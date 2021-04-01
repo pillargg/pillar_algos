@@ -5,8 +5,8 @@ __Description__:
 Pillar is creating an innovative way to automatically select and splice clips from Twitch videos for streamers. This repo is focusing on the algorithm aspect. Three main algorithms are being tested.
 
 1. Find the best moments in clips based on where the most users participated. Most is defined as the *ratio of unique users* during a 2 min section to unique users for the entire session.
+1. Find the best moments in clips based on where the most users participated. Most is defined as the *number of unique users* during a 2 min section.
 1. Find the best moments in clips based on when rate of messages per user peaked. This involves answering the question "at which 2 min segment do the most users send the most messages?". If users X, Y, and Z all send 60% of their messages at timestamp range delta, then that timestamp might qualify as a "best moment"
-2. Find the best moments in clips based on where the most users participated. Most is defined as the *number of unique users* during a 2 min section.
 
 __Datasets used__:
 1. Preliminary data `prelim_df`: 545 rows representing one 3 hour 35 minute 26 second twitch stream chat of [Hearthstone by LiiHS](https://www.twitch.tv/videos/963184458)
