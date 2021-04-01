@@ -1,5 +1,7 @@
 # Background
 
+[Access me](https://github.com/pomkos/twitch_chat_analysis/blob/main/pillar.ipynb)
+
 __Description__:
 
 Pillar is creating an innovative way to automatically select and splice clips from Twitch videos for streamers. This repo is focusing on the algorithm aspect. Three main algorithms are being tested.
