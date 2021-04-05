@@ -4,8 +4,8 @@ import numpy as np
 import datetime as dt
 import json
 
-def organize_twitch_chat(json_name):
-    data = pd.read_json(json_name, orient='records')
+def organize_twitch_chat(json_data):
+    data = pd.DataFrame.from_records(json_data)
     df = data[['created_at','updated_at','commenter','message']]
     messages = df['message'].apply(pd.Series).drop(['fragments','user_color','user_notice_params'],axis=1)
     users = df['commenter'].apply(pd.Series)
@@ -211,6 +211,8 @@ def save_json(json_results, name):
     with open(f"{name}.txt",'w') as f:
         f.write(str_)
 
-big_df = organize_twitch_chat("big_data.json") # fetch appropriate data
-results, json_results = hour_iterator(big_df, vid_id=955629991)
-save_json(json_results, "algo1_results")
+
+def run(data):
+    big_df = organize_twitch_chat(data) # fetch appropriate data
+    results, json_results = hour_iterator(big_df, vid_id=955629991)
+    save_json(json_results, "algo1_results2")
