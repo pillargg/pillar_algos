@@ -7,7 +7,5 @@ import json
 
 data = json.load(open('sample_data.json'))
 
-# function that extracts vid_id from request goes here
-vid_id = 955629991
 
-print(algo1Runner(data, vid_id))
+print(algo1Runner(data))

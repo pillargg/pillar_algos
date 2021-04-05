@@ -134,7 +134,7 @@ class fminChats():
         df_unique['elapsed'] = df_unique['end'] - df_unique['start']
         return df_unique
     
-def results_jsonified(results, vid_id, first_sec):
+def results_jsonified(results, first_sec):
     '''
     Extracts relevant results and makes them machine readable
     
@@ -142,8 +142,6 @@ def results_jsonified(results, vid_id, first_sec):
     -----
     results: pd.DataFrame
         DataFrame with at least start, end columns.
-    vid_id: int
-        Twitch id of video
     '''
     results['first_sec'] = first_sec # to calculate elapsed time from first sec, in seconds
     results = results.sort_values('perc_rel_unique', ascending=False) # so json format is returned with top result being the most relevant
@@ -157,13 +155,12 @@ def results_jsonified(results, vid_id, first_sec):
         end_sec = dt.timedelta.total_seconds(end-og)
         
         dict_ = {"startTime":start_sec,
-                 "endTime":end_sec,
-                 "videoId":vid_id}
+                 "endTime":end_sec}
         json_results.append(dict_)
         
     return json_results
         
-def hour_iterator(big_df, vid_id, min_=2):
+def hour_iterator(big_df, min_=2):
     '''
     Pushes all dfs in a list through the fminChats function, returns a dataframe of results
     
@@ -173,8 +170,6 @@ def hour_iterator(big_df, vid_id, min_=2):
         Df of the entire twitch session. This is the one that was split by dfSplitter class
     min_: int
         How long a timestamp range should be
-    vid_id: int
-        Twitch id of video. Needed for jsonify function
     '''
     ds = dfSplitter(big_df) # initiate
     ds.find_rest() # split big_df into 1 hour long separate dfs
@@ -199,7 +194,7 @@ def hour_iterator(big_df, vid_id, min_=2):
     results['elapsed'] = results['end'] - results['start'] # to double check length
     pretty_results = results.reset_index(drop=True) # prettify
     
-    json_results = results_jsonified(results, vid_id, first_sec) # ordered by top perc_rel_unique
+    json_results = results_jsonified(results, first_sec) # ordered by top perc_rel_unique
     
     return pretty_results, json_results
 
@@ -216,9 +211,10 @@ def save_json(json_results, name):
         f.write(str_)
 
 
-def run(data, vid_id):
+def run(data):
     data = pd.DataFrame.from_records(data)
     big_df = organize_twitch_chat(data) # fetch appropriate data
-    results, json_results = hour_iterator(big_df, vid_id=vid_id)
-    save_json(json_results, "algo1_results2")
-    return f"{vid_id} analyzed and results saved as json"
+    results, json_results = hour_iterator(big_df)
+    return json_results
+    # save_json(json_results, "algo1_results2")
+    # return f"{vid_id} analyzed and results saved as json"
