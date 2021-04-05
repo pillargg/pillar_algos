@@ -4,9 +4,13 @@ import numpy as np
 import datetime as dt
 import json
 
-def organize_twitch_chat(json_data):
-    data = pd.DataFrame.from_records(json_data)
+def organize_twitch_chat(data):
+    # all vars were loaded as str. Change type to datetime/int/bool
+    data['created_at'] = pd.to_datetime(data['created_at'])
+    data['updated_at'] = pd.to_datetime(data['updated_at'])
+    
     df = data[['created_at','updated_at','commenter','message']]
+    
     messages = df['message'].apply(pd.Series).drop(['fragments','user_color','user_notice_params'],axis=1)
     users = df['commenter'].apply(pd.Series)
     
@@ -208,11 +212,13 @@ def save_json(json_results, name):
         str_ += str(dict_) + ', \n '
     str_ += ']'
     
-    with open(f"{name}.txt",'w') as f:
+    with open(f"{name}.json",'w') as f:
         f.write(str_)
 
 
-def run(data):
+def run(data, vid_id):
+    data = pd.DataFrame.from_records(data)
     big_df = organize_twitch_chat(data) # fetch appropriate data
-    results, json_results = hour_iterator(big_df, vid_id=955629991)
+    results, json_results = hour_iterator(big_df, vid_id=vid_id)
     save_json(json_results, "algo1_results2")
+    return f"{vid_id} analyzed and results saved as json"
