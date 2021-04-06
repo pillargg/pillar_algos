@@ -4,9 +4,13 @@ import numpy as np
 import datetime as dt
 import json
 
-def organize_twitch_chat(json_name):
-    data = pd.read_json(json_name, orient='records')
+def organize_twitch_chat(data):
+    # all vars were loaded as str. Change type to datetime/int/bool
+    data['created_at'] = pd.to_datetime(data['created_at'])
+    data['updated_at'] = pd.to_datetime(data['updated_at'])
+    
     df = data[['created_at','updated_at','commenter','message']]
+    
     messages = df['message'].apply(pd.Series).drop(['fragments','user_color','user_notice_params'],axis=1)
     users = df['commenter'].apply(pd.Series)
     
@@ -130,7 +134,7 @@ class fminChats():
         df_unique['elapsed'] = df_unique['end'] - df_unique['start']
         return df_unique
     
-def results_jsonified(results, vid_id, first_sec):
+def results_jsonified(results, first_sec):
     '''
     Extracts relevant results and makes them machine readable
     
@@ -138,8 +142,6 @@ def results_jsonified(results, vid_id, first_sec):
     -----
     results: pd.DataFrame
         DataFrame with at least start, end columns.
-    vid_id: int
-        Twitch id of video
     '''
     results['first_sec'] = first_sec # to calculate elapsed time from first sec, in seconds
     results = results.sort_values('perc_rel_unique', ascending=False) # so json format is returned with top result being the most relevant
@@ -153,13 +155,12 @@ def results_jsonified(results, vid_id, first_sec):
         end_sec = dt.timedelta.total_seconds(end-og)
         
         dict_ = {"startTime":start_sec,
-                 "endTime":end_sec,
-                 "videoId":vid_id}
+                 "endTime":end_sec}
         json_results.append(dict_)
         
     return json_results
         
-def hour_iterator(big_df, vid_id, min_=2):
+def hour_iterator(big_df, min_=2):
     '''
     Pushes all dfs in a list through the fminChats function, returns a dataframe of results
     
@@ -169,8 +170,6 @@ def hour_iterator(big_df, vid_id, min_=2):
         Df of the entire twitch session. This is the one that was split by dfSplitter class
     min_: int
         How long a timestamp range should be
-    vid_id: int
-        Twitch id of video. Needed for jsonify function
     '''
     ds = dfSplitter(big_df) # initiate
     ds.find_rest() # split big_df into 1 hour long separate dfs
@@ -195,7 +194,7 @@ def hour_iterator(big_df, vid_id, min_=2):
     results['elapsed'] = results['end'] - results['start'] # to double check length
     pretty_results = results.reset_index(drop=True) # prettify
     
-    json_results = results_jsonified(results, vid_id, first_sec) # ordered by top perc_rel_unique
+    json_results = results_jsonified(results, first_sec) # ordered by top perc_rel_unique
     
     return pretty_results, json_results
 
@@ -208,9 +207,14 @@ def save_json(json_results, name):
         str_ += str(dict_) + ', \n '
     str_ += ']'
     
-    with open(f"{name}.txt",'w') as f:
+    with open(f"{name}.json",'w') as f:
         f.write(str_)
 
-big_df = organize_twitch_chat("big_data.json") # fetch appropriate data
-results, json_results = hour_iterator(big_df, vid_id=955629991)
-save_json(json_results, "algo1_results")
+
+def run(data):
+    data = pd.DataFrame.from_records(data)
+    big_df = organize_twitch_chat(data) # fetch appropriate data
+    results, json_results = hour_iterator(big_df)
+    return json_results
+    # save_json(json_results, "algo1_results2")
+    # return f"{vid_id} analyzed and results saved as json"

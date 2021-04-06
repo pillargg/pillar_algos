@@ -3,4 +3,3 @@ numpy
 matplotlib
 seaborn
 datetime
-json
