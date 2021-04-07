@@ -191,7 +191,7 @@ def hour_iterator(big_df, min_=2, sort_by='rel'):
 
     # iterate all sections through the class
     for i in range(len(hour_list)):
-        fm = fminChats(hour_list[i], max_uniques)
+        fm = fminChats(hour_list[i], max_uniques, min_=min_)
         _n = fm.find_rest() # _n not needed
         chunk_list = fm.result # get back list of dfs, each 2 minutes long
 
@@ -220,8 +220,8 @@ def save_json(json_results, name):
         f.write(str_)
 
 
-def run(data, sort_by):
+def run(data, sort_by, min_):
     data = pd.DataFrame.from_records(data)
     big_df = organize_twitch_chat(data) # fetch appropriate data
-    results, json_results = hour_iterator(big_df, sort_by=sort_by)
+    results, json_results = hour_iterator(big_df,min_=min_ , sort_by=sort_by)
     return json_results
