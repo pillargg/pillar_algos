@@ -7,5 +7,6 @@ import json
 
 data = json.load(open('sample_data.json'))
 
-
-print(algo1Runner(data))
+sort_by = 'rel'  # "number of chatters at timestamp"/"number of chatters at that hour"
+# sort_by = 'abs'  # "number of chatters at timestamp"/"total number of chatters in stream"
+print(algo1Runner(data, sort_by=sort_by))

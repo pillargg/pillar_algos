@@ -1,3 +1,7 @@
+########
+# This script sorts the final results by `perc_rel_unique`. Calculated as "number of chatters at timestamp"/"number of chatters in that one hour"
+########
+
 import pandas as pd
 import numpy as np
 
@@ -134,7 +138,7 @@ class fminChats():
         df_unique['elapsed'] = df_unique['end'] - df_unique['start']
         return df_unique
     
-def results_jsonified(results, first_sec):
+def results_jsonified(results, first_sec, sort_by='rel'):
     '''
     Extracts relevant results and makes them machine readable
     
@@ -142,9 +146,11 @@ def results_jsonified(results, first_sec):
     -----
     results: pd.DataFrame
         DataFrame with at least start, end columns.
+    sort_by: str
+        Whether to sort values by `abs` or `rel` unique chatters.
     '''
     results['first_sec'] = first_sec # to calculate elapsed time from first sec, in seconds
-    results = results.sort_values('perc_rel_unique', ascending=False) # so json format is returned with top result being the most relevant
+    results = results.sort_values(f'perc_{sort_by}_unique', ascending=False) # so json format is returned with top result being the most relevant
     json_results = []
     for i, row in results.iterrows():
         og = row['first_sec']
@@ -160,7 +166,7 @@ def results_jsonified(results, first_sec):
         
     return json_results
         
-def hour_iterator(big_df, min_=2):
+def hour_iterator(big_df, min_=2, sort_by='rel'):
     '''
     Pushes all dfs in a list through the fminChats function, returns a dataframe of results
     
@@ -170,6 +176,8 @@ def hour_iterator(big_df, min_=2):
         Df of the entire twitch session. This is the one that was split by dfSplitter class
     min_: int
         How long a timestamp range should be
+    sort_by: str
+        Whether to sort values by `abs` or `rel` unique chatters.
     '''
     ds = dfSplitter(big_df) # initiate
     ds.find_rest() # split big_df into 1 hour long separate dfs
@@ -193,9 +201,9 @@ def hour_iterator(big_df, min_=2):
 
     results['elapsed'] = results['end'] - results['start'] # to double check length
     pretty_results = results.reset_index(drop=True) # prettify
-    pretty_results = pretty_results.sort_values('perc_rel_unique',ascending=False)
+    pretty_results = pretty_results.sort_values(f'perc_{sort_by}_unique',ascending=False)
     
-    json_results = results_jsonified(results, first_sec) # ordered by top perc_rel_unique
+    json_results = results_jsonified(results, first_sec, sort_by=sort_by) # ordered by top perc_rel_unique
     
     return pretty_results, json_results
 
@@ -212,10 +220,8 @@ def save_json(json_results, name):
         f.write(str_)
 
 
-def run(data):
+def run(data, sort_by):
     data = pd.DataFrame.from_records(data)
     big_df = organize_twitch_chat(data) # fetch appropriate data
-    results, json_results = hour_iterator(big_df)
+    results, json_results = hour_iterator(big_df, sort_by=sort_by)
     return json_results
-    # save_json(json_results, "algo1_results2")
-    # return f"{vid_id} analyzed and results saved as json"
