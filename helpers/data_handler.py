@@ -2,10 +2,7 @@
 # also json_saver() that converts given variable into string, saves into .json file
 
 import pandas as pd
-import numpy as np
-
 import datetime as dt
-import json
 
 def organize_twitch_chat(data):
     '''

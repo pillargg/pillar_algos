@@ -3,11 +3,6 @@
 ########
 
 import pandas as pd
-import numpy as np
-
-import datetime as dt
-import json
-
 from helpers import data_handler as d
 
 def perc_uniques(chunk_list, min_, total_uniques, big_unique):
