@@ -193,6 +193,7 @@ def hour_iterator(big_df, min_=2):
 
     results['elapsed'] = results['end'] - results['start'] # to double check length
     pretty_results = results.reset_index(drop=True) # prettify
+    pretty_results = pretty_results.sort_values('perc_rel_unique',ascending=False)
     
     json_results = results_jsonified(results, first_sec) # ordered by top perc_rel_unique
     
