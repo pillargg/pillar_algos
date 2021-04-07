@@ -18,7 +18,7 @@ Print of algo1_results.json file
 from algo1 import run as algo1Runner
 import json
 
-data = json.load(open('sample_data.json'))
+data = json.load(open('data/sample_data.json'))
 
 print(
     algo1Runner(data, sort_by='rel', min_=2)

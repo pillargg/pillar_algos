@@ -8,167 +8,45 @@ import numpy as np
 import datetime as dt
 import json
 
-def organize_twitch_chat(data):
-    # all vars were loaded as str. Change type to datetime/int/bool
-    data['created_at'] = pd.to_datetime(data['created_at'])
-    data['updated_at'] = pd.to_datetime(data['updated_at'])
-    
-    df = data[['created_at','updated_at','commenter','message']]
-    
-    messages = df['message'].apply(pd.Series).drop(['fragments','user_color','user_notice_params'],axis=1)
-    users = df['commenter'].apply(pd.Series)
-    
-    df = df.drop(['message','commenter'], axis=1) # duplicate info
-    df = pd.concat([df,users,messages],axis=1)
-    df = df.iloc[:,[0,1,2,3,4,5,6,9,10,11,12,13]] # select cols that arent duplicates
-    
-    return df
+from helpers import data_handler as d
 
-class dfSplitter():
-    def __init__(self, dataframe):
-        '''
-        Splits dataframe into multiple dataframes, each 1 hour long
+def perc_uniques(chunk_list, min_, total_uniques, big_unique):
+    '''
+    Finds the percent unique chatters for each dataframe in the list. Dataframes assumed to be split using xminChats.find_rest.
+    '''
 
-        output:
-        ------
-        my_list: list
-            List of dataframes
-        '''
-        # init function finds the first split
-        dataframe = dataframe.sort_values("created_at")
-        first = dataframe[dataframe['created_at'] <= dataframe.loc[0,'created_at'] + pd.Timedelta(hours = 1)]
-        self.last_i = first.index.max()
-        self.dataframe = dataframe
-        self.result = [] # list to append starting timestamp + datasets to
-        self.result.append(dataframe.iloc[0, 0]) # NOTE: assumes first col is always "created_at" col
-        self.result.append(first)
-        
-    def find_rest(self):
-        '''
-        Uses last index of first split to find the others
-        '''
-        dataframe = self.dataframe
-        last_i = self.last_i
-        if last_i+1 != len(dataframe):
-            new_df = dataframe.loc[last_i+1:,:] # clip df to start at last_i
-            newest = new_df[new_df['created_at'] <= new_df.loc[last_i+1,'created_at'] + pd.Timedelta(hours=1)] # filter by hour
-            self.result.append(newest) # store in list
-            self.last_i = newest.index.max()
-            
-            self.find_rest() # repeat
-        else:
-            return dataframe # never actually used
-        
-class fminChats():
-    def __init__(self,dataframe, big_unique, min_= 2):
-        '''
-        Finds the percent unique chatters that chatted every min_ minutes
-        
-        input
-        -----
-        dataframe: pd.DataFrame
-            Twitch chat dataframe organized and split by dfSplitter
-        big_unique: int
-            Total number of unique chatters for the entire Twitch stream
-        min_: int
-            Minute range to find timestamps for. Ex: Find 2 min long timestamps.
-        '''
-        
-        # init function finds the first split
-        dataframe = dataframe.sort_values("created_at")
-        first = dataframe[dataframe['created_at'] <= dataframe.iloc[0,0] + pd.Timedelta(minutes = min_)]
-        
-        self.min_ = min_
-        self.total_uniques = len(dataframe['_id'].unique())
-        self.big_unique = big_unique
-        
-        self.last_i = first.index.max()
-        self.dataframe = dataframe
-        
-        self.result = []
-        self.result.append(first)
-        
-    def find_rest(self):
-        '''
-        Uses last index of first split to find the others
-        '''
-        dataframe = self.dataframe
-        last_i = self.last_i
-        if last_i+1 < dataframe.index.max(): # NOT len(dataframe), that bugs out and i dont wanna explain why
-            new_df = dataframe.loc[last_i+1:,:] # clip df to start new min_ min calc at last_i+1
-            newest = new_df[new_df['created_at'] <= new_df.loc[last_i+1,'created_at'] + pd.Timedelta(value=self.min_, unit='minutes')] # filter by minute
-            self.result.append(newest) # store in list
-            
-            self.last_i = newest.index.max()
-            self.find_rest() # repeat
-        else:
-            x=''
-    
-    def perc_uniques(self, chunk_list):
-        '''
-        Finds the percent unique chatters for eachd dataframe in the list. Dataframes assumed to be split using self.find_rest.
-        '''
-        
-        perc_unique = {
-                f'{self.min_}min_chunk':[],
-                'start':[],
-                'end':[],
-                'num_unique':[],
-                'perc_rel_unique':[],
-                'perc_abs_unique':[]
-        }
-        
-        
-        for i in range(len(chunk_list)):
-            # calcuate
-            chunk = i
-            unique = len(chunk_list[i]['_id'].unique())
-            timestamp = [chunk_list[i]['created_at'].min(), chunk_list[i]['created_at'].max()]
-            perc_rel = unique/self.total_uniques # this is the total uniques in THAT DATAFRAME, ie the hourly cut
-            perc_abs = unique/self.big_unique # this is the total uniques in the entire twitch session
-            # store
-            perc_unique[f'{self.min_}min_chunk'].append(chunk)
-            perc_unique['start'].append(timestamp[0])
-            perc_unique['end'].append(timestamp[1])
-            perc_unique['num_unique'].append(unique)
-            perc_unique['perc_rel_unique'].append(perc_rel)
-            perc_unique['perc_abs_unique'].append(perc_abs)
-            
-        df_unique = pd.DataFrame(perc_unique)
-        df_unique['elapsed'] = df_unique['end'] - df_unique['start']
-        return df_unique
-    
-def results_jsonified(results, first_sec, sort_by='rel'):
-    '''
-    Extracts relevant results and makes them machine readable
-    
-    input
-    -----
-    results: pd.DataFrame
-        DataFrame with at least start, end columns.
-    sort_by: str
-        Whether to sort values by `abs` or `rel` unique chatters.
-    '''
-    results['first_sec'] = first_sec # to calculate elapsed time from first sec, in seconds
-    results = results.sort_values(f'perc_{sort_by}_unique', ascending=False) # so json format is returned with top result being the most relevant
-    json_results = []
-    for i, row in results.iterrows():
-        og = row['first_sec']
-        start = row['start']
-        end = row['end']
-        
-        start_sec = dt.timedelta.total_seconds(start-og) # find difference between first sec and given timestamp, convert that to seconds
-        end_sec = dt.timedelta.total_seconds(end-og)
-        
-        dict_ = {"startTime":start_sec,
-                 "endTime":end_sec}
-        json_results.append(dict_)
-        
-    return json_results
-        
+    perc_unique = {
+            f'{min_}min_chunk':[],
+            'start':[],
+            'end':[],
+            'num_unique':[],
+            'perc_rel_unique':[],
+            'perc_abs_unique':[]
+    }
+
+
+    for i in range(len(chunk_list)):
+        # calcuate
+        chunk = i
+        unique = len(chunk_list[i]['_id'].unique())
+        timestamp = [chunk_list[i]['created_at'].min(), chunk_list[i]['created_at'].max()]
+        perc_rel = unique/total_uniques # this is the total uniques in THAT DATAFRAME, ie the hourly cut
+        perc_abs = unique/big_unique # this is the total uniques in the entire twitch session
+        # store
+        perc_unique[f'{min_}min_chunk'].append(chunk)
+        perc_unique['start'].append(timestamp[0])
+        perc_unique['end'].append(timestamp[1])
+        perc_unique['num_unique'].append(unique)
+        perc_unique['perc_rel_unique'].append(perc_rel)
+        perc_unique['perc_abs_unique'].append(perc_abs)
+
+    df_unique = pd.DataFrame(perc_unique)
+    df_unique['elapsed'] = df_unique['end'] - df_unique['start']
+    return df_unique
+
 def hour_iterator(big_df, min_=2, sort_by='rel'):
     '''
-    Pushes all dfs in a list through the fminChats function, returns a dataframe of results
+    Pushes all dfs in a list through the xminChats function, returns a dataframe of results
     
     input
     -----
@@ -179,7 +57,7 @@ def hour_iterator(big_df, min_=2, sort_by='rel'):
     sort_by: str
         Whether to sort values by `abs` or `rel` unique chatters.
     '''
-    ds = dfSplitter(big_df) # initiate
+    ds = d.dfSplitter(big_df) # initiate
     ds.find_rest() # split big_df into 1 hour long separate dfs
     hour_list = ds.result # result stored in class var. NOTE: index 0 is always the very first timestamp of big_df
     first_sec = hour_list[0]
@@ -191,11 +69,11 @@ def hour_iterator(big_df, min_=2, sort_by='rel'):
 
     # iterate all sections through the class
     for i in range(len(hour_list)):
-        fm = fminChats(hour_list[i], max_uniques, min_=min_)
+        fm = d.xminChats(hour_list[i], max_uniques, min_=min_)
         _n = fm.find_rest() # _n not needed
         chunk_list = fm.result # get back list of dfs, each 2 minutes long
-
-        hr_uniques = fm.perc_uniques(chunk_list)
+        
+        hr_uniques = perc_uniques(chunk_list, min_, total_uniques=fm.total_uniques, big_unique=fm.big_unique)
         hr_uniques['hour'] = i + 1
         results = results.append(hr_uniques)
 
@@ -203,25 +81,15 @@ def hour_iterator(big_df, min_=2, sort_by='rel'):
     pretty_results = results.reset_index(drop=True) # prettify
     pretty_results = pretty_results.sort_values(f'perc_{sort_by}_unique',ascending=False)
     
-    json_results = results_jsonified(results, first_sec, sort_by=sort_by) # ordered by top perc_rel_unique
+    json_results = d.results_jsonified(results, first_sec, results_col=f'perc_{sort_by}_unique') # ordered by top perc_rel_unique
     
     return pretty_results, json_results
 
-def save_json(json_results, name):
-    '''
-    Saves json_results in txt file.
-    '''
-    str_  = '['
-    for dict_ in json_results:
-        str_ += str(dict_) + ', \n '
-    str_ += ']'
-    
-    with open(f"{name}.json",'w') as f:
-        f.write(str_)
+
 
 
 def run(data, sort_by, min_):
     data = pd.DataFrame.from_records(data)
-    big_df = organize_twitch_chat(data) # fetch appropriate data
+    big_df = d.organize_twitch_chat(data) # fetch appropriate data
     results, json_results = hour_iterator(big_df,min_=min_ , sort_by=sort_by)
     return json_results
