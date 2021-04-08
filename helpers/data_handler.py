@@ -33,6 +33,7 @@ def organize_twitch_chat(data):
     df = df.drop(['message','commenter'], axis=1) # duplicate info
     df = pd.concat([df,users,messages],axis=1)
     df = df.iloc[:,[0,1,2,3,4,5,6,9,10,11,12,13]] # select cols that arent duplicates
+    df = df[df['is_action'] == False].reset_index(drop=True) 
     
     return df
 
