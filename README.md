@@ -39,10 +39,10 @@ To create one overarching algorithm that will find the most "interesting" clips 
 * New objective measure: community created clips (`ccc`) for a given VOD id with start/end timestamps for each clip
 * Assumption: `ccc` are interesting and can be used to create a narrative for each VOD. We can test this by cross referencing with posts to /r/livestreamfails upvotes/comments
 * Hypothesis: if we can predict where `ccc` would be created, those are potentially good clips to show the user
-   * Short term test: Create a model to predict where ccc would be created using variables such as word count, chat rate, emoji useage, chat semantic analysis. We can do this by finding timestamps of ccc and correlating them with chat stats
-   * Medium term test: Use top 100 streamers as training data. What similarities do their ccc and reddit most upvoted of that VOD share? (chat rate etc)
+   * *Short term test*: Create a model to predict where ccc would be created using variables such as word count, chat rate, emoji useage, chat semantic analysis. We can do this by finding timestamps of ccc and correlating them with chat stats
+   * *Medium term test*: Use top 100 streamers as training data. What similarities do their ccc and reddit most upvoted of that VOD share? (chat rate etc)
       1. Get the transcript for these top 100
       2. Get the top 100's YT posted 15-30min story content for the 8 hour VOD
       3. Get the transcript for that story content
       4. Semantic analysis and correlations, etc.
-   * Long term test: what percentage of clips do our streamers actually end up using
+   * *Long term test*: what percentage of clips do our streamers actually end up using
