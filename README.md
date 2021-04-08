@@ -15,3 +15,14 @@ __Datasets used__:
     * Used to create initial json import and resulting df clean/merge function `organize_twitch_chat`
 2. Big data `big_df`: 2409 rows representing one 7 hour 37 minute, 0 second twitch stream chat of [Hearthstone by LiiHS](https://www.twitch.tv/videos/955629991)
     * Used to create all algorithms
+# Current Goal
+
+To create one overarching algorithm that will find the most "interesting" clips in a twitch VOD. This will be created through the following steps:
+1. Creation of various algorithms that isolate `min_` (2 by default) minute chunks. The basic workflow:
+   1. Create variable (ex: `num_words`, for number of words in the body of a chat message)
+   1. Group df by `min_` chunks, average/sum/etc the variable for each `min_` chunks
+   1. Sort new df by variable, from highest "value" to lowest "value"
+   1. Save this new df as json
+1. Users rate clips provided by each algorithm
+2. Useless algorithms thrown away
+3. Rest of the algorithms merged into one overarching algorithm, with weights distributed based on user ratings
