@@ -29,7 +29,7 @@ To create one overarching algorithm that will find the most "interesting" clips 
    1. Create variable (ex: `num_words`, for number of words in the body of a chat message)
    1. Group df by `min_` chunks, average/sum/etc the variable for each `min_` chunks
    1. Sort new df by variable, from highest "value" to lowest "value"
-   1. Save this new df as json
+   1. Save this new df as json ([example](https://github.com/pomkos/twitch_chat_analysis/blob/main/exports/algo1_results.json))
 1. Users rate clips provided by each algorithm
 2. Useless algorithms thrown away
 3. Rest of the algorithms merged into one overarching algorithm, with weights distributed based on user ratings
