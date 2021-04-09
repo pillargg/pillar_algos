@@ -201,13 +201,13 @@ def save_json(json_results, name):
     json_results: list
         List of dictionaries containing results
     name: str
-        Filename to save as. Ex: name.json
+        Filename (with optional directory) to save as. Ex: name.json or exports/name.json
     '''
     str_  = '['
     for dict_ in json_results:
         str_ += str(dict_) + ', \n '
     str_ += ']'
     
-    with open(f"exports/{name}.json",'w') as f:
+    with open(f"{name}.json",'w') as f:
         f.write(str_)
-    print(f"Saved to exports/{name}.json")
+    print(f"Saved to {name}.json")
