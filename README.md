@@ -27,8 +27,8 @@ Pillar is creating an innovative way to automatically select and splice clips fr
 To create one overarching algorithm that will find the most "interesting" clips in a twitch VOD. This will be created through the following steps:
 1. Creation of various algorithms that isolate `min_` (2 by default) minute chunks. The basic workflow:
    1. Create variable (ex: `num_words`, for number of words in the body of a chat message)
-   1. Group df by `min_` chunks, average/sum/etc the variable for each `min_` chunks
-   1. Sort new df by variable, from highest "value" to lowest "value"
+   1. Group df by `min_` chunks, then average/sum/etc `num_words` for each `min_` chunks
+   1. Sort new df by `num_words`, from highest "value" to lowest "value"
    1. Save this new df as json ([example](https://github.com/pomkos/twitch_chat_analysis/blob/main/exports/algo1_results.json))
 1. Users rate clips provided by each algorithm
 2. Useless algorithms thrown away
