@@ -24,10 +24,10 @@ output
 ------
 Print of algo1_results.json file
 """
-from algo1 import run as algo1Runner
-from algo2 import run as algo2Runner
-from algo3_5 import run as algo3_5Runner
-from algo3_0 import run as algo3_0Runner
+from algo1 import run as algo1Runner # unique rate per timestamp
+from algo2 import run as algo2Runner # chat send per user rate
+from algo3_5 import run as algo3_5Runner # number of words/emojis/both in each message, summed per stamp
+from algo3_0 import run as algo3_0Runner # stamps where the top active users participated
 import json
 
 data = json.load(open('data/sample_data.json'))
