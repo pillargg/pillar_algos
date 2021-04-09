@@ -20,9 +20,13 @@ def thalamus(big_df, min_, goal='num_words'):
     goal: str
         one of `num_words`, `num_emo`, or `num_words_emo`
     '''
+    # cut
     big_df = algorithm(big_df)
-    chunk_df, first_stamp = chunker(big_df, min_)
-    
+    first_stamp, chunk_list = d.get_chunks(big_df)
+    chunk_df = pd.DataFrame(columns = chunk_list[0].columns)
+    for chunk in chunk_list:
+        chunk_df = chunk_df.append(chunk)
+        
     results = results_formatter(chunk_df, goal=goal)
     return results, first_stamp
     
@@ -36,61 +40,6 @@ def algorithm(big_df):
     
     return big_df
     
-def chunker(big_df, min_):
-    '''
-    Runs big_df through classes and functions to split it into hours/chunks
-    
-    output
-    ------
-    chunk_df: pd.DataFrame
-        Dataframe with each hour/chunk labeled
-    first_stamp: datetime
-        The very first timestamp in the dataframe
-    '''
-    # split into hours
-    dfs = d.dfSplitter(big_df)
-    dfs.find_rest()
-
-    hour_list = dfs.result
-    first_stamp = hour_list[0]
-    del hour_list[0]
-    
-    big_unique = big_df['_id'].unique()
-    
-    # split into minutes
-    chunk_list = []
-    for i in range(len(hour_list)):
-        hour = hour_list[i]
-        xmc = d.xminChats(hour, big_unique, min_=min_)
-        xmc.find_rest()
-        for chunk_num in range(len(xmc.result)):
-            chunk = xmc.result[chunk_num]
-            chunk['hour'] = i
-            chunk['chunk'] = chunk_num
-            chunk_list.append(chunk)
-            
-    chunk_list_expanded = []
-
-    for chunk in chunk_list:
-        chunk_list_expanded.append(num_words_in_chat(chunk))
-
-    chunk_df = pd.DataFrame(columns = ['created_at', 'updated_at', 'display_name', '_id', 'name', 'type',
-           'bio', 'logo', 'body', 'is_action', 'user_badges', 'emoticons', 'hour',
-           'chunk', 'num_words_emo', 'num_emo', 'num_words'])
-
-    for chunk in chunk_list_expanded:
-        chunk_df = chunk_df.append(chunk)
-
-    chunk_df = chunk_df.astype({
-                                'is_action':bool,
-                                'hour':int,
-                                'chunk':int,
-                                'num_words_emo':float,
-                                'num_emo':float,
-                                'num_words':float
-                             })
-    return chunk_df, first_stamp
-
 def results_formatter(dataframe, goal):
     '''
     Creates a new df `results` that contains the total number of words in the dataframe, the time

@@ -210,4 +210,4 @@ def save_json(json_results, name):
     
     with open(f"exports/{name}.json",'w') as f:
         f.write(str_)
-    print(f"Saved to data/{name}.json")
+    print(f"Saved to exports/{name}.json")
