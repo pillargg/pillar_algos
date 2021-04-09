@@ -98,12 +98,13 @@ def id_words_counter(big_df):
     
     return id_words
     
-def run(data, min_, min_words):
+def run(data, min_, min_words, save_json = False):
     data = pd.DataFrame.from_records(data)
     big_df = dh.organize_twitch_chat(data) # fetch appropriate data
     results, first_stamp = thalamus(big_df, min_, min_words = 5, goal='num_top_user_appears') 
     
     json_results = dh.results_jsonified(results, first_stamp, results_col='num_top_user_appears')
-    dh.save_json(json_results, f"algo3.0_top_user_appears")
+    if save_json:
+        dh.save_json(json_results, f"algo3.0_top_user_appears")
     
     return json_results

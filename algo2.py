@@ -91,11 +91,13 @@ def rate_finder(dataframe, hour, x=2):
     return chat_rate_df.reset_index(drop=True)
       
     
-def run(data, min_):
+def run(data, min_, save_json = False):
     data = pd.DataFrame.from_records(data)
     big_df = d.organize_twitch_chat(data) # fetch appropriate data
     results, first_stamp = thalamus(big_df, min_)
     json_results = d.results_jsonified(results,first_stamp, 'chats_per_2min')
-    d.save_json(json_results, 'algo2_mean_rate_per_2min')
+    
+    if save_json:
+        d.save_json(json_results, 'algo2_mean_rate_per_2min')
     
     return json_results

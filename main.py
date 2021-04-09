@@ -4,6 +4,8 @@ each of the algorithms.
 
 input
 -----
+save_json: bool
+    True if want to save results as json to exports folder
 data: list
 min_: int
     Approximate number of minutes each clip should be
@@ -33,8 +35,8 @@ import json
 data = json.load(open('data/sample_data.json'))
 
 print(
-    #algo1Runner(data, sort_by='rel', min_=2),
-    #algo2Runner(data, min_=2)
-    #algo3_5Runner(data,goal='num_words',min_=2)
-    algo3_0Runner(data,min_=2, min_words=5)
+    #algo1Runner(data, sort_by='rel', min_=2, save_json = False),
+    #algo2Runner(data, min_=2, save_json = False)
+    #algo3_5Runner(data,goal='num_words',min_=2, save_json = False)
+    algo3_0Runner(data,min_=2, min_words=5, save_json = False)
 )

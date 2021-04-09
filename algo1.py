@@ -83,8 +83,10 @@ def hour_iterator(big_df, min_=2, sort_by='rel'):
 
 
 
-def run(data, sort_by, min_):
+def run(data, sort_by, min_, save_json = False):
     data = pd.DataFrame.from_records(data)
     big_df = d.organize_twitch_chat(data) # fetch appropriate data
     results, json_results = hour_iterator(big_df,min_=min_ , sort_by=sort_by)
+    if save_json:
+        d.save_json(json_results, name="algo1_perc_rel_unique")
     return json_results

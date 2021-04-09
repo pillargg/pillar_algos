@@ -95,12 +95,13 @@ def num_words_in_chat(dataframe):
     dataframe['num_words_emo'] = word_bag
     return dataframe
 
-def run(data, min_, goal):
+def run(data, min_, goal, save_json = False):
     data = pd.DataFrame.from_records(data)
     big_df = d.organize_twitch_chat(data) # fetch appropriate data
     results, first_stamp = thalamus(big_df, min_, goal=goal) 
     
     json_results = d.results_jsonified(results,first_stamp, goal)
-    d.save_json(json_results, f"algo3.5_{goal}")
+    if save_json:
+        d.save_json(json_results, f"algo3.5_{goal}")
     
     return json_results
