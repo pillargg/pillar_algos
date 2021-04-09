@@ -5,14 +5,14 @@ with open("../README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="pillaralgos", # Replace with your own username
+    name="pillaralgos",
     version= "1.0.0",
     author="Peter Gates",
     author_email="pgate89@gmail.com",
     description='Algorithms for Pillar. Currently includes "mini" algorithms, nothing too sophisticated.',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/pomkos/twitch_chat_analysis",
+    url="https://github.com/pillargg/twitch_chat_analysis",
     project_urls={
         "Pillar": "https://pillar.gg",
     },
@@ -26,8 +26,7 @@ setuptools.setup(
     install_requires=[
         'pandas>=1.2.3',
         'numpy>=1.20.2',
-        'matplotlib>=3.4.1',
-        'seaborn>=0.11.1'
+        'pillaralgos>=1.0.0'
     ],
     python_requires=">=3.6",
 )
