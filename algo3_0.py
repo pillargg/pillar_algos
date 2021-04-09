@@ -1,6 +1,6 @@
 ########
-# This script finds the number of words/emojis/both depending on `goal` variable,
-# isolates to each `min_` timestamp, and sorts the resulting df by largest number
+# This script finds the top 10 active users, timestamps where they participated,
+# filtered by at least `min_words` number of words sent by the user per stamp
 ########
 import pandas as pd
 from helpers import data_handler as dh
