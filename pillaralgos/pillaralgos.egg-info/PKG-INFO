@@ -1,7 +1,7 @@
 Metadata-Version: 2.1
 Name: pillaralgos
 Version: 1.0.0.3
-Summary: Algorithms for Pillar. Curently includes "mini" algorithms, nothing too sophisticated.
+Summary: Algorithms for Pillar. Currently includes "mini" algorithms, nothing too sophisticated.
 Home-page: https://github.com/pomkos/twitch_chat_analysis
 Author: Peter Gates
 Author-email: pgate89@gmail.com
@@ -49,7 +49,7 @@ Description: # Table of Contents
         * __New objective measure__: community created clips (`ccc`) for a given VOD id with start/end timestamps for each clip
         * __Assumption__: `ccc` are interesting and can be used to create a narrative for each VOD. We can test this by cross referencing with posts to /r/livestreamfails upvotes/comments
         * __Hypothesis__: if we can predict where `ccc` would be created, those are potentially good clips to show the user
-           * *Short term test*: Create a model to predict where ccc would be created using variables such as word count, chat rate, emoji useage, chat semantic analysis. We can do this by finding timestamps of ccc and correlating them with chat stats
+           * *Short term test*: Create a model to predict where ccc would be created using variables such as word count, chat rate, emoji usage, chat semantic analysis. We can do this by finding timestamps of ccc and correlating them with chat stats
            * *Medium term test*: Use top 100 streamers as training data. What similarities do their ccc and reddit most upvoted of that VOD share? (chat rate etc)
               1. Get the transcript for these top 100
               2. Get the top 100's YT posted 15-30min story content for the 8 hour VOD

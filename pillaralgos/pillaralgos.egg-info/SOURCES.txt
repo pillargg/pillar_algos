@@ -8,4 +8,5 @@ pillaralgos/helpers/sanity_checks.py
 pillaralgos/pillaralgos.egg-info/PKG-INFO
 pillaralgos/pillaralgos.egg-info/SOURCES.txt
 pillaralgos/pillaralgos.egg-info/dependency_links.txt
+pillaralgos/pillaralgos.egg-info/requires.txt
 pillaralgos/pillaralgos.egg-info/top_level.txt
