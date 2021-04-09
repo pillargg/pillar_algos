@@ -3,7 +3,7 @@
 # filtered by at least `min_words` number of words sent by the user per stamp
 ########
 import pandas as pd
-from helpers import data_handler as dh
+from .helpers import data_handler as dh
 
 def thalamus(big_df, min_, goal, min_words):
     

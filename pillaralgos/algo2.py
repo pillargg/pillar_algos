@@ -5,7 +5,7 @@
 
 import pandas as pd
 import datetime as dt
-from helpers import data_handler as d
+from .helpers import data_handler as d
 
 
 def thalamus(dataframe, min_):

@@ -3,7 +3,7 @@
 # isolates to each `min_` timestamp, and sorts the resulting df by largest number
 ########
 import pandas as pd
-from helpers import data_handler as d
+from .helpers import data_handler as d
 
 
 def thalamus(big_df, min_, goal='num_words'):

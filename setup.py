@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="pillaralgos", # Replace with your own username
-    version= "1.0.0.4",
+    version= "1.0.0.5",
     author="Peter Gates",
     author_email="pgate89@gmail.com",
     description='Algorithms for Pillar. Currently includes "mini" algorithms, nothing too sophisticated.',
@@ -23,7 +23,6 @@ setuptools.setup(
         "Intended Audience :: Developers",
         "Topic :: Scientific/Engineering :: Information Analysis"
     ],
-    package_dir={"": "pillaralgos"},
     install_requires=[
         'pandas>=1.2.3',
         'numpy>=1.20.2',
