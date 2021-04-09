@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="pillaralgos", # Replace with your own username
-    version= "1.0.0.5",
+    version= "1.0.0",
     author="Peter Gates",
     author_email="pgate89@gmail.com",
     description='Algorithms for Pillar. Currently includes "mini" algorithms, nothing too sophisticated.',
