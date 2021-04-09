@@ -117,6 +117,46 @@ class xminChats():
         else:
             x=''
             
+def get_chunks(dataframe, min_=2):
+    '''
+    Iterates through the data_helper classes to divide dataframe into chunks
+    
+    input
+    -----
+    dataframe: pd.DataFrame
+        The entire twitch stream chat df
+    min_: int
+        The min_ value to pass into xminChats()
+        
+    output
+    ------
+    first_stamp: datetime
+        The very first timestamp of dataframe
+    chunk_list:
+        List of `min_` long dataframes
+    '''
+    dhs = dfSplitter(dataframe)
+    dhs.find_rest()
+    hour_list = dhs.result
+
+    first_stamp = hour_list[0]
+    del hour_list[0]
+
+    chunk_list = []
+    for i in range(len(hour_list)):
+        hour = hour_list[i]
+        
+        dhx = xminChats(hour, dataframe['_id'].unique(), min_=min_)
+        dhx.find_rest()
+        chunks = dhx.result
+
+        for x in range(len(chunks)):
+            chunk = chunks[x]
+            chunk['hour'] = i
+            chunk['chunk'] = x
+            chunk_list.append(chunk)
+    return first_stamp, chunk_list
+
 def results_jsonified(results, first_sec, results_col):
     '''
     Converts timestamps to seconds, extracts results and makes the whole thing machine readable
