@@ -89,7 +89,7 @@ To build and publish this package we are using the [poetry](https://python-poetr
 Folder structure:
 ```
 |-- pypi
-    |-- pillaralgos
+    |-- pillaralgos  # <---- note that poetry didn't require an additional subfolder
         |-- helpers
             |-- __init__.py
             |-- data_handler.py
