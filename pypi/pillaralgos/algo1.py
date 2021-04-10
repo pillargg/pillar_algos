@@ -1,6 +1,10 @@
-########
-# This script sorts the final results by `perc_rel_unique`. Calculated as "number of chatters at timestamp"/"number of chatters in that one hour"
-########
+'''
+DESCRIPTION
+    Sorts the final results by `perc_rel_unique`. Calculated as "number of chatters at timestamp"/"number of chatters in that one hour"
+
+HOW TO
+    algo1.run(data, sort_by, min_, save_json = False)
+'''
 
 import pandas as pd
 from .helpers import data_handler as d
@@ -83,10 +87,25 @@ def hour_iterator(big_df, min_=2, sort_by='rel'):
 
 
 
-def run(data, sort_by, min_, save_json = False):
+def run(data, min_=2, sort_by='rel', save_json = False):
+    '''
+    Runs algo1 to sort timestamps by the relative percentage of chatters by default.
+    
+    input:
+    ------
+    data: list
+        List of dictionaries of data from Twitch chat
+    min_: int
+        Approximate number of minutes each clip should be
+    sort_by: str
+        'rel': "number of chatters at timestamp"/"number of chatters at that hour"
+        'abs': "number of chatters at timestamp"/"total number of chatters in stream"
+    save_json: bool
+        True if want to save results as json to exports folder
+    '''
     data = pd.DataFrame.from_records(data)
     big_df = d.organize_twitch_chat(data) # fetch appropriate data
     results, json_results = hour_iterator(big_df,min_=min_ , sort_by=sort_by)
     if save_json:
-        d.save_json(json_results, name="algo1_perc_rel_unique")
+        d.save_json(json_results, name=f"algo1_perc_{sort_by}_unique")
     return json_results

@@ -1,7 +1,7 @@
-########
-# This script finds the top 10 active users, timestamps where they participated,
-# filtered by at least `min_words` number of words sent by the user per stamp
-########
+'''
+This script finds the top 10 active users, timestamps where they participated,
+filtered by at least `min_words` number of words sent by the user per stamp
+'''
 import pandas as pd
 from .helpers import data_handler as dh
 
@@ -98,7 +98,30 @@ def id_words_counter(big_df):
     
     return id_words
     
-def run(data, min_, min_words, save_json = False):
+def run(data, min_=2, min_words=5, save_json = False):
+    '''
+    Runs algo3_0 to extract only those chunks where the top 10 users participated. 
+      - Top users are defined as "sent the most words in the entire twitch stream".
+      - Once top users are identified, only those chunks are returned where top users
+        sent at least `min_words` number of words.
+    
+    input
+    ------
+    data: list
+        List of dictionaries of data from Twitch chat
+    min_: int
+        Approximate number of minutes each clip should be
+    min_words:int
+        When filtering chunks to top users, at least how many words the top user should send
+    save_json: bool
+        True if want to save results as json to exports folder
+        
+    output
+    ------
+    json_results: list
+        List of dictionaries in json format, ordered from predicted best to worst candidates.
+            Ex: [{start:TIMESTAMP_INT, end:TIMESTAMP_INT}]
+    '''
     data = pd.DataFrame.from_records(data)
     big_df = dh.organize_twitch_chat(data) # fetch appropriate data
     results, first_stamp = thalamus(big_df, min_, min_words = 5, goal='num_top_user_appears') 

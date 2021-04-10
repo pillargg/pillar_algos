@@ -1,7 +1,7 @@
-########
-# This script finds the number of words/emojis/both depending on `goal` variable,
-# isolates to each `min_` timestamp, and sorts the resulting df by largest number
-########
+'''
+This script finds the number of words/emojis/both depending on `goal` variable,
+isolates to each `min_` timestamp, and sorts the resulting df by largest number
+'''
 import pandas as pd
 from .helpers import data_handler as d
 
@@ -95,7 +95,29 @@ def num_words_in_chat(dataframe):
     dataframe['num_words_emo'] = word_bag
     return dataframe
 
-def run(data, min_, goal, save_json = False):
+def run(data, min_=2, goal='num_words_emo', save_json = False):
+    '''
+    Runs algo3_5 to sort timestamps by the number of words+emojis by default.
+    
+    input
+    ------
+    data: list
+        List of dictionaries of data from Twitch chat
+    min_: int
+        Approximate number of minutes each clip should be
+    goal: str
+        'num_words': sum of the number of words in each chat message
+        'num_emo': sum of the number of emoticons in each chat message
+        'num_words_emo': sum of the number of words + emoticons in each chat message
+    save_json: bool
+        True if want to save results as json to exports folder
+        
+    output
+    ------
+    json_results: list
+        List of dictionaries in json format, ordered from predicted best to worst candidates.
+            Ex: [{start:TIMESTAMP_INT, end:TIMESTAMP_INT}]
+    '''
     data = pd.DataFrame.from_records(data)
     big_df = d.organize_twitch_chat(data) # fetch appropriate data
     results, first_stamp = thalamus(big_df, min_, goal=goal) 

@@ -1,4 +1,6 @@
-# functions to help with graphing pretty graphs
+'''
+Functions to help with graphing pretty graphs
+'''
 
 def plot_with_time(x,y,data, xformat='%H:%m'):
     '''
