@@ -84,7 +84,7 @@ To create one overarching algorithm that will find the most "interesting" clips 
    * *Long term test*: what percentage of clips do our streamers actually end up using
    
 # Build
-To build and publish this package we are using the [poetry](https://python-poetry.org/) python packager. It takes care of some background stuff that led to mistakes in the past.
+To build and publish this package we are using the [poetry](https://python-poetry.org/) python packager. It takes care of some background stuff that led to [mistakes in the past](https://github.com/pillargg/twitch_chat_analysis/issues/8).
 
 Folder structure:
 ```
