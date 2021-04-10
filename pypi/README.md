@@ -1,9 +1,30 @@
 # Table of Contents
+1. [Build and Publish](#build)
 1. [Background](#background)
    1. [Algorithms](#algorithms)
    2. [Datasets](#datasets)
 3. [Current Goal](#current-goal)
 4. [Long Term Goal](#long-term-goal)
+
+# Build
+To build and publish this package we are using the [poetry](https://python-poetry.org/) python packager. It takes care of some background stuff that led to mistakes in the past.
+
+Folder structure:
+```
+|-- pypi
+    |-- pillaralgos
+        |-- helpers
+            |-- __init__.py
+            |-- data_handler.py
+            |-- graph_helpers.py
+            |-- sanity_checks.py
+        |-- __init__.py  # must include version number
+        |-- algoXX.py
+    |-- LICENSE
+    |-- README.md
+    |-- pyproject.toml  # must include version number
+```
+To publish just run the `poetry publish --build` command after update version numbers as needed.
 
 # Background
 Pillar is creating an innovative way to automatically select and splice clips from Twitch videos for streamers. This repo is focusing on the algorithm aspect. Three main algorithms are being tested.
