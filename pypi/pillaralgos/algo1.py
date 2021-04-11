@@ -3,7 +3,7 @@ DESCRIPTION
     Sorts the final results by `perc_rel_unique`. Calculated as "number of chatters at timestamp"/"number of chatters in that one hour"
 
 HOW TO
-    algo1.run(data, sort_by, min_, save_json = False)
+    algo1.run(data, min_=2, sort_by='rel', save_json = False)
 '''
 
 import pandas as pd
@@ -85,8 +85,6 @@ def hour_iterator(big_df, min_=2, sort_by='rel'):
     return pretty_results, json_results
 
 
-
-
 def run(data, min_=2, sort_by='rel', save_json = False):
     '''
     Runs algo1 to sort timestamps by the relative percentage of chatters by default.
@@ -104,7 +102,7 @@ def run(data, min_=2, sort_by='rel', save_json = False):
         True if want to save results as json to exports folder
     '''
     data = pd.DataFrame.from_records(data)
-    big_df = d.organize_twitch_chat(data) # fetch appropriate data
+    big_df = d.organize_twitch_chat(data) # fetch appropriate data   
     results, json_results = hour_iterator(big_df,min_=min_ , sort_by=sort_by)
     if save_json:
         d.save_json(json_results, name=f"algo1_perc_{sort_by}_unique")

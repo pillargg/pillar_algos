@@ -2,11 +2,54 @@
 # also json_saver() that converts given variable into string, saves into .json file
 
 import pandas as pd
+import numpy as np
 import datetime as dt
 
-def organize_twitch_chat(data):
+def rename_columns(col_string):
     '''
-    Turns json into dataframe. Expands lists of lists into own columns. Selects only relevant columns.
+    Renames columns to be more presentable
+    '''
+    if (col_string == 'created_at_id') | (col_string == 'updated_at_id'):
+        col_string = col_string.replace('_id','')
+        return 'id_' + col_string
+    elif (col_string == 'created_at_mess') | (col_string == 'updated_at_mess'):
+        col_string = col_string.replace('_mess','')
+        return col_string
+    else:
+        return col_string.replace('_mess','',1).replace('_id','',1)
+
+def select_columns(dataframe, keep_user_vars=False):
+    '''
+    Removes unneeded columns
+    '''
+    if keep_user_vars:
+        # If true, include user columns
+        bad_cols = [
+            'display_name_id',
+            'name_id',
+            'user_notice_params_mess'
+        ]
+    else:
+        # If false, not analyzing the users
+        bad_cols = [
+            'display_name_id',
+            'name_id',
+            'user_notice_params_mess',
+        # these aren't used by the simpler fctns
+            'bio_id',
+            'created_at_id',
+            'updated_at_id',
+            'logo_id'
+        ]
+    dataframe = dataframe.drop(bad_cols, axis=1)
+    cols = dataframe.columns
+    cols = list(pd.Series(cols).apply(rename_columns))
+    dataframe.columns = cols
+    return dataframe
+
+def organize_twitch_chat(data, keep_user_vars=False):
+    '''
+    Turns json into dataframe. Expands lists of lists into own columns.
     
     input
     -----
@@ -21,21 +64,74 @@ def organize_twitch_chat(data):
              'bio', 'logo', 'body', 'is_action', 'user_badges', 'emoticons']
     '''
     data = pd.DataFrame.from_records(data) # convert to df
-    # all vars were loaded as str. Change type to datetime/int/bool
-    data['created_at'] = pd.to_datetime(data['created_at'])
-    data['updated_at'] = pd.to_datetime(data['updated_at'])
+    df = data[['created_at','updated_at','commenter','message']].add_suffix('_mess')
     
-    df = data[['created_at','updated_at','commenter','message']]
+    h = dictExtractor(df['message_mess'],label='_mess')
+    messages = h.result
+    g = dictExtractor(df['commenter_mess'], label='_id')
+    users = g.result
     
-    messages = df['message'].apply(pd.Series).drop(['fragments','user_color','user_notice_params'],axis=1)
-    users = df['commenter'].apply(pd.Series)
-    
-    df = df.drop(['message','commenter'], axis=1) # duplicate info
+    df = df.drop(['message_mess','commenter_mess'], axis=1) # duplicate info
     df = pd.concat([df,users,messages],axis=1)
-    df = df.iloc[:,[0,1,2,3,4,5,6,9,10,11,12,13]] # select cols that arent duplicates
-    df = df[df['is_action'] == False].reset_index(drop=True) 
-    
+    # all vars were loaded as str. Change type to datetime/int/bool
+    df = df.astype( {'_id_id':int,
+                    'bio_id':'category',
+                    'created_at_id':'datetime64[ns]',
+                    'created_at_mess':'datetime64[ns]',
+                    'updated_at_id':'datetime64[ns]',
+                    'updated_at_mess':'datetime64[ns]',
+                    'is_action_mess':bool,
+                    'type_id':'category'}
+                  )
+    df = select_columns(df, keep_user_vars)
     return df
+
+class dictExtractor:
+    def __init__(self, my_series, label = ''):
+        '''
+        Extracts dictionaries from series into a new dict using the
+        longest dictionary's keys. Converts new dict into df, stored
+        as `self.result`. Because not every dict had same number of keys.
+        
+        input
+        -----
+        my_series: pd.Series
+            A column from twitch dataframe where each row is a dict
+        label: str
+            What will be appended to the end of each col
+        '''
+        # find max length of dicts
+        length = my_series.apply(lambda x: len(x))
+        y = 0
+        for x in length:
+            if x > y:
+                y = x
+        # find index of max keys dict
+        ind = length[length == 8].index[0]
+        max_d = my_series.iloc[ind].keys()
+        self.max_d = max_d
+        # initiate new dict
+        self.new_dict = {}
+        for k in max_d:
+            self.new_dict[k] = []
+        # extract dict values into new dict
+        my_series.apply(lambda x: self.keys_iterator(x))
+        # store as df
+        self.result = pd.DataFrame.from_dict(self.new_dict)
+        # df.add_suffix() is actually 0.25 seconds slower
+        self.result.columns = [col + label for col in self.result.columns]
+        
+    def keys_iterator(self, my_dict):
+        '''
+        Checks that all of the `max_d` are in the given dictionary. If not,
+        appends np.nan. Otherwise appends the value.
+        '''
+        for k in self.max_d:
+            if k not in my_dict.keys():
+                self.new_dict[k].append(np.nan)
+            else:
+                self.new_dict[k].append(my_dict[k])
+
 
 class dfSplitter():
     def __init__(self, dataframe):
