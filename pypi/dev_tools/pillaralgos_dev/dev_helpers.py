@@ -40,7 +40,13 @@ class awsBucketAPI:
         else:
             print(f"{len(chat_bucket)} buckets contained 'messagestore'")
             self.test = False
-
+            
+    def save_specific_file(self, file_name):
+        '''
+        Downloads a specific file from aws bucket, saving to data/file_name.json
+        '''
+        self.s3c.download_file(self.chat_bucket,file_name, f'data/{file_name}.json')
+    
     def get_random_file_names(self, n):
         '''
         Randomly select `n` files in the bucket, returns the filenames as an array
