@@ -9,7 +9,6 @@ import pandas as pd
 import datetime as dt
 from .helpers import data_handler as d
 
-
 def thalamus(dataframe, min_):
     '''
     Formats data for rate_finder(), gets chunk_list to pass through rate_finder
@@ -22,7 +21,7 @@ def thalamus(dataframe, min_):
     del hour_list[0]
     # label each dataset so we can tell what hour they came from
     for i in range(len(hour_list)):
-        hour_list[i]['hour'] = i
+        hour_list[i].loc[:,'hour'] = i
 
     # split hours into 2 minute chunks
     chunk_list = []
@@ -37,7 +36,7 @@ def thalamus(dataframe, min_):
 
     # for each 2 min chunk
     for chunk in chunk_list:
-        hour = chunk.iloc[-1,11] # col 11 is hour.
+        hour = chunk.loc[:,'hour'].iloc[-1]
         # find the chat rate for each user
         chat_rates = chat_rates.append(rate_finder(dataframe = chunk, hour = hour, x=2)) 
 
