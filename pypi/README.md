@@ -38,6 +38,12 @@ Pillar is creating an innovative way to automatically select and splice clips fr
    1. __STATUS__: current weight determined by (`num_words_of_user`/`num_words_of_top_user`)
    1. [Algorithm 3.5](https://github.com/pomkos/twitch_chat_analysis/blob/reorganize_repo/algorithm_3.5.ipynb) Finds the best moments in clips based on most number of words/emojis/both used in chat
 
+### Timeit results
+
+| algo1        | algo2       | algo3_0      | algo3_5      |
+|--------------|-------------|--------------|--------------|
+| 1 min 11 sec | 5 min 2 sec | 5 min 14 sec | 1 min 37 sec |
+
 ## Datasets:
 1. Preliminary data `prelim_df`: 545 rows representing one 3 hour 35 minute 26 second twitch stream chat of [Hearthstone by LiiHS](https://www.twitch.tv/videos/963184458)
     * Used to create initial json import and resulting df clean/merge function `organize_twitch_chat`
