@@ -37,7 +37,7 @@ def thalamus(dataframe, min_):
 
     # for each 2 min chunk
     for chunk in chunk_list:
-        hour = chunk.iloc[-1,12] # col 12 is hour.
+        hour = chunk.iloc[-1,11] # col 11 is hour.
         # find the chat rate for each user
         chat_rates = chat_rates.append(rate_finder(dataframe = chunk, hour = hour, x=2)) 
 
