@@ -1,6 +1,9 @@
 '''
 This script finds the top 10 active users, timestamps where they participated,
 filtered by at least `min_words` number of words sent by the user per stamp
+
+HOW TO
+    algo3_0.run(data, min_=2, min_words=5, save_json = False)
 '''
 import pandas as pd
 from .helpers import data_handler as dh
@@ -73,7 +76,7 @@ def id_words_counter(big_df):
     Returns a dataframe with all user IDs and the number of words/emojis/combined
     they each sent, sorted by top senders
     '''
-    id_words = pd.DataFrame(columns = ['display_name','_id','num_words', 'num_emoji'])
+    id_words = pd.DataFrame(columns = ['_id','num_words', 'num_emoji'])
     
     for _id in big_df['_id'].unique():
         temp_df = big_df[big_df['_id'] == _id]
@@ -84,7 +87,6 @@ def id_words_counter(big_df):
 
         sum_words = num_words.sum()
         id_words = id_words.append({
-            'display_name':temp_df['display_name'].iloc[0],
             '_id':_id,
             'num_words':sum_words,
             'num_emoji':num_emoji

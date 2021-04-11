@@ -1,6 +1,9 @@
 '''
 This script finds the mean chat_rate per unique user per `min_` min chunk,
 isolates to each `min_` timestamp, and sorts the resulting df by largest number
+
+HOW TO
+    algo2.run(data, min_=2, save_json = False)
 '''
 import pandas as pd
 import datetime as dt

@@ -107,7 +107,7 @@ class dictExtractor:
             if x > y:
                 y = x
         # find index of max keys dict
-        ind = length[length == 8].index[0]
+        ind = length[length == y].index[0]
         max_d = my_series.iloc[ind].keys()
         self.max_d = max_d
         # initiate new dict

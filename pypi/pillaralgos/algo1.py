@@ -1,6 +1,5 @@
 '''
-DESCRIPTION
-    Sorts the final results by `perc_rel_unique`. Calculated as "number of chatters at timestamp"/"number of chatters in that one hour"
+Sorts the final results by `perc_rel_unique`. Calculated as "number of chatters at timestamp"/"number of chatters in that one hour"
 
 HOW TO
     algo1.run(data, min_=2, sort_by='rel', save_json = False)
