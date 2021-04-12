@@ -3,7 +3,7 @@ This script finds the number of words/emojis/both depending on `goal` variable,
 isolates to each `min_` timestamp, and sorts the resulting df by largest number
 
 HOW TO
-    algo3_5.run(data, min_=2, goal='num_words_emo', save_json = False)
+    algo3_5.run(data, min_=2, limit=10, goal='num_words_emo', save_json = False)
 """
 import pandas as pd
 from .helpers import data_handler as d

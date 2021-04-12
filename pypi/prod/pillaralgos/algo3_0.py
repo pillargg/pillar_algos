@@ -3,7 +3,7 @@ This script finds the top 10 active users, timestamps where they participated,
 filtered by at least `min_words` number of words sent by the user per stamp
 
 HOW TO
-    algo3_0.run(data, min_=2, min_words=5, save_json = False)
+    algo3_0.run(data, min_=2, limit=10, min_words=5, save_json = False)
 """
 import pandas as pd
 from .helpers import data_handler as dh
