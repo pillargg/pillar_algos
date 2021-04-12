@@ -106,7 +106,7 @@ def id_words_counter(big_df):
     return id_words
 
 
-def run(data, min_=2, min_words=5, save_json=False):
+def run(data, min_=2, limit=10, min_words=5, save_json=False):
     """
     Runs algo3_0 to extract only those chunks where the top 10 users participated.
       - Top users are defined as "sent the most words in the entire twitch stream".
@@ -119,6 +119,8 @@ def run(data, min_=2, min_words=5, save_json=False):
         List of dictionaries of data from Twitch chat
     min_: int
         Approximate number of minutes each clip should be
+    limit: int
+        Number of rows/dictionaries/timestamps to return
     min_words:int
         When filtering chunks to top users, at least how many words the top user should send
     save_json: bool
@@ -135,6 +137,7 @@ def run(data, min_=2, min_words=5, save_json=False):
     results, first_stamp = thalamus(
         big_df, min_, min_words=5, goal="num_top_user_appears"
     )
+    results = results.head(limit)
 
     json_results = dh.results_jsonified(
         results, first_stamp, results_col="num_top_user_appears"

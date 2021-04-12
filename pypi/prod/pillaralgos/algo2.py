@@ -114,7 +114,7 @@ def rate_finder(dataframe, hour, x=2):
     return chat_rate_df.reset_index(drop=True)
 
 
-def run(data, min_=2, save_json=False):
+def run(data, min_=2, limit=10, save_json=False):
     """
     Runs algo2 to find the mean chat_rate per unique user per `min_` chunk,
     takes the means for each chunk, and then sorts by the highest mean rate.
@@ -125,6 +125,8 @@ def run(data, min_=2, save_json=False):
         List of dictionaries of data from Twitch chat
     min_: int
         Approximate number of minutes each clip should be
+    limit: int
+        Number of rows/dictionaries/timestamps to return
     save_json: bool
         True if want to save results as json to exports folder
 
@@ -137,6 +139,7 @@ def run(data, min_=2, save_json=False):
     data = pd.DataFrame.from_records(data)
     big_df = d.organize_twitch_chat(data)  # fetch appropriate data
     results, first_stamp = thalamus(big_df, min_)
+    results = results.head(limit)
     json_results = d.results_jsonified(results, first_stamp, f"chats_per_{min_}min")
 
     if save_json:

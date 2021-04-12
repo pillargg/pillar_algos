@@ -108,7 +108,7 @@ def num_words_in_chat(dataframe):
     return dataframe
 
 
-def run(data, min_=2, goal="num_words_emo", save_json=False):
+def run(data, min_=2, limit=10, goal="num_words_emo", save_json=False):
     """
     Runs algo3_5 to sort timestamps by the number of words+emojis by default.
 
@@ -118,6 +118,8 @@ def run(data, min_=2, goal="num_words_emo", save_json=False):
         List of dictionaries of data from Twitch chat
     min_: int
         Approximate number of minutes each clip should be
+    limit: int
+        Number of rows/dictionaries/timestamps to return
     goal: str
         'num_words': sum of the number of words in each chat message
         'num_emo': sum of the number of emoticons in each chat message
@@ -134,6 +136,7 @@ def run(data, min_=2, goal="num_words_emo", save_json=False):
     data = pd.DataFrame.from_records(data)
     big_df = d.organize_twitch_chat(data)  # fetch appropriate data
     results, first_stamp = thalamus(big_df, min_, goal=goal)
+    results = results.head(limit)
 
     json_results = d.results_jsonified(results, first_stamp, goal)
     if save_json:

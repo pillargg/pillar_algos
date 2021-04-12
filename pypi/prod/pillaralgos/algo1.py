@@ -114,7 +114,7 @@ def hour_iterator(big_df, min_=2, sort_by="rel"):
     return pretty_results, json_results
 
 
-def run(data, min_=2, sort_by="rel", save_json=False):
+def run(data, min_=2, limit=10, sort_by="rel", save_json=False):
     """
     Runs algo1 to sort timestamps by the relative percentage of chatters by default.
 
@@ -124,6 +124,8 @@ def run(data, min_=2, sort_by="rel", save_json=False):
         List of dictionaries of data from Twitch chat
     min_: int
         Approximate number of minutes each clip should be
+    limit: int
+        Number of rows/dictionaries/timestamps to return
     sort_by: str
         'rel': "number of chatters at timestamp"/"number of chatters at that hour"
         'abs': "number of chatters at timestamp"/"total number of chatters in stream"
@@ -133,6 +135,7 @@ def run(data, min_=2, sort_by="rel", save_json=False):
     data = pd.DataFrame.from_records(data)
     big_df = d.organize_twitch_chat(data)  # fetch appropriate data
     results, json_results = hour_iterator(big_df, min_=min_, sort_by=sort_by)
+    results = results.head(limit)
     if save_json:
         d.save_json(json_results, name=f"algo1_perc_{sort_by}_unique")
     return json_results
