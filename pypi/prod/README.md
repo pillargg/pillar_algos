@@ -4,7 +4,7 @@
    2. [Output variables](#output-variables)
 2. [Background](#background)
    1. [Algorithms](#algorithms)
-   2. [Datasets](#datasets)
+   1. [Timeit Results](#timeit-results)
 3. [Current Goal](#current-goal)
 4. [Long Term Goal](#long-term-goal)
 5. [Build and Publish](#build)
@@ -52,11 +52,12 @@ Pillar is creating an innovative way to automatically select and splice clips fr
    1. __STATUS__: current weight determined by (`num_words_of_user`/`num_words_of_top_user`)
    1. [Algorithm 3.5](https://github.com/pomkos/twitch_chat_analysis/blob/reorganize_repo/algorithm_3.5.ipynb) Finds the best moments in clips based on most number of words/emojis/both used in chat
 
-## Datasets:
-1. Preliminary data `prelim_df`: 545 rows representing one 3 hour 35 minute 26 second twitch stream chat of [Hearthstone by LiiHS](https://www.twitch.tv/videos/963184458)
-    * Used to create initial json import and resulting df clean/merge function `organize_twitch_chat`
-2. Big data `big_df`: 2409 rows representing one 7 hour 37 minute, 0 second twitch stream chat of [Hearthstone by LiiHS](https://www.twitch.tv/videos/955629991)
-    * Used to create all algorithms
+### Timeit results
+Results as of `4/11/21 12:21am EST` run on `big_df` with 1039228 rows, 11 columns.
+
+| algo1  | algo2        | algo3_0 | algo3_5 |
+|--------|--------------|---------|---------|
+|3.4 sec | 3 min 14 sec |39.4 sec | 28 sec  |
 
 # Current Goal
 
