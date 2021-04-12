@@ -52,7 +52,7 @@ def perc_uniques(chunk_list, min_, total_uniques, big_unique):
     return df_unique
 
 
-def hour_iterator(big_df, min_=2, sort_by="rel"):
+def hour_iterator(big_df, limit, min_=2, sort_by="rel"):
     """
     Pushes all dfs in a list through the xminChats function, returns a dataframe of results
 
@@ -106,6 +106,7 @@ def hour_iterator(big_df, min_=2, sort_by="rel"):
     pretty_results = pretty_results.sort_values(
         f"perc_{sort_by}_unique", ascending=False
     )
+    results = results.head(10)
 
     json_results = d.results_jsonified(
         results, first_sec, results_col=f"perc_{sort_by}_unique"
@@ -135,8 +136,7 @@ def run(data, min_=2, limit=10, sort_by="rel", save_json=False):
     data = pd.DataFrame.from_records(data)
     big_df = d.organize_twitch_chat(data)  # fetch appropriate data
     if type(big_df) == pd.DataFrame:
-        results, json_results = hour_iterator(big_df, min_=min_, sort_by=sort_by)
-        results = results.head(limit)
+        results, json_results = hour_iterator(big_df, limit=limit, min_=min_, sort_by=sort_by)
         if save_json:
             d.save_json(json_results, name=f"algo1_perc_{sort_by}_unique")
         return json_results
