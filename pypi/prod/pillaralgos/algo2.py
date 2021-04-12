@@ -138,11 +138,14 @@ def run(data, min_=2, limit=10, save_json=False):
     """
     data = pd.DataFrame.from_records(data)
     big_df = d.organize_twitch_chat(data)  # fetch appropriate data
-    results, first_stamp = thalamus(big_df, min_)
-    results = results.head(limit)
-    json_results = d.results_jsonified(results, first_stamp, f"chats_per_{min_}min")
+    if type(big_df) == pd.DataFrame:
+        results, first_stamp = thalamus(big_df, min_)
+        results = results.head(limit)
+        json_results = d.results_jsonified(results, first_stamp, f"chats_per_{min_}min")
 
-    if save_json:
-        d.save_json(json_results, f"algo2_mean_rate_per_{min_}min")
+        if save_json:
+            d.save_json(json_results, f"algo2_mean_rate_per_{min_}min")
 
-    return json_results
+        return json_results
+    else:
+        return big_df

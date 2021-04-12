@@ -135,11 +135,14 @@ def run(data, min_=2, limit=10, goal="num_words_emo", save_json=False):
     """
     data = pd.DataFrame.from_records(data)
     big_df = d.organize_twitch_chat(data)  # fetch appropriate data
-    results, first_stamp = thalamus(big_df, min_, goal=goal)
-    results = results.head(limit)
+    if type(big_df) == pd.DataFrame:
+        results, first_stamp = thalamus(big_df, min_, goal=goal)
+        results = results.head(limit)
 
-    json_results = d.results_jsonified(results, first_stamp, goal)
-    if save_json:
-        d.save_json(json_results, f"algo3.5_{goal}")
+        json_results = d.results_jsonified(results, first_stamp, goal)
+        if save_json:
+            d.save_json(json_results, f"algo3.5_{goal}")
 
-    return json_results
+        return json_results
+    else:
+        return big_df

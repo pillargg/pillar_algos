@@ -62,31 +62,34 @@ def organize_twitch_chat(data, keep_user_vars=False):
             ['created_at', 'updated_at', 'display_name', '_id', 'name', 'type',
              'bio', 'logo', 'body', 'is_action', 'user_badges', 'emoticons']
     """
-    data = pd.DataFrame.from_records(data)  # convert to df
-    df = data[["created_at", "updated_at", "commenter", "message"]].add_suffix("_mess")
+    if len(data) > 0:
+        data = pd.DataFrame.from_records(data)  # convert to df
+        df = data[["created_at", "updated_at", "commenter", "message"]].add_suffix("_mess")
 
-    h = dictExtractor(df["message_mess"], label="_mess")
-    messages = h.result
-    g = dictExtractor(df["commenter_mess"], label="_id")
-    users = g.result
+        h = dictExtractor(df["message_mess"], label="_mess")
+        messages = h.result
+        g = dictExtractor(df["commenter_mess"], label="_id")
+        users = g.result
 
-    df = df.drop(["message_mess", "commenter_mess"], axis=1)  # duplicate info
-    df = pd.concat([df, users, messages], axis=1)
-    # all vars were loaded as str. Change type to datetime/int/bool
-    df = df.astype(
-        {
-            "_id_id": int,
-            "bio_id": "category",
-            "created_at_id": "datetime64[ns]",
-            "created_at_mess": "datetime64[ns]",
-            "updated_at_id": "datetime64[ns]",
-            "updated_at_mess": "datetime64[ns]",
-            "is_action_mess": bool,
-            "type_id": "category",
-        }
-    )
-    df = select_columns(df, keep_user_vars)
-    return df
+        df = df.drop(["message_mess", "commenter_mess"], axis=1)  # duplicate info
+        df = pd.concat([df, users, messages], axis=1)
+        # all vars were loaded as str. Change type to datetime/int/bool
+        df = df.astype(
+            {
+                "_id_id": int,
+                "bio_id": "category",
+                "created_at_id": "datetime64[ns]",
+                "created_at_mess": "datetime64[ns]",
+                "updated_at_id": "datetime64[ns]",
+                "updated_at_mess": "datetime64[ns]",
+                "is_action_mess": bool,
+                "type_id": "category",
+            }
+        )
+        df = select_columns(df, keep_user_vars)
+        return df
+    else:
+        return np.array([])
 
 
 class dictExtractor:

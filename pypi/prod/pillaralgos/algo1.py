@@ -134,8 +134,11 @@ def run(data, min_=2, limit=10, sort_by="rel", save_json=False):
     """
     data = pd.DataFrame.from_records(data)
     big_df = d.organize_twitch_chat(data)  # fetch appropriate data
-    results, json_results = hour_iterator(big_df, min_=min_, sort_by=sort_by)
-    results = results.head(limit)
-    if save_json:
-        d.save_json(json_results, name=f"algo1_perc_{sort_by}_unique")
-    return json_results
+    if type(big_df) == pd.DataFrame:
+        results, json_results = hour_iterator(big_df, min_=min_, sort_by=sort_by)
+        results = results.head(limit)
+        if save_json:
+            d.save_json(json_results, name=f"algo1_perc_{sort_by}_unique")
+        return json_results
+    else:
+        return big_df
