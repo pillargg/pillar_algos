@@ -10,8 +10,7 @@ HOW TO:
 class awsBucketAPI:
     def __init__(self):
         """
-        Connects to AWS message bucket, retrieves list of objects, randomly selects `n`
-        to save in "data/{object_name}.json"
+        Initializes connection to AWS bucket.
 
         NOTE:
             Must have AWS CLI installed and configured using `aws configure`
