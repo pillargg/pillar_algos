@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "pillaralgos_dev"
+version = "0.1.2"
+description = "Library containing some basic, commonly used functions during the creation and analysis of algorithms for Pillar"
+authors = ["Peter Gates <pgate89@gmail.com>"]
+readme = "README.md"
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pandas = "^1.2.3"
+numpy = "^1.20.2"
+boto3 = "^1.17.49"
+matplotlib = "^3.4.1"
+seaborn = "^0.11.1"
+
+[tool.poetry.urls]
+"Pillar" = "https://pillar.gg"
+"Github" = "https://github.com/pillargg/twitch_chat_analysis/"
+"Bug Tracker" = "https://github.com/pillargg/twitch_chat_analysis/issues"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
