@@ -1,5 +1,9 @@
 """
-Tools for File management, graphing convenience
+Tools for calling AWS, file management, graphing convenience.
+
+HOW TO:
+    aws = dev_help.awsBucketAPI()
+    dev_help.plot_with_time(x, y, data, xformat="%H:%m")
 """
 
 
@@ -9,13 +13,13 @@ class awsBucketAPI:
         Connects to AWS message bucket, retrieves list of objects, randomly selects `n`
         to save in "data/{object_name}.json"
 
+        NOTE:
+            Must have AWS CLI installed and configured using `aws configure`
         HOW TO:
             aws = awsBucketAPI()
             results = aws.get_top_file_sizes(save=False)
             names = aws.get_random_file_names(n=5)
             aws.save_files(names)
-        NOTE:
-            Must have AWS CLI installed and configured using `aws configure`
         """
         # connect to aws
         import boto3
@@ -83,7 +87,9 @@ class awsBucketAPI:
             mid_size = df_objects.iloc[mid_index - 3 : mid_index + 3, :]["Key"].values
         else:
             # otherwise just use the middle index
-            mid_size = df_objects.iloc[median_indices[0] - 3 : median_indices[0] + 3, :]["Key"].values
+            mid_size = df_objects.iloc[
+                median_indices[0] - 3 : median_indices[0] + 3, :
+            ]["Key"].values
 
         ## SAVE ##
         if save:

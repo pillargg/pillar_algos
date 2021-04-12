@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pillaralgos_dev"
-version = "0.1.1"
+version = "0.1.2"
 description = "Library containing some basic, commonly used functions during the creation and analysis of algorithms for Pillar"
 authors = ["Peter Gates <pgate89@gmail.com>"]
 readme = "README.md"
