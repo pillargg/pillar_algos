@@ -7,6 +7,7 @@ NOTE: This readme is just a quick reference. For more details include todo, near
 2. [Background](#background)
    1. [Algorithms](#algorithms)
    1. [Timeit Results](#timeit-results)
+3. [Build and Publis](#build)
 
 # Use
 
@@ -57,3 +58,23 @@ Results as of `April 13, 2021 18:31 EST` run on `big_df` with 80841 rows, 10 col
 | algo1  | algo2        | algo3_0 | algo3_5 |
 |--------|--------------|---------|---------|
 |2.2 sec | 1 min 23 sec |28.1 sec | 16.3 sec|
+
+# Build
+To build and publish this package we are using the [poetry](https://python-poetry.org/) python packager. It takes care of some background stuff that led to [mistakes in the past](https://github.com/pillargg/twitch_chat_analysis/issues/8).
+
+Folder structure:
+```
+|-- pypi
+    |-- pillaralgos  # <---- note that poetry didn't require an additional subfolder
+        |-- helpers
+            |-- __init__.py
+            |-- data_handler.py
+            |-- graph_helpers.py
+            |-- sanity_checks.py
+        |-- __init__.py  # must include version number
+        |-- algoXX.py  # all algorithms in separate files
+    |-- LICENSE
+    |-- README.md
+    |-- pyproject.toml  # must include version number
+```
+To publish just run the `poetry publish --build` command after update version numbers as needed.
