@@ -299,9 +299,7 @@ def results_jsonified(results, first_sec, results_col):
     json_results: list
         List of dictionaries with startTime and endTime keys, sorted by best results at top
     """
-    results[
-        "first_sec"
-    ] = first_sec  # to calculate elapsed time from first sec, in seconds
+    results["first_sec"] = first_sec  # to calculate elapsed time from first sec, in seconds
     results = results.sort_values(
         results_col, ascending=False
     )  # so json format is returned with top result being the most relevant
