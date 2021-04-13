@@ -49,7 +49,6 @@ def med_file_results_df():
     "load sample results df, (vars created from sample_med.json and algo1)"
     results_df = pd.read_csv(f"{data_folder}/sample_med_resultsdf.csv")
     results_df = results_df.set_index(["Unnamed: 0"])
-    results_df = results_df[["start", "end", "perc_rel_unique"]]
     results_df = results_df.astype(
         {"start": "datetime64[ns]",
          "end": "datetime64[ns]",
@@ -106,6 +105,7 @@ def test_organize_twitch_chat_dtypes(med_file):
 def test_results_jsonified(med_file_results_df, med_file_results_json):
     'Compares calculated json from "sample_med_resultsdf.csv" to stored results'
     col = "perc_rel_unique"
-    first_sec = med_file_results_df.loc[0, "start"]
+    # "Unnamed: 0" is the original index. Find first sec by sorting by it.
+    first_sec = med_file_results_df.sort_values('Unnamed: 0').iloc[0, 1]
     calc_json = dh.results_jsonified(med_file_results_df.head(), first_sec, col)
     assert calc_json == med_file_results_json
