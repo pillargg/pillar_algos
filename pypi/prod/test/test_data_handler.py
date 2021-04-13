@@ -48,7 +48,6 @@ def med_file():
 def med_file_results_df():
     "load sample results df, (vars created from sample_med.json and algo1)"
     results_df = pd.read_csv(f"{data_folder}/sample_med_resultsdf.csv")
-    results_df = results_df.set_index(["Unnamed: 0"])
     results_df = results_df.astype(
         {"start": "datetime64[ns]",
          "end": "datetime64[ns]",
