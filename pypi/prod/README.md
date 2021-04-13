@@ -1,3 +1,5 @@
+NOTE: This readme is just a quick reference. For more details include todo, near/medium/long term goals please see our GitHub page.
+
 # Table of Contents
 1. [Use](#use)
    1. [Input variables](#input-variables)
@@ -53,53 +55,8 @@ Pillar is creating an innovative way to automatically select and splice clips fr
    1. [Algorithm 3.5](https://github.com/pomkos/twitch_chat_analysis/blob/reorganize_repo/algorithm_3.5.ipynb) Finds the best moments in clips based on most number of words/emojis/both used in chat
 
 ### Timeit results
-Results as of `4/11/21 12:21am EST` run on `big_df` with 1039228 rows, 11 columns.
+Results as of `April 13, 2021 18:31 EST` run on `big_df` with 80841 rows, 10 columns.
 
 | algo1  | algo2        | algo3_0 | algo3_5 |
 |--------|--------------|---------|---------|
-|3.4 sec | 3 min 14 sec |39.4 sec | 28 sec  |
-
-# Current Goal
-
-To create one overarching algorithm that will find the most "interesting" clips in a twitch VOD. This will be created through the following steps:
-1. Creation of various algorithms that isolate `min_` (2 by default) minute chunks. The basic workflow:
-   1. Create variable (ex: `num_words`, for number of words in the body of a chat message)
-   1. Group df by `min_` chunks, then average/sum/etc `num_words` for each `min_` chunks
-   1. Sort new df by `num_words`, from highest "value" to lowest "value"
-   1. Return this new df as json ([example](https://github.com/pomkos/twitch_chat_analysis/blob/main/exports/algo1_results.json))
-1. Users rate clips provided by each algorithm
-2. Useless algorithms thrown away
-3. Rest of the algorithms merged into one overarching algorithm, with weights distributed based on user ratings
-
-# Long Term Goal
-
-* __New objective measure__: community created clips (`ccc`) for a given VOD id with start/end timestamps for each clip
-* __Assumption__: `ccc` are interesting and can be used to create a narrative for each VOD. We can test this by cross referencing with posts to /r/livestreamfails upvotes/comments
-* __Hypothesis__: if we can predict where `ccc` would be created, those are potentially good clips to show the user
-   * *Short term test*: Create a model to predict where ccc would be created using variables such as word count, chat rate, emoji usage, chat semantic analysis. We can do this by finding timestamps of ccc and correlating them with chat stats
-   * *Medium term test*: Use top 100 streamers as training data. What similarities do their ccc and reddit most upvoted of that VOD share? (chat rate etc)
-      1. Get the transcript for these top 100
-      2. Get the top 100's YT posted 15-30min story content for the 8 hour VOD
-      3. Get the transcript for that story content
-      4. Semantic analysis and correlations, etc.
-   * *Long term test*: what percentage of clips do our streamers actually end up using
-   
-# Build
-To build and publish this package we are using the [poetry](https://python-poetry.org/) python packager. It takes care of some background stuff that led to [mistakes in the past](https://github.com/pillargg/twitch_chat_analysis/issues/8).
-
-Folder structure:
-```
-|-- pypi
-    |-- pillaralgos  # <---- note that poetry didn't require an additional subfolder
-        |-- helpers
-            |-- __init__.py
-            |-- data_handler.py
-            |-- graph_helpers.py
-            |-- sanity_checks.py
-        |-- __init__.py  # must include version number
-        |-- algoXX.py  # all algorithms in separate files
-    |-- LICENSE
-    |-- README.md
-    |-- pyproject.toml  # must include version number
-```
-To publish just run the `poetry publish --build` command after update version numbers as needed.
+|2.2 sec | 1 min 23 sec |28.1 sec | 16.3 sec|
