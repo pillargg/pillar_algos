@@ -17,7 +17,7 @@ pill_dir = os.path.join(prod_dir, 'pillaralgos') # join parent with pillaralgos 
 algos_path = os.path.abspath(pill_dir)  # get the absolute path
 
 base_dir = os.path.join(prod_dir, cd, cd)
-data_folder = f'{base_dir}/data' # location of sample data
+data_folder = 'sample_data' # location of sample data
 
 #### Append Algos Dir to Sys.path ####
 sys.path.append(algos_path)  # append the path to sys.path
