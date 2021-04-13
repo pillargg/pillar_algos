@@ -1,6 +1,7 @@
-# this file contains a series of classes and functions to help with loading and splitting twitch chat data
-# also json_saver() that converts given variable into string, saves into .json file
-
+'''
+This file contains a series of classes and functions to help with loading and splitting twitch chat data
+also json_saver() that converts given variable into string, saves into .json file
+'''
 import pandas as pd
 import numpy as np
 import datetime as dt
