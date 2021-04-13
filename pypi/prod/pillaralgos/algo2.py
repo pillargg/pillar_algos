@@ -15,73 +15,49 @@ def thalamus(dataframe, min_):
     Formats data for rate_finder(), gets chunk_list to pass through rate_finder
     """
     # split into hours
-    dfs = d.dfSplitter(dataframe)
-    dfs.find_rest()
-    hour_list = dfs.result
-    first_stamp = hour_list[0]
-    del hour_list[0]
-    # label each dataset so we can tell what hour they came from
-    for i in range(len(hour_list)):
-        hour_list[i].loc[:, "hour"] = i
-
-    # split hours into 2 minute chunks
-    chunk_list = []
-    for hour in hour_list:
-        xmc = d.xminChats(
-            hour, dataframe["_id"].unique(), min_=2
-        )  # split into 2 min segments
-        xmc.find_rest()
-
-        for chunk in xmc.result:
-            chunk_list.append(chunk)  # fmc.result gets returned as a list
-
+    first_stamp, chunk_list = d.get_chunks(dataframe, min_=min_)
+    
     chat_rates = pd.DataFrame(
-        columns=["hour", "chunk", "start", "end", "_id", "num_chats", "chats_per_2min"]
+        columns=["hour", "chunk", "start", "end", "_id", "num_chats", f"chats_per_{min_}min"]
     )
-
     # for each 2 min chunk
     for chunk in chunk_list:
-        hour = chunk.loc[:, "hour"].iloc[-1]
         # find the chat rate for each user
-        chat_rates = chat_rates.append(rate_finder(dataframe=chunk, hour=hour, x=2))
+        chat_rates = chat_rates.append(rate_finder(dataframe=chunk, x = min_))
 
     chat_rates = chat_rates.reset_index(drop=True)
-    chat_rates.sort_values("chats_per_2min", ascending=False).head()
+    chat_rates_mean = chat_rates.groupby(['start','end']).mean().reset_index()
+    chat_rates_mean = chat_rates_mean.sort_values(f"chats_per_{min_}min", ascending=False)
+    
 
-    return chat_rates, first_stamp
+    return chat_rates_mean, first_stamp
 
 
-def rate_finder(dataframe, hour, x=2):
+def rate_finder(dataframe, x=2):
     """
-    Finds the rate of messages sent per X minutes for each user in the dataframe.
+    Finds the rate of messages sent per X minutes for each user in the dataframe (assumed to be a chunk).
 
-    NOTE: if only 1 timestamp in chunk dataframe, assumes the chunk is exactly 2 minutes before the next chunk in the entire twitch chat stream
+    NOTE: if only 1 timestamp in chunk dataframe, assumes the chunk is exactly X minutes before the next chunk in the entire twitch chat stream
     """
     # Initiate new df
-    chat_rate_df = pd.DataFrame(
+    id_results_all = pd.DataFrame(
         columns=[
-            "hour",
-            "chunk",
-            "start",
-            "end",
             "_id",
             "num_chats",
             f"chats_per_{x}min",
         ]
     )
     chatters = dataframe["_id"].unique()  # id unique chatters for this chunk
-
+    hour = dataframe['hour'].unique()[0] # each hour is the same 
+    chunk = dataframe['chunk'].unique()[0] # each chunk is the same
+    time_start = dataframe.iloc[0, 0] 
+    time_end = dataframe.iloc[-1, 0]
+    time_d = dt.timedelta.total_seconds(time_end - time_start)
     for i in range(len(chatters)):
         temp_df = dataframe[dataframe["_id"] == chatters[i]]  # isolate chatter's data
-        hour = hour
-        chunk = i
-        time_start = dataframe.iloc[0, 0]
-        time_end = dataframe.iloc[-1, 0]
+
         _id = chatters[i]
         num_chats = len(temp_df["body"])  # count how many chats were sent by them
-        time_d = dt.timedelta.total_seconds(
-            dataframe.iloc[-1, 0] - dataframe.iloc[0, 0]
-        )
 
         if time_d > 0:
             chat_rate = (
@@ -89,8 +65,8 @@ def rate_finder(dataframe, hour, x=2):
             )  # use time_d to calculate chat/sec, then multiply to get user requested rate
         elif time_d == 0:
             # if there is only 1 message in the chunk, there will be only 1 timestamp
-            # in that case assume that time_d = 2
-            time_d = 2
+            # in that case assume that time_d = X
+            time_d = x
             chat_rate = (num_chats / time_d) * 60 * x  # convert to chat/X minutes
         else:
             chat_rate = (
@@ -98,19 +74,20 @@ def rate_finder(dataframe, hour, x=2):
             )  # if number is negative, math is wrong somewhere and needs to be looked into
 
         # gather results
-        results = pd.DataFrame(
+        id_results = pd.DataFrame(
             {
-                "hour": [hour],
-                "chunk": [chunk],
-                "start": [time_start],
-                "end": [time_end],
                 "_id": [_id],
                 "num_chats": [num_chats],
                 f"chats_per_{x}min": [chat_rate],
             }
         )
-
-        chat_rate_df = chat_rate_df.append(results)  # store in df
+        id_results_all = id_results_all.append(id_results)  # store in df
+    
+    chat_rate_df = id_results_all.copy()
+    chat_rate_df['hour'] = hour
+    chat_rate_df['chunk'] = chunk
+    chat_rate_df['start'] = time_start
+    chat_rate_df['end'] = time_end
     return chat_rate_df.reset_index(drop=True)
 
 

@@ -108,3 +108,10 @@ def test_results_jsonified(med_file_results_df, med_file_results_json):
     first_sec = med_file_results_df.sort_values('Unnamed: 0').iloc[0, 1]
     calc_json = dh.results_jsonified(med_file_results_df.head(), first_sec, col)
     assert calc_json == med_file_results_json
+
+
+def test_chunker():
+    'future site of testing minute chunker and hour splitter'
+    
+def test_algos():
+    'future site of algo tester to test different param values'
