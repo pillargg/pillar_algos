@@ -7,9 +7,6 @@ NOTE: This readme is just a quick reference. For more details include todo, near
 2. [Background](#background)
    1. [Algorithms](#algorithms)
    1. [Timeit Results](#timeit-results)
-3. [Current Goal](#current-goal)
-4. [Long Term Goal](#long-term-goal)
-5. [Build and Publish](#build)
 
 # Use
 
