@@ -1,5 +1,5 @@
 """
-Runs tests on the `data_handler` script, but first navigates to correct dirs
+Runs tests on the `helper` scripts in the helper folder, but first navigates to correct dirs
 [Navigation source](https://towardsdatascience.com/pytest-for-data-scientists-2990319e55e6)
 """
 import os.path  # get dir path
@@ -26,6 +26,7 @@ sys.path.append(algos_path)  # append the path to sys.path
 
 #### Testing Area ####
 from helpers import data_handler as dh  # from pillaralgos folder
+from helpers import emoji_getter as eg
 
 ###############################################################################
 
@@ -45,13 +46,18 @@ def med_file():
 
 
 @pytest.fixture()
+def lg_file():
+    "load raw large sized file"
+    data = json.load(open(f"{data_folder}/sample_lg.json"))
+    return data
+
+
+@pytest.fixture()
 def med_file_results_df():
     "load sample results df, (vars created from sample_med.json and algo1)"
     results_df = pd.read_csv(f"{data_folder}/sample_med_resultsdf.csv")
     results_df = results_df.astype(
-        {"start": "datetime64[ns]",
-         "end": "datetime64[ns]",
-         "perc_rel_unique": float}
+        {"start": "datetime64[ns]", "end": "datetime64[ns]", "perc_rel_unique": float}
     )
     return results_df
 
@@ -84,8 +90,7 @@ def test_organize_twitch_chat_lg(med_file):
 def test_organize_twitch_chat_cols(med_file):
     "Checks basic cols are in the returned df"
     data = dh.organize_twitch_chat(med_file)
-    needed_cols = ["created_at", "updated_at", "body",
-                   "emoticons", "is_action", "type"]
+    needed_cols = ["created_at", "updated_at", "body", "emoticons", "is_action", "type"]
     assert all(col in data.columns for col in needed_cols)
 
 
@@ -105,11 +110,55 @@ def test_results_jsonified(med_file_results_df, med_file_results_json):
     'Compares calculated json from "sample_med_resultsdf.csv" to stored results'
     col = "perc_rel_unique"
     # "Unnamed: 0" is the original index. Find first sec by sorting by it.
-    first_sec = med_file_results_df.sort_values('Unnamed: 0').iloc[0, 1]
+    first_sec = med_file_results_df.sort_values("Unnamed: 0").iloc[0, 1]
     calc_json = dh.results_jsonified(med_file_results_df.head(), first_sec, col)
     assert calc_json == med_file_results_json
 
 
 def test_chunker():
-    'future site of testing minute chunker and hour splitter'
-    
+    "future site of testing minute chunker and hour splitter"
+
+
+def test_emoji_getter(lg_file):
+    ee = eg.emoticonExtractor(data=lg_file, min_use="mean", limit=None)
+    calc_result = ee.run()
+    calc_result = calc_result.head(10).astype(
+        {
+            "vid_id": int,
+            "emoji_id": int,
+            "occurrance": int,
+        }
+    )
+    answer = {
+        "vid_id": [
+            964075925,
+            964075925,
+            964075925,
+            964075925,
+            964075925,
+            964075925,
+            964075925,
+            964075925,
+            964075925,
+            964075925,
+        ],
+        "emoji_id": [114836, 425618, 555555584, 27509, 41, 34, 33, 1, 25, 28087],
+        "occurrance": [7709, 5541, 3106, 2163, 1826, 1602, 1229, 1140, 1130, 1046],
+        "emoji_name": [
+            "Jebaited",
+            "LUL",
+            "<3",
+            "PermaSmug",
+            "Kreygasm",
+            "SwiftRage",
+            "DansGame",
+            ":)",
+            "Kappa",
+            "WutFace",
+        ],
+        "label": ["", "", "", "", "", "", "", "", "", ""],
+    }
+    answer = pd.DataFrame(answer)
+
+    for col in answer:
+        assert all(calc_result[col] == answer[col])
