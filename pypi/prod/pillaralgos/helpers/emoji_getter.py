@@ -64,22 +64,24 @@ class emoticonExtractor:
         )
 
         emo_data = body_has_emo[["emo_id_list", "emo_loc", "body"]]
-        emo_dict = self.emo_id_matcher(emo_data)  # create a dictionary of emo_id:emo_name
-        
+        emo_dict = self.emo_id_matcher(
+            emo_data
+        )  # create a dictionary of emo_id:emo_name
+
         num_used = self.number_times_used()
         num_used["emoji_name"] = num_used["emoji_id"].map(emo_dict)
         num_used["label"] = ""
-        
+
         top_emoticons = self.finalize(num_used)
         if self.save_csv:
             top_emoticons.to_csv(f"top_emos_strim{self.vid_id}.csv", index=False)
         return top_emoticons
-    
-    ### ACTUAL FUNCTIONS ### 
+
+    ### ACTUAL FUNCTIONS ###
     def number_times_used(self):
-        '''
+        """
         Counts how many times each unique emoji was used
-        '''
+        """
         num_used = pd.Series(
             self.all_emos
         ).value_counts()  # count how many times each unique emo was used
@@ -89,9 +91,9 @@ class emoticonExtractor:
         return num_used
 
     def finalize(self, num_used):
-        '''
+        """
         Organizes emoji dataset as per given __init__ variables.
-        '''
+        """
         if type(self.min_use) == str:
             # grab everything greater than mean count
             top_emoticons = num_used[
@@ -118,7 +120,7 @@ class emoticonExtractor:
         ]
 
         return top_emoticons
-    
+
     ### HELPER FUNCTIONS ###
     def emo_extractor(self, my_list):
         """
