@@ -59,7 +59,7 @@ def test_algo1(med_file):
               {'startTime': 135.939, 'endTime': 163.39},
               {'startTime': 234.249, 'endTime': 259.889}]
     assert calc_result == answer
-    
+
 def test_algo2(med_file):
     calc_result = algo2.run(
         data=med_file,
@@ -67,7 +67,7 @@ def test_algo2(med_file):
         limit=10,
         save_json=False
     )
-    
+
     answer = [{'startTime': 14840.294, 'endTime': 14840.294},
               {'startTime': 696.512, 'endTime': 696.512},
               {'startTime': 6441.765, 'endTime': 6441.765},
@@ -78,9 +78,9 @@ def test_algo2(med_file):
               {'startTime': 14428.961, 'endTime': 14428.961},
               {'startTime': 15187.424, 'endTime': 15187.424},
               {'startTime': 7199.836, 'endTime': 7201.808}]
-    
+
     assert calc_result == answer
-    
+
 def test_algo3_0(med_file):
     calc_result = algo3_0.run(
         data=med_file,
@@ -100,7 +100,7 @@ def test_algo3_0(med_file):
               {'startTime': 16380.996, 'endTime': 16499.338},
               {'startTime': 10823.715, 'endTime': 10943.506}]
     assert calc_result == answer
-    
+
 def test_algo3_5(med_file):
     calc_result = algo3_5.run(
         data=med_file,
