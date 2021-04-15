@@ -37,10 +37,11 @@ def run(data, common_timestamps, algos_to_compare = ["algo1","algo2","algo3_0","
         compare_us.append(algo2)
     if "algo3_0" in algos_to_compare:
         compare_us.append(algo3_0)
-    if "algo3_5" in algos_to compare:
+    if "algo3_5" in algos_to_compare:
+        compare_us.append(algo3_5)
     results = []
     # gather results from algos
-    for algo in algos_to_compare:
+    for algo in compare_us:
         result = algo.run(data, min_=2)
         results.append(result)
 
@@ -52,7 +53,7 @@ def run(data, common_timestamps, algos_to_compare = ["algo1","algo2","algo3_0","
         results_df = results_df.append(result)
 
     # get valuecounts as a list, filter out timestamps that only occur once
-    common = list(results_df['startTime'].value_counts()[results_df['startTime'].value_counts(sort=True) > common_timestamps].index)
+    common = list(results_df['startTime'].value_counts()[results_df['startTime'].value_counts(sort=True) >= common_timestamps].index)
 
     common_results = pd.DataFrame(columns=['startTime','endTime'])
 
