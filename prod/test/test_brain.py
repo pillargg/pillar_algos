@@ -36,9 +36,25 @@ def med_file():
     data = json.load(open(f"{data_folder}/sample_med.json"))
     return data
 
+def check_length(answer, min_):
+    '''
+    Checks the length of timestamps is less than min_
+    
+    answer: list
+        List of dictionaries (json format)
+    '''
+    lengths = []
+    for ans in answer:
+        time_diff = ans['endTime'] - ans['startTime']
+        num_sec = min_*60 
+        result = time_diff <= num_sec
+        lengths.append(result)
+    return all(lengths)
+
 def test_brain(med_file):
+    clip_length = 2 # this is also param for check_length
     calc_result = brain.run(data=med_file,
-                            clip_length=2,
+                            clip_length=clip_length,
                             common_timestamps=2, 
                             algos_to_compare = ["algo1","algo2","algo3_0","algo3_5"],
                             limit=None)
@@ -56,4 +72,6 @@ def test_brain(med_file):
               {'startTime': 17734.164, 'endTime': 17853.51},
               {'startTime': 12177.737, 'endTime': 12293.058}]
     
-    assert calc_result == answer
+    time_check = check_length(calc_result, min_=clip_length)
+    assert calc_result == answer # check answer is correct
+    assert time_check # check the length of clips is <= clip_length

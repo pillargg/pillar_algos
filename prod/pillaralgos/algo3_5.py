@@ -25,7 +25,7 @@ def thalamus(big_df, min_, goal="num_words"):
     """
     # cut
     big_df = algorithm(big_df)
-    first_stamp, chunk_list = d.get_chunks(big_df)
+    first_stamp, chunk_list = d.get_chunks(big_df, min_=min_)
     chunk_df = pd.DataFrame(columns=chunk_list[0].columns)
     for chunk in chunk_list:
         chunk_df = chunk_df.append(chunk)

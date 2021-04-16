@@ -12,7 +12,7 @@ from .helpers import data_handler as dh
 def thalamus(big_df, min_, goal, min_words):
 
     id_words = id_words_counter(big_df)
-    first_stamp, chunk_list = dh.get_chunks(big_df)
+    first_stamp, chunk_list = dh.get_chunks(big_df, min_=min_)
     top_chunks = new_chunk_list(id_words, chunk_list, min_words=min_words)
     results = results_formatter(top_chunks, goal="num_top_user_appears")
 
@@ -34,7 +34,6 @@ def results_formatter(list_chunk, goal):
     results: pd.DataFrame
         Dataframe with `start`, `end`, `num_words` columns
     """
-    chunk_list = []
     time_start_list = []
     time_end_list = []
     goal_list = []
