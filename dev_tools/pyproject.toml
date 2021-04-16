@@ -4,7 +4,7 @@ version = "0.1.2"
 description = "Library containing some basic, commonly used functions during the creation and analysis of algorithms for Pillar"
 authors = ["Peter Gates <pgate89@gmail.com>"]
 readme = "README.md"
-license = "MIT"
+license = "GPL-3.0-or-later"
 
 [tool.poetry.dependencies]
 python = "^3.8"
