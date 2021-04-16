@@ -141,4 +141,4 @@ def run(data, min_=2, limit=10, sort_by="rel", save_json=False):
             d.save_json(json_results, name=f"algo1_perc_{sort_by}_unique")
         return json_results
     else:
-        return big_df
+        return big_df # this is an empty numpy array if it is not a DF.

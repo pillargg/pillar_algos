@@ -10,6 +10,10 @@ from .helpers import data_handler as dh
 
 
 def thalamus(big_df, min_, goal, min_words):
+    '''
+    Coordinates the other functions in this algo and data_helper. Separate from 
+    `run()` for sanity purposes.
+    '''
 
     id_words = id_words_counter(big_df)
     first_stamp, chunk_list = dh.get_chunks(big_df, min_=min_)
@@ -143,4 +147,4 @@ def run(data, min_=2, limit=10, min_words=5, save_json=False):
 
         return json_results
     else:
-        return big_df
+        return big_df # this is an empty numpy array if it is not a DF.

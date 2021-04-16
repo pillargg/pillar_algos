@@ -145,4 +145,4 @@ def run(data, min_=2, limit=10, goal="num_words_emo", save_json=False):
 
         return json_results
     else:
-        return big_df
+        return big_df # this is an empty numpy array if it is not a DF.
