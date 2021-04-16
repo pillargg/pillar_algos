@@ -6,6 +6,9 @@ import pandas as pd
 import numpy as np
 import datetime as dt
 
+# remove the .loc warning. bc I dont acre about writes making it back
+# to og dataframe https://stackoverflow.com/a/20627316/9866659
+pd.options.mode.chained_assignment = None  # default='warn'
 
 def rename_columns(col_string):
     """

@@ -6,7 +6,7 @@ from pillaralgos import algo1, algo2, algo3_0, algo3_5
 import json
 import numpy as np
 
-def run(data, common_timestamps, algos_to_compare = ["algo1","algo2","algo3_0","algo3_5"], limit=None):
+def run(data, clip_length, common_timestamps=2, algos_to_compare = ["algo1","algo2","algo3_0","algo3_5"], limit=None):
     '''
     Coordinates all 4 algorithms, then compares across results to see if any timestamps are shared between them. Runs all algos on default param settings.
     

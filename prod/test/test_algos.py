@@ -80,6 +80,7 @@ def test_algo2(med_file):
               {'startTime': 7199.836, 'endTime': 7201.808}]
 
     assert calc_result == answer
+    
 
 def test_algo3_0(med_file):
     calc_result = algo3_0.run(
@@ -120,3 +121,55 @@ def test_algo3_5(med_file):
               {'startTime': 507.003, 'endTime': 626.884},
               {'startTime': 1138.629, 'endTime': 1256.19}]
     assert calc_result == answer
+    
+def test_algo1_diffs(med_file):
+    all_results = []
+    for time in [0.5, 3, 1, 2]:
+        result = algo1.run(
+            data = med_file,
+            min_ = time,
+            limit = 10,
+            sort_by = 'rel',
+            save_json = False)
+        all_results.append(result)
+        
+    assert all_results[0] != all_results[1] != all_results[2] != all_results[3]
+    
+def test_algo2_diffs(med_file):
+    all_results = []
+    for time in [0.5, 3, 1, 2]:
+        result = algo2.run(
+            data=med_file,
+            min_=time,
+            limit=10,
+            save_json=False)
+        all_results.append(result)
+        
+    assert all_results[0] != all_results[1] != all_results[2] != all_results[3]
+    
+def test_algo30_diffs(med_file):
+    all_results = []
+    for time in [0.5, 3, 1, 2]:
+        result = algo3_0.run(
+            med_file, 
+            min_=time, 
+            limit=10, 
+            min_words=10, 
+            save_json=False)
+        all_results.append(result)
+        
+    assert all_results[0] != all_results[1] != all_results[2] != all_results[3]
+    
+def test_algo35_diffs(med_file):
+    all_results = []
+    for time in [0.5, 3, 1, 2]:
+        result = algo3_5.run(
+            data=med_file,
+            min_=time,
+            limit=10,
+            goal='num_emo',
+            save_json=False)
+        
+        all_results.append(result)
+        
+    assert all_results[0] != all_results[1] != all_results[2] != all_results[3]

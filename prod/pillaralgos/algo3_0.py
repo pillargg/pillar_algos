@@ -13,7 +13,7 @@ def thalamus(big_df, min_, goal, min_words):
 
     id_words = id_words_counter(big_df)
     first_stamp, chunk_list = dh.get_chunks(big_df)
-    top_chunks = new_chunk_list(id_words, chunk_list, min_words=5)
+    top_chunks = new_chunk_list(id_words, chunk_list, min_words=min_words)
     results = results_formatter(top_chunks, goal="num_top_user_appears")
 
     return results, first_stamp
@@ -135,7 +135,7 @@ def run(data, min_=2, limit=10, min_words=5, save_json=False):
     data = pd.DataFrame.from_records(data)
     big_df = dh.organize_twitch_chat(data)  # fetch appropriate data
     if type(big_df) == pd.DataFrame:
-        results, first_stamp = thalamus(big_df, min_, min_words=5, goal="num_top_user_appears")
+        results, first_stamp = thalamus(big_df, min_=min_, min_words=min_words, goal="num_top_user_appears")
         results = results.head(limit)
 
         json_results = dh.results_jsonified(results, first_stamp, results_col="num_top_user_appears")

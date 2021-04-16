@@ -37,7 +37,9 @@ def med_file():
     return data
 
 def test_brain(med_file):
-    calc_result = brain.run(med_file,common_timestamps=2, 
+    calc_result = brain.run(data=med_file,
+                            clip_length=2,
+                            common_timestamps=2, 
                             algos_to_compare = ["algo1","algo2","algo3_0","algo3_5"],
                             limit=None)
     
