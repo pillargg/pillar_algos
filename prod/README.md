@@ -8,6 +8,7 @@ NOTE: This readme is just a quick reference. For more details include todo, near
    1. [Algorithms](#algorithms)
    1. [Timeit Results](#timeit-results)
 3. [Build and Publis](#build)
+4. [Changelog](#changelog)
 
 # Use
 
@@ -78,3 +79,14 @@ Folder structure:
     |-- pyproject.toml  # must include version number
 ```
 To publish just run the `poetry publish --build` command after update version numbers as needed.
+
+# Changelog
+
+* Moved `dev` and `prod` folders out of `pypi` folder for ease of access
+* New licensing
+* Added unit tests, sample data, sample answers (#6, #17, #18)
+* Fixed use of iloc vs loc (#20)
+* Algos2,3_0,3_5 now properly outputs correct lengths based on param input (#15, #21, #31)
+* Algos return empty numpy array if no results found
+* Created `brain.run()` that runs all algos and then returns common timestamps amongst them. See `help(brain)` and `help(brain.run` for more info
+* Removed some old notebooks, moved some code to `archive.ipynb`
