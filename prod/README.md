@@ -65,18 +65,26 @@ To build and publish this package we are using the [poetry](https://python-poetr
 
 Folder structure:
 ```
-|-- pypi
+|-- dev_tools
+    |-- pillaralgos_dev
+        |-- __init__.py
+        |-- dev_helpers.py # aws connection, file retrieval script
+        |-- sanity_checks.py # placeholder
+    |-- README.md 
+    |-- pyproject.toml
+|-- prod
     |-- pillaralgos  # <---- note that poetry didn't require an additional subfolder
         |-- helpers
             |-- __init__.py
             |-- data_handler.py
-            |-- graph_helpers.py
-            |-- sanity_checks.py
+            |-- emoji_getter.py
         |-- __init__.py  # must include version number
         |-- algoXX.py  # all algorithms in separate files
+        |-- brain.py
     |-- LICENSE
     |-- README.md
     |-- pyproject.toml  # must include version number
+    |-- reinstall_pill.sh # quick script to uninstall local pillaralgos, build and install new one
 ```
 To publish just run the `poetry publish --build` command after update version numbers as needed.
 
