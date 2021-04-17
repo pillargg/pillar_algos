@@ -102,17 +102,18 @@ def hour_iterator(big_df, limit, min_=2, sort_by="rel"):
         results = results.append(hr_uniques)
 
     results["elapsed"] = results["end"] - results["start"]  # to double check length
+    results = results.sort_values(f"perc_{sort_by}_unique", ascending=False)
+    results = results.head(limit)
     pretty_results = results.reset_index(drop=True)  # prettify
     pretty_results = pretty_results.sort_values(
         f"perc_{sort_by}_unique", ascending=False
     )
-    results = results.head(10)
-
+    # results_jsonified sorts by top calc
     json_results = d.results_jsonified(
         results, first_sec, results_col=f"perc_{sort_by}_unique"
-    )  # ordered by top perc_rel_unique
+    )  
 
-    return pretty_results, json_results
+    return pretty_results, json_results # results sorted by percent unique
 
 
 def run(data, min_=2, limit=10, sort_by="rel", save_json=False):
@@ -136,7 +137,7 @@ def run(data, min_=2, limit=10, sort_by="rel", save_json=False):
     data = pd.DataFrame.from_records(data)
     big_df = d.organize_twitch_chat(data)  # fetch appropriate data
     if type(big_df) == pd.DataFrame:
-        results, json_results = hour_iterator(big_df, limit=limit, min_=min_, sort_by=sort_by)
+        results, json_results = hour_iterator(big_df, min_=min_, sort_by=sort_by, limit=limit)
         if save_json:
             d.save_json(json_results, name=f"algo1_perc_{sort_by}_unique")
         return json_results

@@ -27,7 +27,7 @@ def thalamus(dataframe, min_):
 
     chat_rates = chat_rates.reset_index(drop=True)
     chat_rates_mean = chat_rates.groupby(['start','end']).mean().reset_index()
-    chat_rates_mean = chat_rates_mean.sort_values(f"chats_per_{min_}min", ascending=False)
+    chat_rates_mean = chat_rates_mean.sort_values(f"chats_per_{min_}min", ascending=False) # sorted by top mean chat rates
     
 
     return chat_rates_mean, first_stamp
@@ -118,6 +118,7 @@ def run(data, min_=2, limit=10, save_json=False):
     if type(big_df) == pd.DataFrame:
         results, first_stamp = thalamus(big_df, min_)
         results = results.head(limit)
+        # results_jsonified sorts by top calc
         json_results = d.results_jsonified(results, first_stamp, f"chats_per_{min_}min")
 
         if save_json:
