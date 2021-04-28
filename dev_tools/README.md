@@ -17,3 +17,9 @@ Check sanity:
 ```
 from pillaralgos_dev import sanity_checks as sane
 ```
+
+# Changelog
+
+v0.1.3:
+
+* added if statement for when there are an even number of files and the median size has to be split. Now just ignores the smallest file to make an odd number of files.

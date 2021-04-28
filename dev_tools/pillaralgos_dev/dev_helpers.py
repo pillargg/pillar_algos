@@ -74,7 +74,11 @@ class awsBucketAPI:
         large_size = df_objects.tail(5)["Key"].values
 
         ## find MEDIAN size: ##
-        median_size = df_objects["Size"].median()
+        if len(df_c) % 2 == 0:
+            temp_df = df_c.iloc[1:,:]
+            median_size = temp_df['Size'].median()
+        else:
+            median_size = df_c["Size"].median()
         # get the index of all objects of that size
         med_results = df_objects[df_objects["Size"] == median_size]
         median_indices = med_results.index
