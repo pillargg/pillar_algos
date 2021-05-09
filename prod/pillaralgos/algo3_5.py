@@ -30,7 +30,7 @@ def thalamus(big_df, min_, goal="num_words"):
     for chunk in chunk_list:
         chunk_df = chunk_df.append(chunk)
 
-    results = results_formatter(chunk_df, goal=goal)
+    results = results_formatter(chunk_df, goal=goal) # sorted by top goal
     return results, first_stamp
 
 
@@ -91,6 +91,8 @@ def results_formatter(dataframe, goal):
             goal: goal_list,
         }
     )
+    results = results.reset_index(drop=True).sort_values(goal, ascending = False) 
+    
     return results
 
 
@@ -138,7 +140,8 @@ def run(data, min_=2, limit=10, goal="num_words_emo", save_json=False):
     if type(big_df) == pd.DataFrame:
         results, first_stamp = thalamus(big_df, min_, goal=goal)
         results = results.head(limit)
-
+        
+        # results_jsonified sorts by top calc
         json_results = d.results_jsonified(results, first_stamp, goal)
         if save_json:
             d.save_json(json_results, f"algo3.5_{goal}")

@@ -36,42 +36,43 @@ def med_file():
     data = json.load(open(f"{data_folder}/sample_med.json"))
     return data
 
-def check_length(answer, min_):
+
+def test_brain(med_file):
+    clip_length = 0.75 # this is also param for check_length
+    calc_result = brain.run(data=med_file,
+                            clip_length=clip_length,
+                            common_timestamps=2, 
+                            algos_to_compare = ["algo1","algo2","algo3_0","algo3_5"],
+                            limit=7)
+    
+    answer = [{'startTime': 21200.477, 'endTime': 21245.343},
+              {'startTime': 12175.522, 'endTime': 12220.34},
+              {'startTime': 19831.123, 'endTime': 19875.995},
+              {'startTime': 15355.018, 'endTime': 15387.38},
+              {'startTime': 17841.413, 'endTime': 17886.181},
+              {'startTime': 5912.06, 'endTime': 5955.978},
+              {'startTime': 5583.986, 'endTime': 5628.403}]
+    assert calc_result == answer # check answer is correct
+
+
+def test_length(med_file):
     '''
     Checks the length of timestamps is less than min_
     
     answer: list
         List of dictionaries (json format)
     '''
-    lengths = []
-    for ans in answer:
-        time_diff = ans['endTime'] - ans['startTime']
-        num_sec = min_*60 
-        result = time_diff <= num_sec
-        lengths.append(result)
-    return all(lengths)
-
-def test_brain(med_file):
-    clip_length = 2 # this is also param for check_length
-    calc_result = brain.run(data=med_file,
+    clip_length = 0.75 # this is also param for check_length
+    answer = brain.run(data=med_file,
                             clip_length=clip_length,
                             common_timestamps=2, 
                             algos_to_compare = ["algo1","algo2","algo3_0","algo3_5"],
-                            limit=None)
+                            limit=7)
     
-    answer = [{'startTime': 765.512, 'endTime': 882.645},
-              {'startTime': 1018.379, 'endTime': 1131.467},
-              {'startTime': 0.0, 'endTime': 119.562},
-              {'startTime': 891.677, 'endTime': 1008.99},
-              {'startTime': 259.889, 'endTime': 375.413},
-              {'startTime': 383.298, 'endTime': 495.599},
-              {'startTime': 127.098, 'endTime': 234.249},
-              {'startTime': 507.003, 'endTime': 626.884},
-              {'startTime': 1138.629, 'endTime': 1256.19},
-              {'startTime': 630.41, 'endTime': 741.233},
-              {'startTime': 17734.164, 'endTime': 17853.51},
-              {'startTime': 12177.737, 'endTime': 12293.058}]
-    
-    time_check = check_length(calc_result, min_=clip_length)
-    assert calc_result == answer # check answer is correct
-    assert time_check # check the length of clips is <= clip_length
+    lengths = []
+    for ans in answer:
+        time_diff = ans['endTime'] - ans['startTime']
+        num_sec = clip_length*60 
+        result = time_diff <= num_sec # to get bools
+        lengths.append(result)
+    assert sum(lengths) == 7 # passes if all time lengths <= clip_length

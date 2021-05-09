@@ -59,35 +59,36 @@ def check_length(answer, min_):
 
 def test_algo1(med_file):
     min_=0.5
+    limit = 10
     calc_result = algo1.run(
         data = med_file,
         min_ = min_,
-        limit = 10,
+        limit = limit,
         sort_by = 'rel',
         save_json = False
     )
-    answer = [{'startTime': 105.78, 'endTime': 135.449},
-              {'startTime': 183.68, 'endTime': 200.871},
-              {'startTime': 266.303, 'endTime': 284.56},
-              {'startTime': 375.218, 'endTime': 399.649},
-              {'startTime': 74.219, 'endTime': 102.902},
-              {'startTime': 0.0, 'endTime': 10.329},
-              {'startTime': 308.506, 'endTime': 334.573},
-              {'startTime': 338.925, 'endTime': 349.935},
-              {'startTime': 135.939, 'endTime': 163.39},
-              {'startTime': 234.249, 'endTime': 259.889}]
+    answer = [{'startTime': 26008.706, 'endTime': 26037.915},
+              {'startTime': 25683.19, 'endTime': 25712.694},
+              {'startTime': 25978.645, 'endTime': 26005.689},
+              {'startTime': 25906.807, 'endTime': 25934.694},
+              {'startTime': 21204.676, 'endTime': 21233.315},
+              {'startTime': 12215.271, 'endTime': 12244.861},
+              {'startTime': 25747.017, 'endTime': 25774.105},
+              {'startTime': 25474.293, 'endTime': 25503.543},
+              {'startTime': 25874.858, 'endTime': 25904.018},
+              {'startTime': 19827.532, 'endTime': 19857.415}]
     
     time_check = check_length(calc_result, min_=min_)
     assert time_check # check the length of clips is <= clip_length
-
     assert calc_result == answer
 
 def test_algo2(med_file):
     min_=0.5
+    limit=5
     calc_result = algo2.run(
         data=med_file,
         min_=min_,
-        limit=10,
+        limit=limit,
         save_json=False
     )
 
@@ -95,24 +96,20 @@ def test_algo2(med_file):
               {'startTime': 696.512, 'endTime': 696.512},
               {'startTime': 6441.765, 'endTime': 6441.765},
               {'startTime': 8194.165, 'endTime': 8194.165},
-              {'startTime': 8381.339, 'endTime': 8381.339},
-              {'startTime': 14140.362, 'endTime': 14140.362},
-              {'startTime': 22983.785, 'endTime': 22983.785},
-              {'startTime': 14428.961, 'endTime': 14428.961},
-              {'startTime': 15187.424, 'endTime': 15187.424},
-              {'startTime': 7199.836, 'endTime': 7201.808}]
+              {'startTime': 8381.339, 'endTime': 8381.339}]
     time_check = check_length(calc_result, min_=min_)
     assert time_check # check the length of clips is <= clip_length
-
     assert calc_result == answer
     
 
 def test_algo3_0(med_file):
     min_=0.5
+    limit=6
+    
     calc_result = algo3_0.run(
         data=med_file,
         min_=min_,
-        limit=10,
+        limit=limit,
         min_words=10,
         save_json=False
     )
@@ -124,31 +121,23 @@ def test_algo3_0(med_file):
               {'startTime': 6656.985, 'endTime': 6680.851}]
     time_check = check_length(calc_result, min_=min_)
     assert time_check # check the length of clips is <= clip_length
-
     assert calc_result == answer
 
 def test_algo3_5(med_file):
     min_=0.5
+    limit=3
     calc_result = algo3_5.run(
         data=med_file,
         min_=min_,
-        limit=10,
+        limit=limit,
         goal='num_emo',
         save_json=False
     )
-    answer = [{'startTime': 105.78, 'endTime': 135.449},
-              {'startTime': 234.249, 'endTime': 259.889},
-              {'startTime': 183.68, 'endTime': 200.871},
-              {'startTime': 375.218, 'endTime': 399.649},
-              {'startTime': 74.219, 'endTime': 102.902},
-              {'startTime': 266.303, 'endTime': 284.56},
-              {'startTime': 0.0, 'endTime': 10.329},
-              {'startTime': 135.939, 'endTime': 163.39},
-              {'startTime': 308.506, 'endTime': 334.573},
-              {'startTime': 338.925, 'endTime': 349.935}]
+    answer = [{'startTime': 21204.676, 'endTime': 21233.315},
+              {'startTime': 12215.271, 'endTime': 12244.861},
+              {'startTime': 19757.217, 'endTime': 19785.986}]
     time_check = check_length(calc_result, min_=min_)
     assert time_check # check the length of clips is <= clip_length
-
     assert calc_result == answer
     
 def test_algo1_diffs(med_file):
