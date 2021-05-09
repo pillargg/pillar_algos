@@ -37,14 +37,19 @@ def thalamus(big_df, min_, goal="num_words"):
 def algorithm(big_df):
     # find number of words+emojis
     big_df = num_words_in_chat(big_df)
-    # find number of emojis
-    big_df["num_emo"] = big_df["emoticons"].apply(
-        lambda x: len(x) if type(x) == list else 0
-    )
+    if 'emoticons' in big_df.columns:
+        
+        # find number of emojis
+        big_df["num_emo"] = big_df["emoticons"].apply(
+            lambda x: len(x) if type(x) == list else 0
+        )
+
+    else: 
+        big_df["num_emo"] = 0
     # find number of words only
     big_df["num_words"] = big_df["num_words_emo"] - big_df["num_emo"]
-
     return big_df
+
 
 
 def results_formatter(dataframe, goal):
