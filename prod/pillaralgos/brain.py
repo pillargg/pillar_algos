@@ -42,7 +42,7 @@ def run(data, clip_length, common_timestamps=2, algos_to_compare = ["algo1","alg
     results = []
     # gather results from algos
     for algo in compare_us:
-        result = algo.run(data, min_=2)
+        result = algo.run(data, min_=common_timestamps)
         results.append(result)
 
     # turn results into df
