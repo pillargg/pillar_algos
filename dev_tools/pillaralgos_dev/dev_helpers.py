@@ -39,7 +39,7 @@ class awsBucketAPI:
         for bucket in self.s3r.buckets.all():
             buckets.append(bucket.name)
         # bucket name and test
-        chat_bucket = [x for x in buckets if "messagestore" in x]
+        chat_bucket = [x for x in buckets if "prod-prod-messagestore" in x]
         if len(chat_bucket) == 1:
             self.chat_bucket = chat_bucket[0]
         else:

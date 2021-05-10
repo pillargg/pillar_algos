@@ -5,4 +5,4 @@ HOW TO
     from pillaralgos import OPTIONS  # replace options with an algo
     OPTIONS.run(data)                # see algo docstring for descriptions
 '''
-__version__ = '1.0.15'
+__version__ = '1.0.18'

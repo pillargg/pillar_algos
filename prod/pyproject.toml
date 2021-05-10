@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pillaralgos"
-version = "1.0.15"
+version = "1.0.18"
 description = 'Algorithms for Pillar. Currently includes "mini" algorithms, nothing too sophisticated.'
 authors = ["Peter Gates <pgate89@gmail.com>"]
 readme = "README.md"

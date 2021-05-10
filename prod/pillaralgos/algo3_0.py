@@ -86,10 +86,10 @@ def id_words_counter(big_df):
     for _id in big_df["_id"].unique():
         temp_df = big_df[big_df["_id"] == _id]
         words = temp_df["body"].str.split(" ")
-        try: 
+        if 'emoticons' in temp_df.columns:
             emoji = temp_df["emoticons"].apply(lambda x: 0 if type(x) == float else len(x))
             num_emoji = emoji.sum()
-        except:
+        else:
             num_emoji = 0.0
         num_words = words.apply(lambda x: len(x))
 
