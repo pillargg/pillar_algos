@@ -57,7 +57,7 @@ There are two methods to test locally, with one working on just Unix-based OSes,
 
 This is the recommended method for testing and should work on all operating systems.
 
-First, install [Docker](https://docs.docker.com/get-docker/) and [act](https://github.com/nektos/act). This is a tool that allows the running of GitHub Actions CI locally, which is how we will run the tests on your local machine. After both are installed, you have to generate a GitHub Token. See [here] on how to do that. The token should be stored in a file called `secrets.env` in your working directory (this file is in the .gitignore so it will not be committed). Here is what the file should look like:
+First, install [Docker](https://docs.docker.com/get-docker/) and [act](https://github.com/nektos/act). This is a tool that allows the running of GitHub Actions CI locally, which is how we will run the tests on your local machine. After both are installed, you have to generate a GitHub Token. See [here] on how to do that. The token should be stored in a file called `.secrets` in your working directory (this file is in the .gitignore so it will not be committed). Here is what the file should look like:
 
 ```bash
 GITHUB_TOKEN=<your token here>
@@ -66,7 +66,7 @@ GITHUB_TOKEN=<your token here>
 After, you can run the tests with the following:
 
 ```bash
-act --secret-file secrets.env
+act
 ```
 
 Here is an example of what output should look like:
