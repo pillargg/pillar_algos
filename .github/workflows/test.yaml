@@ -22,4 +22,4 @@ jobs:
       - name: Run Tests
         run: |
           cd prod/test
-          pytest
+          pytest --durations=0
