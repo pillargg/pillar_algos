@@ -2,8 +2,11 @@
 Sorts the final results by `perc_rel_unique`. Calculated as "number of chatters
 at timestamp"/"number of chatters in that one hour"
 
-HOW TO
-    algo1.run(data, min_=2, limit=10, sort_by='rel', save_json = False)
+HOW TO:
+
+```
+algo1.run(data, min_=2, limit=10, sort_by='rel', save_json = False)
+```
 """
 
 import pandas as pd
@@ -56,14 +59,16 @@ def hour_iterator(big_df, limit, min_=2, sort_by="rel"):
     """
     Pushes all dfs in a list through the xminChats function, returns a dataframe of results
 
-    input
+    ### Input
     -----
+    ```
     big_df: pd.DataFrame
         Df of the entire twitch session. This is the one that was split by dfSplitter class
     min_: int
         How long a timestamp range should be
     sort_by: str
         Whether to sort values by `abs` or `rel` unique chatters.
+    ```
     """
     ds = d.dfSplitter(big_df)  # initiate
     ds.find_rest()  # split big_df into 1 hour long separate dfs
@@ -92,7 +97,7 @@ def hour_iterator(big_df, limit, min_=2, sort_by="rel"):
     # iterate all sections through the class
     for i in range(len(hour_list)):
         fm = d.xminChats(hour_list[i], max_uniques, min_=min_)
-        _n = fm.find_rest()  # _n not needed
+        fm.find_rest()  # _n not needed
         chunk_list = fm.result  # get back list of dfs, each 2 minutes long
 
         hr_uniques = perc_uniques(
@@ -120,8 +125,9 @@ def run(data, min_=2, limit=10, sort_by="rel", save_json=False):
     """
     Runs algo1 to sort timestamps by the relative percentage of chatters by default.
 
-    input:
+    ### Input
     ------
+    ```
     data: list
         List of dictionaries of data from Twitch chat
     min_: int
@@ -133,6 +139,7 @@ def run(data, min_=2, limit=10, sort_by="rel", save_json=False):
         'abs': "number of chatters at timestamp"/"total number of chatters in stream"
     save_json: bool
         True if want to save results as json to exports folder
+    ```
     """
     data = pd.DataFrame.from_records(data)
     big_df = d.organize_twitch_chat(data)  # fetch appropriate data

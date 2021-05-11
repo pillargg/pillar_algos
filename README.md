@@ -5,6 +5,7 @@
 3. [Current Goal](#current-goal)
 4. [Long Term Goal](#long-term-goal)
 5. [Testing Locally](#testing-locally)
+6. [Usage](#usage)
 
 # Background
 Pillar is creating an innovative way to automatically select and splice clips from Twitch videos for streamers. This repo is focusing on the algorithm aspect. Three main algorithms are being tested.
@@ -337,4 +338,10 @@ pip install -r requirement.txt
 pip install pytest
 cd prod/test
 pytest --duration=0 
+```
+
+## Usage
+```python
+from pillaralgos import OPTIONS  # replace options with an algo
+OPTIONS.run(data)                # see algo docstring for descriptions
 ```
