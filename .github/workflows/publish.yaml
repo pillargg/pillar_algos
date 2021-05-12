@@ -22,6 +22,7 @@ jobs:
         pip install -r requirements.txt
     - name: Build and Publish
       run: |
+        cd prod
         poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
         poetry build
         poetry publish
