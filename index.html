@@ -1,0 +1,728 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="icon" href="pillargg.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.4">
+    
+    
+      
+        <title>Pillar Algos</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.bde7dde4.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.ef6f36e2.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#000000">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="stylesheets/pillar.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="deep-purple">
+  
+    
+    <script>function __prefix(e){return new URL(".",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#pillar-algos" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="Pillar Algos" class="md-header__button md-logo" aria-label="Pillar Algos" data-md-component="logo">
+      
+  <img src="pillargg.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Pillar Algos
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Pillar Algos
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        
+<a href="https://github.com/pillargg/pillar_algos/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    pillargg/pillar_algos
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="Pillar Algos" class="md-nav__button md-logo" aria-label="Pillar Algos" data-md-component="logo">
+      
+  <img src="pillargg.png" alt="logo">
+
+    </a>
+    Pillar Algos
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/pillargg/pillar_algos/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    pillargg/pillar_algos
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        Pillar Algos
+      </a>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Algorithm_1/" class="md-nav__link">
+        Algorithm 1
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Algorithm_2/" class="md-nav__link">
+        Algorithm 2
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Algorithm_3.0/" class="md-nav__link">
+        Algorithm 3.0
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Algorithm_3.5/" class="md-nav__link">
+        Algorithm 3.5
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Brain/" class="md-nav__link">
+        Brain
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/pillargg/pillar_algos/edit/master/docs/index.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                <h1 id="pillar-algos">Pillar Algos</h1>
+<ol>
+<li><a href="#background">Background</a></li>
+<li><a href="#algorithms">Algorithms</a></li>
+<li><a href="#datasets">Datasets</a></li>
+<li><a href="#current-goal">Current Goal</a></li>
+<li><a href="#long-term-goal">Long Term Goal</a></li>
+<li><a href="#testing-locally">Testing Locally</a></li>
+<li><a href="#usage">Usage</a></li>
+</ol>
+<h1 id="background">Background</h1>
+<p>Pillar is creating an innovative way to automatically select and splice clips from Twitch videos for streamers. This repo is focusing on the algorithm aspect. Three main algorithms are being tested.</p>
+<h2 id="algorithms">Algorithms</h2>
+<ol>
+<li><a href="https://github.com/pomkos/twitch_chat_analysis/blob/reorganize_repo/algorithm_1.ipynb">Algorithm 1</a>: Find the best moments in clips based on where the most users participated. Most is defined as the <em>ratio of unique users</em> during a 2 min section to unique users for the entire session.</li>
+<li><a href="https://github.com/pomkos/twitch_chat_analysis/blob/reorganize_repo/algorithm_2.ipynb">Algorithm 2</a> Find the best moments in clips based on when rate of messages per user peaked. This involves answering the question "at which 2 min segment do the most users send the most messages?". If users X, Y, and Z all send 60% of their messages at timestamp range delta, then that timestamp might qualify as a "best moment"</li>
+<li><strong>NOTE</strong>: Currently answers the question "at which 2 min segment do users send the most messages fastest"</li>
+<li><a href="https://github.com/pomkos/twitch_chat_analysis/blob/reorganize_repo/algorithm_3.ipynb">Algorithm 3 (WIP)</a> Weigh each user by their chat rate, account age, etc. Heavier users predicted to chat more often at "best moment" timestamps </li>
+<li><strong>STATUS</strong>: current weight determined by (<code>num_words_of_user</code>/<code>num_words_of_top_user</code>)</li>
+<li><a href="https://github.com/pomkos/twitch_chat_analysis/blob/reorganize_repo/algorithm_3.5.ipynb">Algorithm 3.5</a> Finds the best moments in clips based on most number of words/emojis/both used in chat</li>
+</ol>
+<h2 id="datasets">Datasets:</h2>
+<ol>
+<li>Preliminary data <code>prelim_df</code>: 545 rows representing one 3 hour 35 minute 26 second twitch stream chat of <a href="https://www.twitch.tv/videos/963184458">Hearthstone by LiiHS</a><ul>
+<li>Used to create initial json import and resulting df clean/merge function <code>organize_twitch_chat</code></li>
+</ul>
+</li>
+<li>Big data <code>big_df</code>: 2409 rows representing one 7 hour 37 minute, 0 second twitch stream chat of <a href="https://www.twitch.tv/videos/955629991">Hearthstone by LiiHS</a><ul>
+<li>Used to create all algorithms</li>
+</ul>
+</li>
+</ol>
+<h1 id="current-goal">Current Goal</h1>
+<p>To create one overarching algorithm that will find the most "interesting" clips in a twitch VOD. This will be created through the following steps:
+1. Creation of various algorithms that isolate <code>min_</code> (2 by default) minute chunks. The basic workflow:
+   1. Create variable (ex: <code>num_words</code>, for number of words in the body of a chat message)
+   1. Group df by <code>min_</code> chunks, then average/sum/etc <code>num_words</code> for each <code>min_</code> chunks
+   1. Sort new df by <code>num_words</code>, from highest "value" to lowest "value"
+   1. Return this new df as json (<a href="https://github.com/pomkos/twitch_chat_analysis/blob/main/exports/algo1_results.json">example</a>)
+1. Users rate clips provided by each algorithm
+2. Useless algorithms thrown away
+3. Rest of the algorithms merged into one overarching algorithm, with weights distributed based on user ratings</p>
+<h1 id="long-term-goal">Long Term Goal</h1>
+<ul>
+<li><strong>New objective measure</strong>: community created clips (<code>ccc</code>) for a given VOD id with start/end timestamps for each clip</li>
+<li><strong>Assumption</strong>: <code>ccc</code> are interesting and can be used to create a narrative for each VOD. We can test this by cross referencing with posts to /r/livestreamfails upvotes/comments</li>
+<li><strong>Hypothesis</strong>: if we can predict where <code>ccc</code> would be created, those are potentially good clips to show the user</li>
+<li><em>Short term test</em>: Create a model to predict where ccc would be created using variables such as word count, chat rate, emoji usage, chat semantic analysis. We can do this by finding timestamps of ccc and correlating them with chat stats</li>
+<li><em>Medium term test</em>: Use top 100 streamers as training data. What similarities do their ccc and reddit most upvoted of that VOD share? (chat rate etc)<ol>
+<li>Get the transcript for these top 100</li>
+<li>Get the top 100's YT posted 15-30min story content for the 8 hour VOD</li>
+<li>Get the transcript for that story content</li>
+<li>Semantic analysis and correlations, etc.</li>
+</ol>
+</li>
+<li><em>Long term test</em>: what percentage of clips do our streamers actually end up using</li>
+</ul>
+<h1 id="testing-locally">Testing Locally</h1>
+<p>There are two methods to test locally, with one working on just Unix-based OSes, and one working on all OSes. Testing with Containers will work on all OSes with Docker installed. </p>
+<h2 id="testing-with-containers">Testing with Containers</h2>
+<p>This is the recommended method for testing and should work on all operating systems.</p>
+<p>First, install <a href="https://docs.docker.com/get-docker/">Docker</a> and <a href="https://github.com/nektos/act">act</a>. This is a tool that allows the running of GitHub Actions CI locally, which is how we will run the tests on your local machine. After both are installed, you have to generate a GitHub Token. See [here] on how to do that. The token should be stored in a file called <code>.secrets</code> in your working directory (this file is in the .gitignore so it will not be committed). Here is what the file should look like:</p>
+<pre><code class="language-bash">GITHUB_TOKEN=&lt;your token here&gt;
+</code></pre>
+<p>After, you can run the tests with the following:</p>
+<pre><code class="language-bash">act
+</code></pre>
+<p>Here is an example of what output should look like:</p>
+<details>
+  <summary>Log</summary>
+
+
+<pre><code class="language-none">[Run Unit Tests/test] 🚀  Start image=catthehacker/ubuntu:act-20.04
+[Run Unit Tests/test]   🐳  docker run image=catthehacker/ubuntu:act-20.04 platform= entrypoint=[&quot;/usr/bin/tail&quot; &quot;-f&quot; &quot;/dev/null&quot;] cmd=[]
+[Run Unit Tests/test] ⭐  Run Checkout Code
+[Run Unit Tests/test]   ☁  git clone 'https://github.com/actions/checkout' # ref=v2
+[Run Unit Tests/test]   🐳  docker cp src=C:\Users\chizz\.cache\act/actions-checkout@v2/ dst=/mnt/c/Users/chizz/Documents/pillar/pillar_algos/_actions/actions-checkout@v2/
+[Run Unit Tests/test]   ❓  ::save-state name=isPost,::true
+[Run Unit Tests/test]   💬  ::debug::GITHUB_WORKSPACE = '/mnt/c/Users/chizz/Documents/pillar/pillar_algos'
+[Run Unit Tests/test]   💬  ::debug::qualified repository = 'pillargg/pillar_algos'
+[Run Unit Tests/test]   💬  ::debug::ref = 'refs/heads/ci-cd'
+[Run Unit Tests/test]   💬  ::debug::commit = '74c766153947d78164c3dc4fde3cffac2efe3630'
+[Run Unit Tests/test]   💬  ::debug::clean = true
+[Run Unit Tests/test]   💬  ::debug::fetch depth = 1
+[Run Unit Tests/test]   💬  ::debug::lfs = false
+[Run Unit Tests/test]   💬  ::debug::submodules = false
+[Run Unit Tests/test]   💬  ::debug::recursive submodules = false
+[Run Unit Tests/test]   ❓  ::add-matcher::/mnt/c/Users/chizz/Documents/pillar/pillar_algos/_actions/actions-checkout@v2/dist/problem-matcher.json
+| Syncing repository: pillargg/pillar_algos
+[Run Unit Tests/test]   ❓  ::group::Getting Git version info
+| Working directory is '/mnt/c/Users/chizz/Documents/pillar/pillar_algos'
+[Run Unit Tests/test]   💬  ::debug::Getting git version
+| [command]/usr/bin/git version
+| git version 2.25.1
+[Run Unit Tests/test]   💬  ::debug::Set git useragent to: git/2.25.1 (github-actions-checkout)
+[Run Unit Tests/test]   ❓  ::endgroup::
+| Deleting the contents of '/mnt/c/Users/chizz/Documents/pillar/pillar_algos'
+[Run Unit Tests/test]   ❓  ::save-state name=repositoryPath,::/mnt/c/Users/chizz/Documents/pillar/pillar_algos
+[Run Unit Tests/test]   ❓  ::group::Initializing the repository
+| [command]/usr/bin/git init /mnt/c/Users/chizz/Documents/pillar/pillar_algos
+| Initialized empty Git repository in /mnt/c/Users/chizz/Documents/pillar/pillar_algos/.git/
+| [command]/usr/bin/git remote add origin https://github.com/pillargg/pillar_algos
+[Run Unit Tests/test]   ❓  ::endgroup::
+[Run Unit Tests/test]   ❓  ::group::Disabling automatic garbage collection
+| [command]/usr/bin/git config --local gc.auto 0
+[Run Unit Tests/test]   ❓  ::endgroup::
+[Run Unit Tests/test]   ⚙  ::add-mask::eC1hY2Nlc3MtdG9rZW46Z2hwX0d0ZDR4TUlDcVp6cGZoNkI5T1BRdGJOdXpvOGdBNTNiTmd6Vg==
+[Run Unit Tests/test]   ❓  ::group::Setting up auth
+| [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+| [command]/usr/bin/git submodule foreach --recursive git config --local --name-only --get-regexp 'core\.sshCommand' &amp;&amp; git config --local --unset-all 'core.sshCommand' || :
+| [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+| [command]/usr/bin/git submodule foreach --recursive git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' &amp;&amp; git config --local --unset-all 'http.https://github.com/.extraheader' || :
+| [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+[Run Unit Tests/test]   ❓  ::endgroup::
+[Run Unit Tests/test]   ❓  ::group::Fetching the repository
+| [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --progress --no-recurse-submodules --depth=1 origin +74c766153947d78164c3dc4fde3cffac2efe3630:refs/remotes/origin/ci-cd
+| remote: Enumerating objects: 56, done.        
+remote: Counting objects: 100% (56/56), done.        
+remote: Compressing objects: 100% (48/48), done.
+| remote: Total 56 (delta 3), reused 33 (delta 1), pack-reused 0        
+| From https://github.com/pillargg/pillar_algos
+|  * [new ref]         74c766153947d78164c3dc4fde3cffac2efe3630 -&gt; origin/ci-cd
+[Run Unit Tests/test]   ❓  ::endgroup::
+[Run Unit Tests/test]   ❓  ::group::Determining the checkout info
+[Run Unit Tests/test]   ❓  ::endgroup::
+[Run Unit Tests/test]   ❓  ::group::Checking out the ref
+| [command]/usr/bin/git checkout --progress --force -B ci-cd refs/remotes/origin/ci-cd
+| Switched to a new branch 'ci-cd'
+| Branch 'ci-cd' set up to track remote branch 'ci-cd' from 'origin'.
+[Run Unit Tests/test]   ❓  ::endgroup::
+| [command]/usr/bin/git log -1 --format='%H'
+| '74c766153947d78164c3dc4fde3cffac2efe3630'
+[Run Unit Tests/test]   ❓  ::remove-matcher owner=checkout-git,::
+[Run Unit Tests/test]   ✅  Success - Checkout Code
+[Run Unit Tests/test] ⭐  Run Setup Python 3.8
+[Run Unit Tests/test]   ☁  git clone 'https://github.com/actions/setup-python' # ref=v2
+[Run Unit Tests/test]   🐳  docker cp src=C:\Users\chizz\.cache\act/actions-setup-python@v2/ dst=/mnt/c/Users/chizz/Documents/pillar/pillar_algos/_actions/actions-setup-python@v2/
+[Run Unit Tests/test]   💬  ::debug::Semantic version spec of 3.8 is 3.8
+[Run Unit Tests/test]   💬  ::debug::isExplicit: 
+[Run Unit Tests/test]   💬  ::debug::explicit? false
+[Run Unit Tests/test]   💬  ::debug::evaluating 0 versions
+[Run Unit Tests/test]   💬  ::debug::match not found
+| Version 3.8 was not found in the local cache
+[Run Unit Tests/test]   💬  ::debug::set auth
+[Run Unit Tests/test]   💬  ::debug::check 3.10.0-beta.1 satisfies 3.8
+[Run Unit Tests/test]   💬  ::debug::check 3.10.0-alpha.7 satisfies 3.8
+[Run Unit Tests/test]   💬  ::debug::check 3.10.0-alpha.6 satisfies 3.8
+[Run Unit Tests/test]   💬  ::debug::check 3.10.0-alpha.5 satisfies 3.8
+[Run Unit Tests/test]   💬  ::debug::check 3.10.0-alpha.4 satisfies 3.8
+[Run Unit Tests/test]   💬  ::debug::check 3.10.0-alpha.3 satisfies 3.8
+[Run Unit Tests/test]   💬  ::debug::check 3.10.0-alpha.2 satisfies 3.8
+[Run Unit Tests/test]   💬  ::debug::check 3.10.0-alpha.1 satisfies 3.8
+[Run Unit Tests/test]   💬  ::debug::check 3.9.5 satisfies 3.8
+[Run Unit Tests/test]   💬  ::debug::check 3.9.4 satisfies 3.8
+[Run Unit Tests/test]   💬  ::debug::check 3.9.3 satisfies 3.8
+[Run Unit Tests/test]   💬  ::debug::check 3.9.2 satisfies 3.8
+[Run Unit Tests/test]   💬  ::debug::check 3.9.2-rc.1 satisfies 3.8
+[Run Unit Tests/test]   💬  ::debug::check 3.9.1 satisfies 3.8
+[Run Unit Tests/test]   💬  ::debug::check 3.9.1-rc.1 satisfies 3.8
+[Run Unit Tests/test]   💬  ::debug::check 3.9.0 satisfies 3.8
+[Run Unit Tests/test]   💬  ::debug::check 3.9.0-rc.2 satisfies 3.8
+[Run Unit Tests/test]   💬  ::debug::check 3.9.0-rc.1 satisfies 3.8
+[Run Unit Tests/test]   💬  ::debug::check 3.9.0-beta.5 satisfies 3.8
+[Run Unit Tests/test]   💬  ::debug::check 3.9.0-beta.4 satisfies 3.8
+[Run Unit Tests/test]   💬  ::debug::check 3.8.10 satisfies 3.8
+[Run Unit Tests/test]   💬  ::debug::x64===x64 &amp;&amp; darwin===linux
+[Run Unit Tests/test]   💬  ::debug::x64===x64 &amp;&amp; linux===linux
+[Run Unit Tests/test]   💬  ::debug::x64===x64 &amp;&amp; linux===linux
+[Run Unit Tests/test]   💬  ::debug::x64===x64 &amp;&amp; linux===linux
+[Run Unit Tests/test]   💬  ::debug::matched 3.8.10
+| Version 3.8 is available for downloading
+| Download from &quot;https://github.com/actions/python-versions/releases/download/3.8.10-107001/python-3.8.10-linux-20.04-x64.tar.gz&quot;
+[Run Unit Tests/test]   💬  ::debug::Downloading https://github.com/actions/python-versions/releases/download/3.8.10-107001/python-3.8.10-linux-20.04-x64.tar.gz
+[Run Unit Tests/test]   💬  ::debug::Destination /tmp/bfc2b5ad-62f1-4101-8131-960763558bae
+[Run Unit Tests/test]   💬  ::debug::set auth
+[Run Unit Tests/test]   💬  ::debug::download complete
+| Extract downloaded archive
+[Run Unit Tests/test]   💬  ::debug::Checking tar --version
+[Run Unit Tests/test]   💬  ::debug::tar (GNU tar) 1.30%0ACopyright (C) 2017 Free Software Foundation, Inc.%0ALicense GPLv3+: GNU GPL version 3 or later &lt;https://gnu.org/licenses/gpl.html&gt;.%0AThis is free software: you are free to change and redistribute it.%0AThere is NO WARRANTY, to the extent permitted by law.%0A%0AWritten by John Gilmore and Jay Fenlason.
+| [command]/usr/bin/tar xz --warning=no-unknown-keyword -C /tmp/b50560b8-c29b-4368-9961-8116845c95a2 -f /tmp/bfc2b5ad-62f1-4101-8131-960763558bae
+| Execute installation script
+| Check if Python hostedtoolcache folder exist...
+| Creating Python hostedtoolcache folder...
+| Create Python 3.8.10 folder
+| Copy Python binaries to hostedtoolcache folder
+| Create additional symlinks (Required for the UsePythonVersion Azure Pipelines task and the setup-python GitHub Action)
+| Upgrading PIP...
+| Looking in links: /tmp/tmp46b32jk4
+| Requirement already satisfied: setuptools in /opt/hostedtoolcache/Python/3.8.10/x64/lib/python3.8/site-packages (56.0.0)
+| Requirement already satisfied: pip in /opt/hostedtoolcache/Python/3.8.10/x64/lib/python3.8/site-packages (21.1.1)
+[Run Unit Tests/test]   ❗  ::error::WARNING: Running pip as root will break packages and permissions. You should install packages reliably by using venv: https://pip.pypa.io/warnings/venv
+| Collecting pip
+| Downloading pip-21.1.1-py3-none-any.whl (1.5 MB)
+| Installing collected packages: pip
+| Successfully installed pip-21.1.1
+[Run Unit Tests/test]   ❗  ::error::WARNING: Running pip as root will break packages and permissions. You should install packages reliably by using venv: https://pip.pypa.io/warnings/venv
+| Create complete file
+[Run Unit Tests/test]   💬  ::debug::isExplicit: 
+[Run Unit Tests/test]   💬  ::debug::explicit? false
+[Run Unit Tests/test]   💬  ::debug::isExplicit: 3.8.10
+[Run Unit Tests/test]   💬  ::debug::explicit? true
+[Run Unit Tests/test]   💬  ::debug::evaluating 1 versions
+[Run Unit Tests/test]   💬  ::debug::matched: 3.8.10
+[Run Unit Tests/test]   💬  ::debug::checking cache: /opt/hostedtoolcache/Python/3.8.10/x64
+[Run Unit Tests/test]   💬  ::debug::Found tool in cache Python 3.8.10 x64
+[Run Unit Tests/test]   ⚙  ::set-output:: python-version=3.8.10
+| Successfully setup CPython (3.8.10)
+[Run Unit Tests/test]   ❓  ##[add-matcher]/mnt/c/Users/chizz/Documents/pillar/pillar_algos/_actions/actions-setup-python@v2/.github/python.json
+[Run Unit Tests/test]   ✅  Success - Setup Python 3.8
+[Run Unit Tests/test] ⭐  Run Install Dependencies
+| Collecting pandas
+|   Downloading pandas-1.2.4-cp38-cp38-manylinux1_x86_64.whl (9.7 MB)
+     |████████████████████████████████| 9.7 MB 2.9 MB/s
+| Collecting numpy
+|   Downloading numpy-1.20.3-cp38-cp38-manylinux_2_12_x86_64.manylinux2010_x86_64.whl (15.4 MB)
+     |████████████████████████████████| 15.4 MB 62.5 MB/s
+| Collecting pre-commit
+|   Downloading pre_commit-2.12.1-py2.py3-none-any.whl (189 kB)
+     |████████████████████████████████| 189 kB 55.3 MB/s
+| Collecting pillaralgos
+|   Downloading pillaralgos-1.0.18-py3-none-any.whl (18 kB)
+| Collecting python-dateutil&gt;=2.7.3
+|   Downloading python_dateutil-2.8.1-py2.py3-none-any.whl (227 kB)
+     |████████████████████████████████| 227 kB 37.9 MB/s
+| Collecting pytz&gt;=2017.3
+|   Downloading pytz-2021.1-py2.py3-none-any.whl (510 kB)
+     |████████████████████████████████| 510 kB 54.0 MB/s
+| Collecting six&gt;=1.5
+|   Downloading six-1.16.0-py2.py3-none-any.whl (11 kB)
+| Collecting toml
+|   Downloading toml-0.10.2-py2.py3-none-any.whl (16 kB)
+| Collecting virtualenv&gt;=20.0.8
+|   Downloading virtualenv-20.4.6-py2.py3-none-any.whl (7.2 MB)
+     |████████████████████████████████| 7.2 MB 28.6 MB/s
+| Collecting identify&gt;=1.0.0
+|   Downloading identify-2.2.4-py2.py3-none-any.whl (98 kB)
+     |████████████████████████████████| 98 kB 14.4 MB/s
+| Collecting nodeenv&gt;=0.11.1
+|   Downloading nodeenv-1.6.0-py2.py3-none-any.whl (21 kB)
+| Collecting cfgv&gt;=2.0.0
+|   Downloading cfgv-3.2.0-py2.py3-none-any.whl (7.3 kB)
+| Collecting pyyaml&gt;=5.1
+|   Downloading PyYAML-5.4.1-cp38-cp38-manylinux1_x86_64.whl (662 kB)
+     |████████████████████████████████| 662 kB 42.5 MB/s
+| Collecting filelock&lt;4,&gt;=3.0.0
+|   Downloading filelock-3.0.12-py3-none-any.whl (7.6 kB)
+| Collecting appdirs&lt;2,&gt;=1.4.3
+|   Downloading appdirs-1.4.4-py2.py3-none-any.whl (9.6 kB)
+| Collecting distlib&lt;1,&gt;=0.3.1
+|   Downloading distlib-0.3.1-py2.py3-none-any.whl (335 kB)
+     |████████████████████████████████| 335 kB 48.7 MB/s
+| Installing collected packages: six, pytz, python-dateutil, numpy, filelock, distlib, appdirs, virtualenv, toml, pyyaml, pandas, nodeenv, identify, cfgv, pre-commit, pillaralgos
+| Successfully installed appdirs-1.4.4 cfgv-3.2.0 distlib-0.3.1 filelock-3.0.12 identify-2.2.4 nodeenv-1.6.0 numpy-1.20.3 pandas-1.2.4 pillaralgos-1.0.18 pre-commit-2.12.1 python-dateutil-2.8.1 pytz-2021.1 pyyaml-5.4.1 six-1.16.0 toml-0.10.2 virtualenv-20.4.6
+| WARNING: Running pip as root will break packages and permissions. You should install packages reliably by using venv: https://pip.pypa.io/warnings/venv
+| Collecting pytest
+|   Downloading pytest-6.2.4-py3-none-any.whl (280 kB)
+     |████████████████████████████████| 280 kB 2.8 MB/s
+| Collecting py&gt;=1.8.2
+|   Downloading py-1.10.0-py2.py3-none-any.whl (97 kB)
+     |████████████████████████████████| 97 kB 4.3 MB/s
+| Collecting attrs&gt;=19.2.0
+|   Downloading attrs-21.2.0-py2.py3-none-any.whl (53 kB)
+     |████████████████████████████████| 53 kB 2.6 MB/s
+| Requirement already satisfied: toml in /opt/hostedtoolcache/Python/3.8.10/x64/lib/python3.8/site-packages (from pytest) (0.10.2)
+| Collecting iniconfig
+|   Downloading iniconfig-1.1.1-py2.py3-none-any.whl (5.0 kB)
+| Collecting packaging
+|   Downloading packaging-20.9-py2.py3-none-any.whl (40 kB)
+     |████████████████████████████████| 40 kB 4.0 MB/s
+| Collecting pluggy&lt;1.0.0a1,&gt;=0.12
+|   Downloading pluggy-0.13.1-py2.py3-none-any.whl (18 kB)
+| Collecting pyparsing&gt;=2.0.2
+|   Downloading pyparsing-2.4.7-py2.py3-none-any.whl (67 kB)
+     |████████████████████████████████| 67 kB 4.0 MB/s
+| Installing collected packages: pyparsing, py, pluggy, packaging, iniconfig, attrs, pytest
+| Successfully installed attrs-21.2.0 iniconfig-1.1.1 packaging-20.9 pluggy-0.13.1 py-1.10.0 pyparsing-2.4.7 pytest-6.2.4
+| WARNING: Running pip as root will break packages and permissions. You should install packages reliably by using venv: https://pip.pypa.io/warnings/venv
+[Run Unit Tests/test]   ✅  Success - Install Dependencies
+[Run Unit Tests/test] ⭐  Run Run Tests
+| ============================= test session starts ==============================
+| platform linux -- Python 3.8.10, pytest-6.2.4, py-1.10.0, pluggy-0.13.1
+| rootdir: /mnt/c/Users/chizz/Documents/pillar/pillar_algos/prod/test
+collected 17 items
+| 
+| test_algos.py ........                                                   [ 47%]
+| test_brain.py ..                                                         [ 58%]
+| test_helpers.py .......                                                  [100%]
+| 
+| ============================== slowest durations ===============================
+| 30.90s call     test_algos.py::test_algo2_diffs
+| 17.57s call     test_brain.py::test_length
+| 17.45s call     test_brain.py::test_brain
+| 14.16s call     test_algos.py::test_algo30_diffs
+| 11.40s call     test_algos.py::test_algo2
+| 9.11s call     test_algos.py::test_algo35_diffs
+| 4.88s call     test_algos.py::test_algo3_0
+| 4.32s call     test_algos.py::test_algo3_5
+| 2.48s call     test_helpers.py::test_emoji_getter
+| 2.21s call     test_algos.py::test_algo1_diffs
+| 1.49s setup    test_helpers.py::test_emoji_getter
+| 0.97s call     test_algos.py::test_algo1
+| 0.08s call     test_helpers.py::test_organize_twitch_chat_lg
+| 0.08s call     test_helpers.py::test_organize_twitch_chat_dtypes
+| 0.08s call     test_helpers.py::test_organize_twitch_chat_cols
+| 0.08s setup    test_brain.py::test_brain
+| 0.07s setup    test_brain.py::test_length
+| 0.06s setup    test_helpers.py::test_organize_twitch_chat_cols
+| 0.06s setup    test_helpers.py::test_organize_twitch_chat_dtypes
+| 0.06s setup    test_algos.py::test_algo30_diffs
+| 0.06s setup    test_algos.py::test_algo2
+| 0.06s setup    test_algos.py::test_algo3_5
+| 0.05s setup    test_algos.py::test_algo1
+| 0.05s setup    test_helpers.py::test_organize_twitch_chat_lg
+| 0.05s setup    test_algos.py::test_algo3_0
+| 0.04s setup    test_algos.py::test_algo35_diffs
+| 0.04s setup    test_algos.py::test_algo1_diffs
+| 0.04s setup    test_algos.py::test_algo2_diffs
+|
+| (23 durations &lt; 0.005s hidden.  Use -vv to show these durations.)
+| ======================== 17 passed in 118.31s (0:01:58) ========================
+[Run Unit Tests/test]   ✅  Success - Run Tests
+</code></pre>
+
+
+</details>
+
+<h2 id="testing-without-containers">Testing without Containers</h2>
+<p>You need <a href="">Python 3.8</a> or newer installed. Run the following in the project directory.</p>
+<pre><code class="language-bash">pip install -r requirement.txt
+pip install pytest
+cd prod/test
+pytest --duration=0 
+</code></pre>
+<h2 id="usage">Usage</h2>
+<pre><code class="language-python">from pillaralgos import OPTIONS  # replace options with an algo
+OPTIONS.run(data)                # see algo docstring for descriptions
+</code></pre>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+      
+        <a href="Algorithm_1/" class="md-footer__link md-footer__link--next" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Algorithm 1
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+        
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": ".", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "assets/javascripts/workers/search.4fa0e4ee.min.js", "version": null}</script>
+    
+    
+      <script src="assets/javascripts/bundle.1d3bfcf1.min.js"></script>
+      
+    
+  </body>
+</html>
