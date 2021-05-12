@@ -1,0 +1,29 @@
+site_name: Pillar Algos
+
+extra_css:
+  - stylesheets/pillar.css
+
+theme:
+  name: "material"
+  palette:
+    scheme: slate
+    primary: black
+    accent: deep purple
+  logo: pillargg.png
+  favicon: pillargg.png
+  icon:
+    repo: fontawesome/brands/github
+
+repo_url: https://github.com/pillargg/pillar_algos
+repo_name: pillargg/pillar_algos
+
+plugins:
+- search
+- mkdocstrings:
+    default_handler: python
+    handlers:
+      python:
+        rendering: 
+          show_sources: false
+      watch:
+        - prod

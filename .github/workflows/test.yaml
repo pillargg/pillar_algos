@@ -17,9 +17,8 @@ jobs:
       - name: Install Dependencies
         run: |
           pip install -r requirements.txt
-          pip install pytest
 
       - name: Run Tests
         run: |
           cd prod/test
-          pytest
+          pytest --durations=0

@@ -3,7 +3,9 @@ This script finds the top 10 active users, timestamps where they participated,
 filtered by at least `min_words` number of words sent by the user per stamp
 
 HOW TO
-    algo3_0.run(data, min_=2, limit=10, min_words=5, save_json = False)
+```
+algo3_0.run(data, min_=2, limit=10, min_words=5, save_json = False)
+```
 """
 import pandas as pd
 from .helpers import data_handler as dh
@@ -27,16 +29,21 @@ def results_formatter(list_chunk, goal):
     """
     Creates a new df `results` that contains the total number of words in the dataframe, the time
     the time the dataframe started and ended
-    input
+    
+    ### Input
     -----
+    ```
     list_chunk: list
         List of pd.DataFrame
     goal: str
         Col name that has calculated results (ex: num_words, chat_rate, etc.)
-    output
+    ```
+    ### Output
     ------
+    ```
     results: pd.DataFrame
         Dataframe with `start`, `end`, `num_words` columns
+    ```
     """
     time_start_list = []
     time_end_list = []
@@ -119,8 +126,9 @@ def run(data, min_=2, limit=10, min_words=5, save_json=False):
       - Once top users are identified, only those chunks are returned where top users
         sent at least `min_words` number of words.
 
-    input
+    ### Input
     ------
+    ```
     data: list
         List of dictionaries of data from Twitch chat
     min_: int
@@ -131,12 +139,14 @@ def run(data, min_=2, limit=10, min_words=5, save_json=False):
         When filtering chunks to top users, at least how many words the top user should send
     save_json: bool
         True if want to save results as json to exports folder
-
-    output
+    ```
+    ### Output
     ------
+    ```
     json_results: list
         List of dictionaries in json format, ordered from predicted best to worst candidates.
             Ex: [{start:TIMESTAMP_INT, end:TIMESTAMP_INT}]
+    ```
     """
     data = pd.DataFrame.from_records(data)
     big_df = dh.organize_twitch_chat(data)  # fetch appropriate data

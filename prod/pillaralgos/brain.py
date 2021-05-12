@@ -10,8 +10,9 @@ def run(data, clip_length, common_timestamps=2, algos_to_compare = ["algo1","alg
     '''
     Coordinates all 4 algorithms, then compares across results to see if any timestamps are shared between them. Runs all algos on default param settings.
     
-    input
+    ### Input
     -----
+    ```
     data: list
         List of dictionaries, like a json file in the format [{'startTime':float, 'endTime':float}]
     common_timestamps: int
@@ -20,12 +21,15 @@ def run(data, clip_length, common_timestamps=2, algos_to_compare = ["algo1","alg
         List of one of: "algo1","algo2","algo3_0","algo3_5"
     limit: int or None
         How many results should be returned. If None, all results surviving the X filter will be returned.
-    
-    output
+    ```
+
+    ### Output
     ------
+    ```
     new_json: list
         List of dictionaries, [{'startTime':float, 'endTime':float}]
-        Or 
+        
+    ```
     '''
     if len(algos_to_compare) < 1:
         return "algos_to_compare cannot be empty"

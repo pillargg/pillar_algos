@@ -3,7 +3,9 @@ This script finds the mean chat_rate per unique user per `min_` min chunk,
 isolates to each `min_` timestamp, and sorts the resulting df by largest number
 
 HOW TO
-    algo2.run(data, min_=2, limit=10, save_json = False)
+```
+algo2.run(data, min_=2, limit=10, save_json = False)
+```
 """
 import pandas as pd
 import datetime as dt
@@ -37,7 +39,7 @@ def rate_finder(dataframe, x=2):
     """
     Finds the rate of messages sent per X minutes for each user in the dataframe (assumed to be a chunk).
 
-    NOTE: if only 1 timestamp in chunk dataframe, assumes the chunk is exactly X minutes before the next chunk in the entire twitch chat stream
+    **NOTE**: if only 1 timestamp in chunk dataframe, assumes the chunk is exactly X minutes before the next chunk in the entire twitch chat stream
     """
     # Initiate new df
     id_results_all = pd.DataFrame(
@@ -96,8 +98,9 @@ def run(data, min_=2, limit=10, save_json=False):
     Runs algo2 to find the mean chat_rate per unique user per `min_` chunk,
     takes the means for each chunk, and then sorts by the highest mean rate.
 
-    input
+    ### Input
     ------
+    ```
     data: list
         List of dictionaries of data from Twitch chat
     min_: int
@@ -106,12 +109,15 @@ def run(data, min_=2, limit=10, save_json=False):
         Number of rows/dictionaries/timestamps to return
     save_json: bool
         True if want to save results as json to exports folder
+    ```
 
-    output
+    ### Output
     ------
+    ```
     json_results: list
         List of dictionaries in json format, ordered from predicted best to worst candidates.
             Ex: [{start:TIMESTAMP_INT, end:TIMESTAMP_INT}]
+    ```            
     """
     data = pd.DataFrame.from_records(data)
     big_df = d.organize_twitch_chat(data)  # fetch appropriate data

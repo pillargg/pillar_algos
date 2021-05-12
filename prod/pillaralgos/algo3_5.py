@@ -3,7 +3,9 @@ This script finds the number of words/emojis/both depending on `goal` variable,
 isolates to each `min_` timestamp, and sorts the resulting df by largest number
 
 HOW TO
-    algo3_5.run(data, min_=2, limit=10, goal='num_words_emo', save_json = False)
+```
+algo3_5.run(data, min_=2, limit=10, goal='num_words_emo', save_json = False)
+```
 """
 import pandas as pd
 from .helpers import data_handler as d
@@ -14,14 +16,16 @@ def thalamus(big_df, min_, goal="num_words"):
     Calculates num_words/emoji/both then runs through functions to
     split big_df, format for saving, and save as json
 
-    input
+    ### Input
     -----
+    ```
     big_df: pd.DataFrame
         twitch stream chat dataframe
     min_: int
         number of minutes each chunk should be
     goal: str
         one of `num_words`, `num_emo`, or `num_words_emo`
+    ```
     """
     # cut
     big_df = algorithm(big_df)
@@ -55,17 +59,23 @@ def algorithm(big_df):
 def results_formatter(dataframe, goal):
     """
     Creates a new df `results` that contains the total number of words in the dataframe, the time
-    the time the dataframe started and ended
-    input
+    the time the dataframe started and ended.
+
+
+    ### Input
     -----
+    ```
     dataframe: pd.DataFrame
         Dataframe with all the hours and chunks labeled, and num_words calculated
     goal: str
         Col name that has calculated results (ex: num_words, chat_rate, etc.)
-    output
+    ```
+    ### Output
     ------
+    ```
     results: pd.DataFrame
         Dataframe with `hour`, `chunk`, `start`, `end`, `num_words` columns
+    ```
     """
     hour_list = []
     chunk_list = []
@@ -119,8 +129,9 @@ def run(data, min_=2, limit=10, goal="num_words_emo", save_json=False):
     """
     Runs algo3_5 to sort timestamps by the number of words+emojis by default.
 
-    input
+    ### Input
     ------
+    ```
     data: list
         List of dictionaries of data from Twitch chat
     min_: int
@@ -133,12 +144,15 @@ def run(data, min_=2, limit=10, goal="num_words_emo", save_json=False):
         'num_words_emo': sum of the number of words + emoticons in each chat message
     save_json: bool
         True if want to save results as json to exports folder
+    ```
 
-    output
+    ### Output
     ------
+    ```
     json_results: list
         List of dictionaries in json format, ordered from predicted best to worst candidates.
             Ex: [{start:TIMESTAMP_INT, end:TIMESTAMP_INT}]
+    ```
     """
     data = pd.DataFrame.from_records(data)
     big_df = d.organize_twitch_chat(data)  # fetch appropriate data
