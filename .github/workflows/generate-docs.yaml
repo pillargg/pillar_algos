@@ -17,6 +17,8 @@ jobs:
       with:
         python-version: 3.8
     - name: Install Dependencies
-      run: pip install mkdocstrings mkdocs-material
+      run: |
+        pip install mkdocstrings mkdocs-material
+        pip install -r requirements.txt
     - name: Update Docs
       run: mkdocs gh-deploy --force
