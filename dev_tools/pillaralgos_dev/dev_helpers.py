@@ -8,7 +8,7 @@ HOW TO:
 
 
 class awsBucketAPI:
-    def __init__(self):
+    def __init__(self, choose_bucket=False):
         """
         Initializes connection to AWS bucket.
 
@@ -19,8 +19,16 @@ class awsBucketAPI:
             results = aws.get_top_file_sizes(save=False)
             names = aws.get_random_file_names(n=5)
             aws.save_files(names)
+
+        input
+        -----
+        choose_bucket: bool
+            "False" to load default bucket (the one with full chat records)
+            "True" to print out all buckets with "messagestore" in it, prompt user 
+            to choose an id (also suggests 2 to choose from)
         """
         # connect to aws
+        self.choose_bucket = choose_bucket
         import boto3
 
         self.s3r = boto3.resource("s3")
@@ -31,21 +39,72 @@ class awsBucketAPI:
 
     def get_bucket_name(self):
         """
-        Grabs the twitch chat bucket name, as long as its the only one that contains
-        "messagestore" in it. Returns False if more than one match.
+        Grabs the twitch chat bucket name. Returns False if 0 matches for "messagestore".
         """
+        known_buckets = {
+            'prod-prod-messagestore60e7afc8-z09kg03c2kxl':'Full chat records',
+            'prod-timestamps-messagestore60e7afc8-dmylgjgqhcij':'CCC records'
+        }
         # get list of buckets
         buckets = []
         for bucket in self.s3r.buckets.all():
             buckets.append(bucket.name)
+
         # bucket name and test
-        chat_bucket = [x for x in buckets if "prod-prod-messagestore" in x]
-        if len(chat_bucket) == 1:
-            self.chat_bucket = chat_bucket[0]
+        chat_bucket = [x for x in buckets if "messagestore" in x]
+        if len(chat_bucket) >= 0:
+            if self.choose_bucket:
+                print(chat_bucket)
+                print('''
+                Known buckets:
+                    Full chat records [1]: prod-prod-messagestore60e7afc8-z09kg03c2kxl
+                    CCC records [2]: prod-timestamps-messagestore60e7afc8-dmylgjgqhcij
+                ''')
+                chosen = input("Choose the bucket (ex: 1, 2, or a full id): ")
+                # convenience, so user can choose 1 or 2
+                if chosen == '1':
+                    chosen = 'prod-prod-messagestore60e7afc8-z09kg03c2kxl'
+                elif chosen == '2':
+                    chosen = 'prod-timestamps-messagestore60e7afc8-dmylgjgqhcij'
+                # select user chosen bucket
+                self.chat_bucket = [buck for buck in chat_bucket if chosen in buck][0]
+                # print appropriate message
+                if chosen in known_buckets.keys():
+                    print(f'Loaded {known_buckets[chosen]}')
+                else:
+                    print("Loaded user defined bucket")
+            else:
+                # select the default, full chat records
+                self.chat_bucket = 'prod-prod-messagestore60e7afc8-z09kg03c2kxl'
+                print("Loaded bucket with full chat records")
         else:
             print(f"{len(chat_bucket)} buckets contained 'messagestore'")
             self.test = False
+    def get_all_filenames(self, save=False):
+        '''
+        Retrieves all filenames for user review
 
+        input
+        -----
+        save: bool
+            True if the files should be saved to data/*.json. Calls self.save_files.
+
+        output
+        ------
+        results: list
+            List of filenames, sorted by filesize
+        '''
+        import pandas as pd
+        objects = self.s3c.list_objects(Bucket=self.chat_bucket)
+        content = objects["Contents"]
+        df_objects = pd.DataFrame.from_records(content)[["Key", "LastModified", "Size"]]
+        df_objects = df_objects.sort_values("Size").reset_index(drop=True)
+        
+        if save:
+            self.save_files(df_objects)
+        else:
+            return df_objects
+        
     def get_top_filenames(self, save=False):
         """
         Retrieves 16 file names: the top 5 smallest files, top 5 largest files, and

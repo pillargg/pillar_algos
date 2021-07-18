@@ -7,4 +7,4 @@ HOW TO:
     from pillaralgos_dev import dev_helpers as dev
     from pillaralgos_dev import sanity_checks as sane
 '''
-__version__ = '0.1.3'
+__version__ = '0.1.4'

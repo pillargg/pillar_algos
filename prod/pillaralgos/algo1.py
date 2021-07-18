@@ -7,7 +7,7 @@ HOW TO
 """
 
 import pandas as pd
-from .helpers import data_handler as d
+from helpers import data_handler as d
 
 
 def perc_uniques(chunk_list, min_, total_uniques, big_unique):
