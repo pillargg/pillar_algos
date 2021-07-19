@@ -5,6 +5,7 @@ Common functions to help in developing `pillaralgos` library. Includes
     * User can choose specific bucket ("as long as it has messagestore in it")
     * User can retrieve list of all files' names in the bucket
     * User can save all files, specific files, random files, or quadrum of files
+    * User can check whether a specific file or a list of filenames exist in the bucket
 * `dev_helpers.plot_with_time` to create a time series plot with conveniently formatted xaxis
 * `sanity_checks` future site of error catchers
 

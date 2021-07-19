@@ -2,7 +2,7 @@
 Tools for calling AWS, file management, graphing convenience.
 
 HOW TO:
-    aws = dev_help.awsBucketAPI()
+    aws = dev_help.awsBucketAPI(choose_bucket=False)
     dev_help.plot_with_time(x, y, data, xformat="%H:%m")
 """
 
@@ -15,7 +15,7 @@ class awsBucketAPI:
         NOTE:
             Must have AWS CLI installed and configured using `aws configure`
         HOW TO:
-            aws = awsBucketAPI()
+            aws = awsBucketAPI(choose_bucket=False)
             results = aws.get_top_file_sizes(save=False)
             names = aws.get_random_file_names(n=5)
             aws.save_files(names)
@@ -225,6 +225,65 @@ class awsBucketAPI:
 
         self.s3c.download_file(self.chat_bucket, aws_file, f"data/{filesave}.json")
 
+    def check_file_exists(self, filename: str) -> bool:
+        '''
+        Returns True if the given filename exists in the bucket, otherwise False
+        '''
+        import botocore
+        try:
+            self.s3r.Object(self.chat_bucket, str(filename)).load()
+        except botocore.exceptions.ClientError as e:
+            if e.response['Error']['Code'] == "404":
+                # The object does not exist.
+                return False
+            else:
+                # Something else has gone wrong.
+                raise
+        else:
+            # The object does exist.
+            return True
+
+    def check_these_files_exist(self, mylist: list, prog_bar=False) -> list:
+        '''
+        Checks which of the files in the list are or are not in the bucket.
+
+        input
+        -----
+        mylist: list
+            List of filenames (str, int, float)
+        prog_bar: bool
+            Whether to show tqdm progress bar. Jupyter only
+
+        output
+        ------
+        exists: list
+            List of filenames that also exist in s3 bucket
+        missing: list
+            List of filenames that do not exist in the s3 bucket
+        '''
+        import botocore
+        exists = []
+        missing = []
+
+        if prog_bar:
+            from tqdm.notebook import tqdm as prog_bar
+            check_list = prog_bar(mylist)
+        else:
+            check_list = mylist
+        for file in check_list:
+            try:
+                self.s3r.Object(self.chat_bucket, str(file)).load()
+            except botocore.exceptions.ClientError as e:
+                if e.response['Error']['Code'] == "404":
+                    # The object does not exist.
+                    missing.append(file)
+                else:
+                    # Something else has gone wrong.
+                    raise
+            else:
+                # The object does exist.
+                exists.append(file)
+        return exists, missing
 
 def plot_with_time(x, y, data, xformat="%H:%m"):
     """
