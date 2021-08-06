@@ -21,6 +21,10 @@ Pillar is creating an innovative way to automatically select and splice clips fr
    2. Algo 3.6: Average sentiment of emojis used in the clip range
 4. Algo 4: Average NLP sentiment during clip range
    1. Make sentiment for the overall stream, and rank clip for how intense of an emotion it is compared to the overall sentiment
+5. Repeated Lines This simple comparison is also a running percentage of the number of repeated lines in a segment. Emotes excluded again this is a very simple text comparison. In future iterations I would hope to be able to take advantage of a better (and cheaper :)) text analysis tool to better compare text lines for similarity.
+6. Emote Spam This simple calculation shows the percentage of chat lines that were emote only and contained more than one emote. No hard calculations here as I am able to grab the emote tags to determine if emotes are present and how many and this becomes my counter.
+
+
 
 ## Datasets:
 1. Preliminary data `prelim_df`: 545 rows representing one 3 hour 35 minute 26 second twitch stream chat of [Hearthstone by LiiHS](https://www.twitch.tv/videos/963184458)
