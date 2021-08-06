@@ -18,6 +18,9 @@ Pillar is creating an innovative way to automatically select and splice clips fr
 1. [Algorithm 3 (WIP)](https://github.com/pomkos/twitch_chat_analysis/blob/reorganize_repo/algorithm_3.ipynb) Weigh each user by their chat rate, account age, etc. Heavier users predicted to chat more often at "best moment" timestamps 
    1. __STATUS__: current weight determined by (`num_words_of_user`/`num_words_of_top_user`)
    1. [Algorithm 3.5](https://github.com/pomkos/twitch_chat_analysis/blob/reorganize_repo/algorithm_3.5.ipynb) Finds the best moments in clips based on most number of words/emojis/both used in chat
+   2. Algo 3.6: Average sentiment of emojis used in the clip range
+4. Algo 4: Average NLP sentiment during clip range
+   1. Make sentiment for the overall stream, and rank clip for how intense of an emotion it is compared to the overall sentiment
 
 ## Datasets:
 1. Preliminary data `prelim_df`: 545 rows representing one 3 hour 35 minute 26 second twitch stream chat of [Hearthstone by LiiHS](https://www.twitch.tv/videos/963184458)
