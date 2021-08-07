@@ -10,6 +10,7 @@
 # Background
 Pillar is creating an innovative way to automatically select and splice clips from Twitch videos for streamers. This repo is focusing on the algorithm aspect. Three main algorithms are being tested.
 
+
 ## Algorithms
 
 1. [Algorithm 1](https://github.com/pomkos/twitch_chat_analysis/blob/reorganize_repo/algorithm_1.ipynb): Find the best moments in clips based on where the most users participated. Most is defined as the *ratio of unique users* during a 2 min section to unique users for the entire session.
@@ -17,12 +18,15 @@ Pillar is creating an innovative way to automatically select and splice clips fr
    1. __NOTE__: Currently answers the question "at which 2 min segment do users send the most messages fastest"
 1. [Algorithm 3 (WIP)](https://github.com/pomkos/twitch_chat_analysis/blob/reorganize_repo/algorithm_3.ipynb) Weigh each user by their chat rate, account age, etc. Heavier users predicted to chat more often at "best moment" timestamps 
    1. __STATUS__: current weight determined by (`num_words_of_user`/`num_words_of_top_user`)
-   1. [Algorithm 3.5](https://github.com/pomkos/twitch_chat_analysis/blob/reorganize_repo/algorithm_3.5.ipynb) Finds the best moments in clips based on most number of words/emojis/both used in chat
-   2. Algo 3.6: Average sentiment of emojis used in the clip range
+   1. [Algorithm 3.5](https://github.com/pomkos/twitch_chat_analysis/blob/reorganize_repo/algorithm_3.5.ipynb) Weighs clips based on most number of words/emojis/both used in chat
+   2. Algo 3.6: ranks algorithms based mean emoji use by users, calculated as "number of emojis used at timestamp divided by number of unique users at that timestamp"
 4. Algo 4: NLP sentiment per clip segment
-   1. Run standard NLP sentiment analysis algo on each 2 minute segment of the stream, assigning it a sentiment
-5. Repeated Lines This simple comparison is also a running percentage of the number of repeated lines in a segment. Emotes excluded again this is a very simple text comparison. In future iterations I would hope to be able to take advantage of a better (and cheaper :)) text analysis tool to better compare text lines for similarity.
-6. Emote Spam This simple calculation shows the percentage of chat lines that were emote only and contained more than one emote. No hard calculations here as I am able to grab the emote tags to determine if emotes are present and how many and this becomes my counter.
+   1. Weighs each timestamp by what percent of sentiment was positive, negative, or neutral
+
+### New ideas from readings
+
+1. _This is basically algo 3_5_: Repeated Lines This simple comparison is also a running percentage of the number of repeated lines in a segment. Emotes excluded again this is a very simple text comparison. In future iterations I would hope to be able to take advantage of a better (and cheaper :)) text analysis tool to better compare text lines for similarity.
+1. _This is basically algo 3_6_: Emote Spam This simple calculation shows the percentage of chat lines that were emote only and contained more than one emote. No hard calculations here as I am able to grab the emote tags to determine if emotes are present and how many and this becomes my counter.
 
 
 
