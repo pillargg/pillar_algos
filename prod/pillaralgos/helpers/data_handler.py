@@ -295,7 +295,7 @@ def results_jsonified(results, first_sec, results_col):
     first_sec: datetime
         The very first timestamp in the entire twitch chat log. Used to calculate elapsed time in seconds.
     results_col: str
-        Column to sort values by (ascending=False)
+        Column(s) to sort values by (ascending=False)
 
     output
     ------

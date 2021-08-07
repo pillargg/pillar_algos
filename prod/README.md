@@ -90,11 +90,7 @@ To publish just run the `poetry publish --build` command after update version nu
 
 # Changelog
 
-* Moved `dev` and `prod` folders out of `pypi` folder for ease of access
-* New licensing
-* Added unit tests, sample data, sample answers (#6, #17, #18)
-* Fixed use of iloc vs loc (#20)
-* Algos2,3_0,3_5 now properly outputs correct lengths based on param input (#15, #21, #31)
-* Algos return empty numpy array if no results found
-* Created `brain.run()` that runs all algos and then returns common timestamps amongst them. See `help(brain)` and `help(brain.run` for more info
-* Removed some old notebooks, moved some code to `archive.ipynb`
+* New algorithms
+* Algo3.6: rank timestamps by emoji:user ratio
+* Algo4: rank timestamps by compound score from SentimentAnalyzer
+* Unit testing for algo 3.6
