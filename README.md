@@ -1,7 +1,7 @@
 # Table of Contents
 1. [Background](#background)
 1. [Features](#features)
-   2. [New ideas from readings]
+   1. New ideas from readings
 3. [Dataset](#dataset)
 
 
