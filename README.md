@@ -24,6 +24,8 @@ All code and documentation so far is focused on 1) predict which clips in a stre
 
 ### New ideas from readings
 
+1. Timestamp with highest percentage of sub users participating
+1. Cluster chat via [brown clustering](https://towardsdatascience.com/a-friendly-introduction-to-text-clustering-fa996bcefd04) or [something like that](https://www.researchgate.net/publication/320849253_Stream_Clustering_of_Chat_Messages_with_Applications_to_Twitch_Streams)
 1. _This is basically algo 3_5_: Repeated Lines This simple comparison is also a running percentage of the number of repeated lines in a segment. Emotes excluded again this is a very simple text comparison. In future iterations I would hope to be able to take advantage of a better (and cheaper :)) text analysis tool to better compare text lines for similarity.
 1. _This is basically algo 3_6_: Emote Spam This simple calculation shows the percentage of chat lines that were emote only and contained more than one emote. No hard calculations here as I am able to grab the emote tags to determine if emotes are present and how many and this becomes my counter.
 
