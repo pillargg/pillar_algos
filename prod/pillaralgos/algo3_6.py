@@ -36,11 +36,10 @@ class emoticonExtractor:
             int: Return only the top X timestamps (using df.head(X))
             None: Return all timestamps
         """
-        self.big_df = dh.organize_twitch_chat(data)  # organize
-        self.first_stamp, self.chunks_list = dh.get_chunks(
-            self.big_df, min_=chunk_length
-        )  # first timestamp + list of X min chunks
-        self.vid_id = data[0]["content_id"]
+        self.big_df = data[0]
+        self.first_stamp = data[1]
+        self.chunks_list = data[2]
+        self.vid_id = data[3]
 
         self.sort_by = sort_by
         self.limit = limit

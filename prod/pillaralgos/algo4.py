@@ -3,7 +3,7 @@ Contains one class `sentimentRanker()` that returns a json of timestamps ranked 
 a user chosen metric. Sentiment score is compouted using nltk.sentiment.vader.SentimentIntensityAnalyzer()
 
 HOW TO:
-    sr = sentimentRanker(data, sort_by='abs_overall', limit=10, chunk_length=2, save_json=False)
+    sr = sentimentRanker(data, sort_by='abs_overall', limit=10, save_json=False)
     results = sr.run()
 """
 import pandas as pd
@@ -11,7 +11,7 @@ from .helpers import data_handler as dh
 
 
 class sentimentRanker():
-    def __init__(self, data, sort_by='abs_overall', limit=10, chunk_length=2, save_json=False):
+    def __init__(self, data, sort_by='abs_overall', limit=10):
         """
         Gets data ready for sentiment analysis. Initializes dicts, lists, etc.
 
@@ -30,19 +30,14 @@ class sentimentRanker():
         limit: int, None
             int: Return only the top X timestamps (using df.head(X))
             None: Return all timestamps
-        
-        chunk_length: int
-            How long timestamps returned should be, in minutes.
         """
-        self.big_df = dh.organize_twitch_chat(data)  # organize
-        self.first_stamp, self.chunks_list = dh.get_chunks(
-            self.big_df, min_=chunk_length
-        )  # first timestamp + list of X min chunks
-        self.vid_id = data[0]["content_id"]
+        self.big_df = data[0]
+        self.first_stamp = data[1]
+        self.chunks_list = data[2]
+        self.vid_id = data[3]
 
         self.sort_by = sort_by
         self.limit = limit
-        self.save_json = save_json
 
     def run(self):
         import numpy as np
@@ -54,9 +49,6 @@ class sentimentRanker():
             if type(self.limit) == int:
                 # grab only the top X most used
                 json_results = json_results[: self.limit]
-
-            if self.save_json:
-                dh.save_json(json_results, f"algo3.6_{self.sort_by}")
 
             return json_results
         else:

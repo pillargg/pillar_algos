@@ -115,7 +115,7 @@ def num_words_in_chat(dataframe):
     return dataframe
 
 
-def run(data, min_=2, limit=10, goal="num_words_emo", save_json=False):
+def run(data, min_=2, limit=10, goal="num_words_emo"):
     """
     Runs algo3_5 to sort timestamps by the number of words+emojis by default.
 
@@ -140,17 +140,18 @@ def run(data, min_=2, limit=10, goal="num_words_emo", save_json=False):
         List of dictionaries in json format, ordered from predicted best to worst candidates.
             Ex: [{start:TIMESTAMP_INT, end:TIMESTAMP_INT}]
     """
-    data = pd.DataFrame.from_records(data)
-    big_df = d.organize_twitch_chat(data)  # fetch appropriate data
-    if type(big_df) == pd.DataFrame:
-        results, first_stamp = thalamus(big_df, min_, goal=goal)
-        results = results.head(limit)
-        
-        # results_jsonified sorts by top calc
-        json_results = d.results_jsonified(results, first_stamp, goal)
-        if save_json:
-            d.save_json(json_results, f"algo3.5_{goal}")
+    # unpack data tuple
+    big_df = data[0]
+    first_stamp = data[1]
+    
+    #### 
+    # NOTE: this algo splits big_df after everything was calculated.
+    # chunk_list = data[2]
+    # vid_id = data[3]
+    ####
+    
+    results, first_stamp = thalamus(big_df, min_, goal=goal)
 
-        return json_results
-    else:
-        return big_df # this is an empty numpy array if it is not a DF.
+    # results_jsonified sorts by top calc
+    json_results = d.results_jsonified(results, first_stamp, goal)
+    return json_results
