@@ -10,8 +10,8 @@ import pandas as pd
 from .helpers import data_handler as dh
 
 
-class sentimentRanker():
-    def __init__(self, data:list, sort_by:str, limit:int):
+class featureFinder():
+    def __init__(self, data: list, sort_by:str, limit:int):
         """
         Gets data ready for sentiment analysis. Initializes dicts, lists, etc.
 
@@ -40,19 +40,9 @@ class sentimentRanker():
         self.limit = limit
 
     def run(self):
-        import numpy as np
-        if type(self.big_df) == pd.DataFrame:
-            results = self.thalamus()
-            self.results = results
-            # results_jsonified sorts by top calc
-            json_results = dh.results_jsonified(results, self.first_stamp, self.sort_by)
-            if type(self.limit) == int:
-                # grab only the top X most used
-                json_results = json_results[: self.limit]
+        results = self.thalamus()
+        self.results = results
 
-            return json_results
-        else:
-            return np.array([])  # this is an empty numpy array if it is not a DF.
 
     def thalamus(self):
         chunk_data = pd.DataFrame()
@@ -83,6 +73,8 @@ class sentimentRanker():
     def finalizer(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         
         dataframe['vid_id'] = self.vid_id
+        dataframe = dataframe.sort_values(self.sort_by, ascending=False)
+
         return dataframe
         
     def sent_analysis(self, cell: str, expand = True) -> pd.DataFrame:

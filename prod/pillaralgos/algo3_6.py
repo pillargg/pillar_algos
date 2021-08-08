@@ -14,7 +14,7 @@ import numpy as np
 from .helpers import data_handler as dh
 
 
-class emoticonExtractor:
+class featureFinder():
     def __init__(
         self, data: list, sort_by:str, limit:int, chunk_length:int):
         """
@@ -32,7 +32,7 @@ class emoticonExtractor:
                 "ratio_then_perc" - first sort with "emoji_user_ratio", then by "perc_emoji_of_stream"
 
             Return timestamps with the highest `sort_by` value
-        limit: int, None
+        limit: int or None
             int: Return only the top X timestamps (using df.head(X))
             None: Return all timestamps
         """
@@ -116,7 +116,7 @@ class emoticonExtractor:
             chunk_data["num_emoji"] / chunk_data["num_user"]
         )
 
-        result = self.finalize(chunk_data)
+        result = self.finalizer(chunk_data)
         return result
 
     ### ACTUAL FUNCTIONS ###
