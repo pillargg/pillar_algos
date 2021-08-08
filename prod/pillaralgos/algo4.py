@@ -11,7 +11,7 @@ from .helpers import data_handler as dh
 
 
 class sentimentRanker():
-    def __init__(self, data, sort_by='abs_overall', limit=10):
+    def __init__(self, data:list, sort_by:str, limit:int):
         """
         Gets data ready for sentiment analysis. Initializes dicts, lists, etc.
 

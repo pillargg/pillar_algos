@@ -9,18 +9,17 @@ import pandas as pd
 from .helpers import data_handler as dh
 
 
-def thalamus(big_df, min_, goal, min_words):
+def thalamus(big_df,chunk_list, goal, min_words):
     '''
     Coordinates the other functions in this algo and data_helper. Separate from 
     `run()` for sanity purposes.
     '''
 
     id_words = id_words_counter(big_df)
-    first_stamp, chunk_list = dh.get_chunks(big_df, min_=min_)
     top_chunks = new_chunk_list(id_words, chunk_list, min_words=min_words)
     results = results_formatter(top_chunks, goal=goal) # sorted by top goal
 
-    return results, first_stamp
+    return results
 
 
 def results_formatter(list_chunk, goal):
@@ -112,7 +111,7 @@ def id_words_counter(big_df):
     return id_words
 
 
-def run(data, min_=2, limit=10, min_words=5, save_json=False):
+def run(data: list, limit: int, min_words: int) -> list:
     """
     Runs algo3_0 to extract only those chunks where the top 10 users participated.
       - Top users are defined as "sent the most words in the entire twitch stream".
@@ -123,8 +122,6 @@ def run(data, min_=2, limit=10, min_words=5, save_json=False):
     ------
     data: list
         List of dictionaries of data from Twitch chat
-    min_: int
-        Approximate number of minutes each clip should be
     limit: int
         Number of rows/dictionaries/timestamps to return
     min_words:int
@@ -138,17 +135,15 @@ def run(data, min_=2, limit=10, min_words=5, save_json=False):
         List of dictionaries in json format, ordered from predicted best to worst candidates.
             Ex: [{start:TIMESTAMP_INT, end:TIMESTAMP_INT}]
     """
-    data = pd.DataFrame.from_records(data)
-    big_df = dh.organize_twitch_chat(data)  # fetch appropriate data
-    if type(big_df) == pd.DataFrame:
-        results, first_stamp = thalamus(big_df, min_=min_, min_words=min_words, goal="num_top_user_appears")
-        results = results.head(limit)
-        
-        # results_jsonified sorts by top calc
-        json_results = dh.results_jsonified(results, first_stamp, results_col="num_top_user_appears")
-        if save_json:
-            dh.save_json(json_results, f"algo3.0_top_user_appears")
+    big_df = data[0]
+    first_stamp = data[1]
+    chunk_list = data[2]
 
-        return json_results
-    else:
-        return big_df # this is an empty numpy array if it is not a DF.
+    results, first_stamp = thalamus(big_df, chunk_list, min_words=min_words, goal="num_top_user_appears")
+    results = results.head(limit)
+    
+    # results_jsonified sorts by top calc
+    json_results = dh.results_jsonified(results, first_stamp, results_col="num_top_user_appears")
+
+    return json_results
+

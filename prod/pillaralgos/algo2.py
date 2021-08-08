@@ -10,13 +10,12 @@ import datetime as dt
 from .helpers import data_handler as d
 
 
-def thalamus(dataframe, min_):
+def thalamus(chunk_list, min_):
     """
     Formats data for rate_finder(), gets chunk_list to pass through rate_finder
     """
     # split into hours
-    first_stamp, chunk_list = d.get_chunks(dataframe, min_=min_)
-    
+   
     chat_rates = pd.DataFrame(
         columns=["hour", "chunk", "start", "end", "_id", "num_chats", f"chats_per_{min_}min"]
     )
@@ -30,7 +29,7 @@ def thalamus(dataframe, min_):
     chat_rates_mean = chat_rates_mean.sort_values(f"chats_per_{min_}min", ascending=False) # sorted by top mean chat rates
     
 
-    return chat_rates_mean, first_stamp
+    return chat_rates_mean
 
 
 def rate_finder(dataframe, x=2):
@@ -91,7 +90,7 @@ def rate_finder(dataframe, x=2):
     return chat_rate_df.reset_index(drop=True)
 
 
-def run(data, min_=2, limit=10, save_json=False):
+def run(data:list, min_:int, limit:int) -> list:
     """
     Runs algo2 to find the mean chat_rate per unique user per `min_` chunk,
     takes the means for each chunk, and then sorts by the highest mean rate.
@@ -113,17 +112,13 @@ def run(data, min_=2, limit=10, save_json=False):
         List of dictionaries in json format, ordered from predicted best to worst candidates.
             Ex: [{start:TIMESTAMP_INT, end:TIMESTAMP_INT}]
     """
-    data = pd.DataFrame.from_records(data)
-    big_df = d.organize_twitch_chat(data)  # fetch appropriate data
-    if type(big_df) == pd.DataFrame:
-        results, first_stamp = thalamus(big_df, min_)
-        results = results.head(limit)
-        # results_jsonified sorts by top calc
-        json_results = d.results_jsonified(results, first_stamp, f"chats_per_{min_}min")
+    
+    first_stamp = data[1]
+    chunk_list = data[2]
 
-        if save_json:
-            d.save_json(json_results, f"algo2_mean_rate_per_{min_}min")
+    results = thalamus(chunk_list, min_)
+    results = results.head(limit)
+    # results_jsonified sorts by top calc
+    json_results = d.results_jsonified(results, first_stamp, f"chats_per_{min_}min")
 
-        return json_results
-    else:
-        return big_df # this is an empty numpy array if it is not a DF.
+    return json_results

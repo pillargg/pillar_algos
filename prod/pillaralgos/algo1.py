@@ -104,19 +104,15 @@ def hour_iterator(big_df, limit, min_=2, sort_by="rel"):
     results["elapsed"] = results["end"] - results["start"]  # to double check length
     results = results.sort_values(f"perc_{sort_by}_unique", ascending=False)
     results = results.head(limit)
-    pretty_results = results.reset_index(drop=True)  # prettify
-    pretty_results = pretty_results.sort_values(
-        f"perc_{sort_by}_unique", ascending=False
-    )
     # results_jsonified sorts by top calc
     json_results = d.results_jsonified(
         results, first_sec, results_col=f"perc_{sort_by}_unique"
     )  
 
-    return pretty_results, json_results # results sorted by percent unique
+    return json_results # results sorted by percent unique
 
 
-def run(data, min_=2, limit=10, sort_by="rel", save_json=False):
+def run(data, min_:int, limit:int, sort_by:str) -> list:
     """
     Runs algo1 to sort timestamps by the relative percentage of chatters by default.
 
@@ -134,12 +130,10 @@ def run(data, min_=2, limit=10, sort_by="rel", save_json=False):
     save_json: bool
         True if want to save results as json to exports folder
     """
-    data = pd.DataFrame.from_records(data)
-    big_df = d.organize_twitch_chat(data)  # fetch appropriate data
-    if type(big_df) == pd.DataFrame:
-        results, json_results = hour_iterator(big_df, min_=min_, sort_by=sort_by, limit=limit)
-        if save_json:
-            d.save_json(json_results, name=f"algo1_perc_{sort_by}_unique")
-        return json_results
-    else:
-        return big_df # this is an empty numpy array if it is not a DF.
+    big_df = data[0]  # fetch appropriate data
+    first_stamp = data[1]
+    chunks_list = data[2]
+    vid_id = data[3]
+    json_results = hour_iterator(big_df, min_=min_, sort_by=sort_by, limit=limit)
+
+    return json_results

@@ -2,11 +2,10 @@
 Coordinates all 4 algorithms, then compares across results to see if any timestamps are shared between them
 '''
 import pandas as pd
-from pillaralgos import algo1, algo2, algo3_0, algo3_5, algo3_6, algo4
-from .helpers import data_handler as dh
-import json
 import numpy as np
 
+from pillaralgos import algo1, algo2, algo3_0, algo3_5, algo3_6, algo4
+from .helpers import data_handler as dh
 
 ### Functions in common across all algos ###
 def load_data(data, clip_length):
@@ -21,9 +20,21 @@ def load_data(data, clip_length):
     else:
         return np.array([])
 
+def format_json_results(results, first_stamp, sort_by):
+    json_results = dh.results_jsonified(results, first_stamp, sort_by)
 
-def format_results(results, first_stamp, sort_by):
-    dh.results_jsonified(results, first_stamp, sort_by)
+    return json_results
+
+### Helper functions
+def format_feature_df():
+    '''
+    Helper function to create the feature set from which ML algorithm will be trained
+    '''
+    feature_df = pd.DataFrame(
+        columns=['vid_id','startTime','endTime','algo1_metric',
+                 'algo2_metric','algo3_metric, algo3_5_metric',
+                  'algo3_6_metric', 'algo4_metric','ccc_label'])
+    
 
 ### Run selected algos ###
 def run(data, clip_length, common_timestamps=2, algos_to_compare = ["algo1","algo2","algo3_0","algo3_5"], limit=None, save_json=False):

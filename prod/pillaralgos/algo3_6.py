@@ -10,13 +10,13 @@ HOW TO:
     results = ee.run()
 """
 import pandas as pd
+import numpy as np
 from .helpers import data_handler as dh
 
 
 class emoticonExtractor:
     def __init__(
-        self, data, sort_by="perc_then_ratio", limit=10, chunk_length=2, save_json=False
-    ):
+        self, data: list, sort_by:str, limit:int, chunk_length:int):
         """
         Gets data ready for emo extraction. Initializes dicts, lists, etc.
 
@@ -43,7 +43,6 @@ class emoticonExtractor:
 
         self.sort_by = sort_by
         self.limit = limit
-        self.save_json = save_json
 
     def run(self):
         if type(self.big_df) == pd.DataFrame:

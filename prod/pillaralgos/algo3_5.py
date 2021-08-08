@@ -115,7 +115,7 @@ def num_words_in_chat(dataframe):
     return dataframe
 
 
-def run(data, min_=2, limit=10, goal="num_words_emo"):
+def run(data:list, min_:int, limit:int, goal:str) -> list:
     """
     Runs algo3_5 to sort timestamps by the number of words+emojis by default.
 
