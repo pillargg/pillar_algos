@@ -1,15 +1,15 @@
 """
 This script finds the number of words/emojis/both depending on `sort_by` variable,
-isolates to each `min_` timestamp, and sorts the resulting df by largest number
+isolates to each `clip_length` timestamp, and sorts the resulting df by largest number
 
 HOW TO
-    algo3_5.run(data, min_=2, limit=10, sort_by='num_words_emo', save_json = False)
+    algo3_5.run(data, clip_length=2, limit=10, sort_by='num_words_emo', save_json = False)
 """
 import pandas as pd
 from .helpers import data_handler as d
 
 class featureFinder():
-    def __init__(self, data:list, min_:int, limit:int, sort_by:str) -> list:
+    def __init__(self, data:list, clip_length:int, limit:int, sort_by:str) -> list:
         """
         Runs algo3_5 to sort timestamps by the number of words+emojis by default.
 
@@ -17,7 +17,7 @@ class featureFinder():
         ------
         data: list
             List of dictionaries of data from Twitch chat
-        min_: int
+        clip_length: int
             Approximate number of minutes each clip should be
         limit: int or None
             Number of rows/dictionaries/timestamps to return
@@ -39,8 +39,9 @@ class featureFinder():
         self.first_stamp = data[1]
         self.chunk_list = data[2]
         self.vid_id = data[3]
-
-        self.min_ = min_
+        
+        self.clip_length = clip_length
+        self.limit = limit
         self.sort_by = sort_by
 
     def run(self):
@@ -52,7 +53,7 @@ class featureFinder():
         -----
         big_df: pd.DataFrame
             twitch stream chat dataframe
-        min_: int
+        clip_length: int
             number of minutes each chunk should be
         sort_by: str
             one of `num_words`, `num_emo`, or `num_words_emo`

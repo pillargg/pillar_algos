@@ -1,25 +1,25 @@
 """
-This script finds the mean chat_rate per unique user per `min_` min chunk,
-isolates to each `min_` timestamp, and sorts the resulting df by largest number
+This script finds the mean chat_rate per unique user per `clip_length` min chunk,
+isolates to each `clip_length` timestamp, and sorts the resulting df by largest number
 
 HOW TO
-    algo2.run(data, min_=2, limit=10, save_json = False)
+    algo2.run(data, clip_length=2, limit=10, save_json = False)
 """
 import pandas as pd
 import datetime as dt
 from .helpers import data_handler as d
 
 class featureFinder():
-    def __init__(self, data:list, min_:int, limit:int) -> list:
+    def __init__(self, data:list, clip_length:int, limit:int) -> list:
         """
-        Runs algo2 to find the mean chat_rate per unique user per `min_` chunk,
+        Runs algo2 to find the mean chat_rate per unique user per `clip_length` chunk,
         takes the means for each chunk, and then sorts by the highest mean rate.
 
         input
         ------
         data: list
             List of dictionaries of data from Twitch chat
-        min_: int
+        clip_length: int
             Approximate number of minutes each clip should be
         limit: int or None
             Number of rows/dictionaries/timestamps to return
@@ -36,9 +36,9 @@ class featureFinder():
         first_stamp = data[1]
         self.chunk_list = data[2]
         self.vid_id = data[3]
-        self.min_ = min_
+        self.clip_length = clip_length
         self.limit = limit
-        self.sort_by = f"chats_per_{min_}min"
+        self.sort_by = f"chats_per_{clip_length}min"
 
 
     def run(self):
@@ -53,7 +53,7 @@ class featureFinder():
         # for each 2 min chunk
         for chunk in self.chunk_list:
             # find the chat rate for each user
-            chat_rates = chat_rates.append(self.rate_finder(dataframe=chunk, x = self.min_))
+            chat_rates = chat_rates.append(self.rate_finder(dataframe=chunk, x = self.clip_length))
 
         chat_rates = chat_rates.reset_index(drop=True)
         chat_rates_mean = chat_rates.groupby(['start','end']).mean().reset_index()
