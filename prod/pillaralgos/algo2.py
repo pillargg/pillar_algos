@@ -10,7 +10,7 @@ import datetime as dt
 from .helpers import data_handler as d
 
 class featureFinder():
-    def __init__(self, data:list, clip_length:int, limit:int, sort_by=None) -> list:
+    def __init__(self, data:tuple, limit:int, clip_length:int, select:str = 'all') -> list:
         """
         Runs algo2 to find the mean chat_rate per unique user per `clip_length` chunk,
         takes the means for each chunk, and then sorts by the highest mean rate.
@@ -23,10 +23,8 @@ class featureFinder():
             Approximate number of minutes each clip should be
         limit: int or None
             Number of rows/dictionaries/timestamps to return
-        save_json: bool
-            True if want to save results as json to exports folder
-        sort_by
-            Note used
+        select
+            Not used
 
         output
         ------
@@ -40,7 +38,7 @@ class featureFinder():
         self.vid_id = data[3]
         self.clip_length = clip_length
         self.limit = limit
-        self.sort_by = f"chats_per_{clip_length}min"
+        self.select = f"chats_per_{clip_length}min"
 
 
     def run(self):
@@ -50,7 +48,7 @@ class featureFinder():
         # split into hours
     
         chat_rates = pd.DataFrame(
-            columns=["hour", "chunk", "start", "end", "_id", "num_chats", self.sort_by]
+            columns=["hour", "chunk", "start", "end", "_id", "num_chats", self.select]
         )
         # for each 2 min chunk
         for chunk in self.chunk_list:
@@ -60,7 +58,7 @@ class featureFinder():
         chat_rates = chat_rates.reset_index(drop=True)
         chat_rates_mean = chat_rates.groupby(['start','end']).mean().reset_index()
         
-        return self.finalizer(chat_rates_mean)
+        return chat_rates_mean
 
 
     def rate_finder(self, dataframe, x):
@@ -119,14 +117,3 @@ class featureFinder():
         chat_rate_df['start'] = time_start
         chat_rate_df['end'] = time_end
         return chat_rate_df.reset_index(drop=True)
-   
-    def finalizer(self, dataframe: pd.DataFrame) -> pd.DataFrame:
-        '''
-        Sorts and clips final dataframe as requested
-        '''
-        dataframe['vid_id'] = self.vid_id
-        dataframe = dataframe.sort_values(self.sort_by, ascending=False)
-        if type(self.limit) == int:
-            dataframe = dataframe.head(self.limit)
-
-        return dataframe

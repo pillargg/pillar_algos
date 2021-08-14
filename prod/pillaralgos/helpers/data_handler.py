@@ -5,10 +5,46 @@ also json_saver() that converts given variable into string, saves into .json fil
 import pandas as pd
 import numpy as np
 import datetime as dt
+from pillaralgos.helpers import exceptions as e
 
 # remove the .loc warning. bc I dont acre about writes making it back
 # to og dataframe https://stackoverflow.com/a/20627316/9866659
 pd.options.mode.chained_assignment = None  # default='warn'
+
+
+def data_finalizer(dataframe: pd.DataFrame,  vid_id: str, select: str = 'all', limit: int = None) -> pd.DataFrame:
+    '''
+    Sorts and clips final dataframe as requested. All algorithms use this function 
+    to standardize dataset layout.
+    
+    input
+    -----
+    dataframe: final dataframe with required columns: start, end
+    vid_id: the stream id, required
+    select: what column(s), besides start and end, to include in the df. Default is all columns.
+    limit: how many rows to return, default is no limit (so all rows)
+    '''
+    # Check that the required columns are included in the dataframe
+    for col in ['start','end']:
+        if col not in dataframe.columns:
+            # raise custom error if the column is not in df
+            raise e.missingColumnError(col)
+
+    dataframe['vid_id'] = vid_id
+
+    if len(dataframe.drop_duplicates()) != len(dataframe):
+        # raise custom error if duplicates were found
+        raise e.duplicatesFoundError()
+    
+    if select != 'all':
+        dataframe = dataframe[['start','end',select]]
+
+    if type(limit) == int:
+        # should never be used, but just in case
+        dataframe = dataframe.head(limit)
+
+    return dataframe
+
 
 def rename_columns(col_string):
     """

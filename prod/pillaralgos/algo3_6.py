@@ -16,7 +16,7 @@ from .helpers import data_handler as dh
 
 class featureFinder():
     def __init__(
-        self, data: list, sort_by:str, limit:int, chunk_length:int):
+        self, data: list, limit:int, sort_by:str, clip_length:int):
         """
         Gets data ready for emo extraction. Initializes dicts, lists, etc.
 

@@ -1,146 +1,81 @@
 """
-Sorts the final results by `perc_rel_unique`. Calculated as "number of chatters
-at timestamp"/"number of chatters in that one hour"
+Finds the number of users per stream, hour, chunk and some ratios of them
 
 HOW TO
-    algo1.run(data, clip_length=2, limit=10, sort_by='rel', save_json = False)
+    algo1.run(data)
 """
 
 import pandas as pd
-from .helpers import data_handler as d
-from icecream import ic
 
 class featureFinder():
-    def __init__(self, data, clip_length:int, limit:int, sort_by:str) -> list:
+    def __init__(self, data:tuple) -> pd.DataFrame:
         """
-        Runs algo1 to sort timestamps by the relative percentage of chatters by default.
+        Runs algo1 to find the number of unique users per stream, hour, and chunk. 
 
         input:
         ------
-        data: list
-            List of dictionaries of data from Twitch chat
-        clip_length: int
-            Approximate number of minutes each clip should be
-        limit: int or None
-            Number of rows/dictionaries/timestamps to return
-        sort_by: str
-            'perc_rel_unique': "number of chatters at timestamp"/"number of chatters at that hour"
-            'perc_abs_unique': "number of chatters at timestamp"/"total number of chatters in stream"
-        save_json: bool
-            True if want to save results as json to exports folder
+        data: tuple where the index 1 contains chunk_df
+
+        output
+        ------
+        results: dataframe
+            Dataframe with columns of: 
+                'stream_unique_users': number of unique users in the stream
+                'hour_unique_users': number of unique users that hour
+                'chunk_unique_users': number of unique users that chunk
+                'chunk_to_stream_unique_users': ratio of chunk:stream unique users
+                'chunk_to_hour_unique_users': ratio of chunk:hour unique users
+
         """
-        self.big_df = data[0]  # fetch appropriate data
-        self.first_stamp = data[1]
-        self.chunks_list = data[2]
-        self.vid_id = data[3]
-        
-        self.clip_length = clip_length
-        self.limit = limit
-        self.sort_by = sort_by
+        self.chunk_data = data[1]
+        self.first_stamp = data[0]
+        self.vid_id = data[2]
 
     def run(self):
-        results = self.hour_iterator()
-
+        unique_users = self.perc_unique_users(self.chunk_data)
+        results = self.clean_dataframe(unique_users)
         return results
 
-    def perc_uniques(self, chunk_list, clip_length, total_uniques, big_unique):
+    def perc_unique_users(self, dataframe):
         """
-        Finds the percent unique chatters for each dataframe in the list. Dataframes
-        assumed to be split using xminChats.find_rest.
+        Finds the percent unique chatters for each chunk
         """
+        total_unique_users = len(dataframe['_id'].unique())
+        self.total_unique_users = total_unique_users
+        hour_unique_users = self.num_unique_users(dataframe, 'hour')
+        chunk_unique_users = self.num_unique_users(dataframe, 'start')
 
-        perc_unique = {
-            f"{clip_length}min_chunk": [],
-            "start": [],
-            "end": [],
-            "num_unique": [],
-            "perc_rel_unique": [],
-            "perc_abs_unique": [],
-        }
-        for i in range(len(chunk_list)):
-            # calcuate
-            chunk = chunk_list[i]
-            unique = len(chunk["_id"].unique())
-            timestamp = [
-                chunk["created_at"].min(),
-                chunk["created_at"].max(),
-            ]
-            # this is the total uniques in THAT DATAFRAME, ie the hourly cut
-            perc_rel = (unique / total_uniques)
-            # this is the total uniques in the entire twitch session
-            perc_abs = (unique / big_unique)
-            # store
-            perc_unique[f"{clip_length}min_chunk"].append(chunk)
-            perc_unique["start"].append(timestamp[0])
-            perc_unique["end"].append(timestamp[1])
-            perc_unique["num_unique"].append(unique)
-            perc_unique["perc_rel_unique"].append(perc_rel)
-            perc_unique["perc_abs_unique"].append(perc_abs)
+        # number of unique users to dataframe
+        dataframe['hour_unique_users'] = dataframe['hour'].map(hour_unique_users)
+        dataframe['chunk_unique_users'] = dataframe['start'].map(chunk_unique_users)
 
-        df_unique = pd.DataFrame(perc_unique)
-        df_unique["elapsed"] = df_unique["end"] - df_unique["start"]
-        return df_unique
+        # get ratio of chunk:stream unique users
+        dataframe['chunk_to_stream_unique_users'] = dataframe['chunk_unique_users'] / total_unique_users
+        # get ratio of chunk:hour unique users
+        dataframe['chunk_to_hour_unique_users'] = dataframe['chunk_unique_users'] / dataframe['hour_unique_users']
 
-    def hour_iterator(self):
-        """
-        Pushes all dfs in a list through the xminChats function, returns a dataframe of results
-
-        input
-        -----
-        big_df: pd.DataFrame
-            Df of the entire twitch session. This is the one that was split by dfSplitter class
-        clip_length: int
-            How long a timestamp range should be
-        sort_by: str
-            Whether to sort values by `absolute` or `relative` unique chatters.
-        """
-        ds = d.dfSplitter(self.big_df)  # initiate
-        ds.find_rest()  # split big_df into 1 hour long separate dfs
-        # result stored in class var. NOTE: index 0 is always the 
-        # very first timestamp of big_df
-        hour_list = (ds.result)
-        hour_list = hour_list[1:]
-
-        # initiate empty results df
-        results = pd.DataFrame(
-            columns=[
-                "hour",
-                f"{self.clip_length}min_chunk",
-                "start",
-                "end",
-                "num_unique",
-                "perc_rel_unique",
-                "perc_abs_unique",
-            ]
-        )
-        max_uniques = len(
-            self.big_df["_id"].unique()
-        )  # the total number of unique chatters for the entire twitch session
-
-        # iterate all sections through the class
-        for i in range(len(hour_list)):
-            hour_df = hour_list[i]
-            fm = d.xminChats(hour_df, max_uniques, min_=self.clip_length)
-            chunk_list = fm.result  # get back list of dfs, each 2 minutes long
-
-            hr_uniques = self.perc_uniques(chunk_list, self.clip_length,
-                                           total_uniques=fm.total_uniques,
-                                           big_unique=fm.big_unique)
-            hr_uniques["hour"] = i + 1
-            self.df_unique = hr_uniques
-            results = results.append(hr_uniques)
-        ic(len(results))
-        results = self.finalizer(results)
-
-        return results # results sorted by percent unique
-
-    def finalizer(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+        return dataframe
+    
+    def num_unique_users(self, dataframe:pd.DataFrame, filter_col:str) -> dict:
         '''
-        Sorts and clips final dataframe as requested
+        Counts the number of users after filtering dataframe by filter_col
         '''
-        from icecream import ic
-        dataframe['vid_id'] = self.vid_id
-        dataframe = dataframe.sort_values(self.sort_by, ascending=False)
-        if type(self.limit) == int:
-            dataframe = dataframe.head(self.limit)
+        num_users_dict = {}
+        for prop in dataframe[filter_col].unique():
+            temp_df = dataframe[dataframe[filter_col] == prop]
+            num_users = len(temp_df['_id'].unique())
+            num_users_dict[prop] = num_users
+
+        return num_users_dict
+    
+    
+    def clean_dataframe(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+        '''
+        Groups dataframe by start/end and then sums each column to only include 1 stat per chunk
+        '''
+        # take the mean, since each row in the unique_users columns have the same number
+        # for each chunk
+        dataframe = dataframe.groupby(['start','end']).mean().reset_index()
+        dataframe = dataframe[['start','end','hour_unique_users', 'chunk_unique_users', 'chunk_to_stream_unique_users', 'chunk_to_hour_unique_users']]
+        dataframe['stream_unique_users'] = self.total_unique_users
         return dataframe
