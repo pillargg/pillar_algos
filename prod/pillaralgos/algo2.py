@@ -10,7 +10,7 @@ import datetime as dt
 from .helpers import data_handler as d
 
 class featureFinder():
-    def __init__(self, data:list, clip_length:int, limit:int) -> list:
+    def __init__(self, data:list, clip_length:int, limit:int, sort_by=None) -> list:
         """
         Runs algo2 to find the mean chat_rate per unique user per `clip_length` chunk,
         takes the means for each chunk, and then sorts by the highest mean rate.
@@ -25,6 +25,8 @@ class featureFinder():
             Number of rows/dictionaries/timestamps to return
         save_json: bool
             True if want to save results as json to exports folder
+        sort_by
+            Note used
 
         output
         ------

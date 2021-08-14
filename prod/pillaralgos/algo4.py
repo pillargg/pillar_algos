@@ -11,7 +11,7 @@ from .helpers import data_handler as dh
 
 
 class featureFinder():
-    def __init__(self, data: list, sort_by:str, limit:int):
+    def __init__(self, data: list, limit:int, sort_by:str):
         """
         Gets data ready for sentiment analysis. Initializes dicts, lists, etc.
 

@@ -155,6 +155,7 @@ class featureFinder():
         Sorts and clips final dataframe as requested
         '''
         dataframe['vid_id'] = self.vid_id
+        dataframe = dataframe.groupby(['hour','chunk']).sum().reset_index()
         dataframe = dataframe.sort_values(self.sort_by, ascending=False)
         if type(self.limit) == int:
             dataframe = dataframe.head(self.limit)

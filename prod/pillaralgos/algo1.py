@@ -8,6 +8,7 @@ HOW TO
 
 import pandas as pd
 from .helpers import data_handler as d
+from icecream import ic
 
 class featureFinder():
     def __init__(self, data, clip_length:int, limit:int, sort_by:str) -> list:
@@ -36,7 +37,7 @@ class featureFinder():
         self.clip_length = clip_length
         self.limit = limit
         self.sort_by = sort_by
-        
+
     def run(self):
         results = self.hour_iterator()
 
@@ -56,7 +57,6 @@ class featureFinder():
             "perc_rel_unique": [],
             "perc_abs_unique": [],
         }
-
         for i in range(len(chunk_list)):
             # calcuate
             chunk = chunk_list[i]
@@ -129,7 +129,7 @@ class featureFinder():
             hr_uniques["hour"] = i + 1
             self.df_unique = hr_uniques
             results = results.append(hr_uniques)
-
+        ic(len(results))
         results = self.finalizer(results)
 
         return results # results sorted by percent unique
@@ -138,9 +138,9 @@ class featureFinder():
         '''
         Sorts and clips final dataframe as requested
         '''
+        from icecream import ic
         dataframe['vid_id'] = self.vid_id
         dataframe = dataframe.sort_values(self.sort_by, ascending=False)
         if type(self.limit) == int:
             dataframe = dataframe.head(self.limit)
-
         return dataframe
