@@ -6,7 +6,7 @@ HOW TO
     algo2.run(data)
 """
 import pandas as pd
-from pillaralgos.helpers import exceptions as e
+from .helpers import exceptions as e
 
 
 class featureFinder():
