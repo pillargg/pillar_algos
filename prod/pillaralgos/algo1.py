@@ -4,7 +4,6 @@ Finds the number of users per stream, hour, chunk and some ratios of them
 HOW TO
     algo1.run(data)
 """
-
 import pandas as pd
 
 class featureFinder():
@@ -27,8 +26,8 @@ class featureFinder():
                 'chunk_to_hour_unique_users': ratio of chunk:hour unique users
 
         """
-        self.chunk_data = data[1]
         self.first_stamp = data[0]
+        self.chunk_data = data[1]
         self.vid_id = data[2]
 
     def run(self):

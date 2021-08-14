@@ -3,117 +3,89 @@ This script finds the mean chat_rate per unique user per `clip_length` min chunk
 isolates to each `clip_length` timestamp, and sorts the resulting df by largest number
 
 HOW TO
-    algo2.run(data, clip_length=2, limit=10, save_json = False)
+    algo2.run(data)
 """
 import pandas as pd
-import datetime as dt
-from .helpers import data_handler as d
+from pillaralgos.helpers import exceptions as e
+
 
 class featureFinder():
-    def __init__(self, data:tuple, limit:int, clip_length:int, select:str = 'all') -> list:
+    def __init__(self, data:tuple) -> pd.DataFrame:
         """
-        Runs algo2 to find the mean chat_rate per unique user per `clip_length` chunk,
-        takes the means for each chunk, and then sorts by the highest mean rate.
+        Runs algo2 to find the chat_rate per unique user per chunk, takes the means for each chunk.
+        "Chat rate" is defined as "number of chats sent per minute" using the equation:
+            (number of messages sent by the user)
+            -------------------------------------    * 60
+            (length of chunk in seconds)
 
         input
         ------
-        data: list
-            List of dictionaries of data from Twitch chat
-        clip_length: int
-            Approximate number of minutes each clip should be
-        limit: int or None
-            Number of rows/dictionaries/timestamps to return
-        select
-            Not used
+        data: tuple where the index 1 contains chunk_df
 
         output
         ------
-        json_results: list
-            List of dictionaries in json format, ordered from predicted best to worst candidates.
-                Ex: [{start:TIMESTAMP_INT, end:TIMESTAMP_INT}]
+        results: dataframe
+            Dataframe with columns of:
+                'mean_chat_rate_per_minute'
         """
-        big_df = data[0]        
-        first_stamp = data[1]
-        self.chunk_list = data[2]
-        self.vid_id = data[3]
-        self.clip_length = clip_length
-        self.limit = limit
-        self.select = f"chats_per_{clip_length}min"
+        self.first_stamp = data[0]
+        self.chunk_data = data[1]
+        self.vid_id = data[2]
 
 
     def run(self):
         """
-        Formats data for rate_finder(), gets chunk_list to pass through rate_finder
+        Coordinates finding chat rate
         """
-        # split into hours
-    
-        chat_rates = pd.DataFrame(
-            columns=["hour", "chunk", "start", "end", "_id", "num_chats", self.select]
-        )
-        # for each 2 min chunk
-        for chunk in self.chunk_list:
+        # find specifically how long (in seconds) each chunk is
+        self.chunk_data['elapsed'] = self.chunk_data['end'] - self.chunk_data['start']
+        self.chunk_data['seconds_elapsed'] = self.chunk_data['elapsed'].apply(lambda x: x.total_seconds())
+
+        # if a chunk has 1 chat, will use the mean to calculate chat rate
+        self.mean_total_seconds = self.chunk_data['seconds_elapsed'].mean()
+
+        chat_rates = pd.DataFrame()
+        for start_time in self.chunk_data['start'].unique():
+            chunk = self.chunk_data[self.chunk_data['start'] == start_time]
             # find the chat rate for each user
-            chat_rates = chat_rates.append(self.rate_finder(dataframe=chunk, x = self.clip_length))
+            chat_rates = chat_rates.append(self.rate_finder(chunk))
 
-        chat_rates = chat_rates.reset_index(drop=True)
-        chat_rates_mean = chat_rates.groupby(['start','end']).mean().reset_index()
-        
-        return chat_rates_mean
+        results = self.clean_dataframe(chat_rates)
+
+        return results
 
 
-    def rate_finder(self, dataframe, x):
+    def rate_finder(self, dataframe:pd.DataFrame):
         """
-        Finds the rate of messages sent per X minutes for each user in the dataframe (assumed to be a chunk).
+        Finds the rate of messages sent per minute for each user in the dataframe (assumed to be a chunk).
 
-        NOTE: if only 1 timestamp in chunk dataframe, assumes the chunk is exactly X minutes before the next chunk in the entire twitch chat stream
+        NOTE: if seconds_elapsed is < 1, 
         """
-        # Initiate new df
-        id_results_all = pd.DataFrame(
-            columns=[
-                "_id",
-                "num_chats",
-                f"chats_per_{x}min",
-            ]
-        )
         chatters = dataframe["_id"].unique()  # id unique chatters for this chunk
-        hour = dataframe['hour'].unique()[0] # each hour is the same 
-        chunk = dataframe['chunk'].unique()[0] # each chunk is the same
-        time_start = dataframe.iloc[0, 0] 
-        time_end = dataframe.iloc[-1, 0]
-        time_d = dt.timedelta.total_seconds(time_end - time_start)
-        for i in range(len(chatters)):
-            temp_df = dataframe[dataframe["_id"] == chatters[i]]  # isolate chatter's data
+        seconds_elapsed_list = dataframe['seconds_elapsed'].unique()
+        num_unique_elapsed = len(seconds_elapsed_list)
+        if num_unique_elapsed == 1:
+            seconds_elapsed = seconds_elapsed_list[0] # chunks are one length
+        else:
+            raise e.ExpectedOneValueError(num_unique_elapsed)
 
-            _id = chatters[i]
-            num_chats = len(temp_df["body"])  # count how many chats were sent by them
+        if len(dataframe) == 1:
+            # sometimes a chunk only has 1 chat in it. In this case the seconds_elapsed will be 0
+            seconds_elapsed = self.mean_total_seconds
 
-            if time_d > 0:
-                chat_rate = (
-                    (num_chats / time_d) * 60 * x
-                )  # use time_d to calculate chat/sec, then multiply to get user requested rate
-            elif time_d == 0:
-                # if there is only 1 message in the chunk, there will be only 1 timestamp
-                # in that case assume that time_d = X
-                time_d = x
-                chat_rate = (num_chats / time_d) * 60 * x  # convert to chat/X minutes
-            else:
-                chat_rate = (
-                    -100
-                )  # if number is negative, math is wrong somewhere and needs to be looked into
+        chat_rate = {}
+        for user in dataframe['_id'].unique():
+            num_chats = len(dataframe[dataframe['_id'] == user])
+            chat_rate[user] = (num_chats / seconds_elapsed) * 60
+        dataframe['chats_sent_per_minute'] = dataframe['_id'].map(chat_rate)
+        return dataframe
 
-            # gather results
-            id_results = pd.DataFrame(
-                {
-                    "_id": [_id],
-                    "num_chats": [num_chats],
-                    f"chats_per_{x}min": [chat_rate],
-                }
-            )
-            id_results_all = id_results_all.append(id_results)  # store in df
-        
-        chat_rate_df = id_results_all.copy()
-        chat_rate_df['hour'] = hour
-        chat_rate_df['chunk'] = chunk
-        chat_rate_df['start'] = time_start
-        chat_rate_df['end'] = time_end
-        return chat_rate_df.reset_index(drop=True)
+    def clean_dataframe(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+        '''
+        Groups dataframe by start/end and then sums each column to only include 1 stat per chunk
+        '''
+        # find the mean chat rate per chunk
+        dataframe = dataframe.groupby(['start','end']).mean().reset_index()
+        dataframe = dataframe.rename({'chats_sent_per_minute':'mean_chat_rate_per_minute'}, axis=1)
+        dataframe = dataframe[['start','end', 'mean_chat_rate_per_minute']]
+        return dataframe
