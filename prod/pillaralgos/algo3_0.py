@@ -30,8 +30,7 @@ class featureFinder():
 
     def run(self):
         '''
-        Coordinates the other functions in this algo and data_helper. Separate from 
-        `run()` for sanity purposes.
+        Coordinates the other functions in this algo.
         '''
         # count the number of words/emojis/both sent per id at each chunk
         id_words = self.id_words_counter(self.chunk_df)
