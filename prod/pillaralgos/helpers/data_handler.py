@@ -1,7 +1,7 @@
-'''
+"""
 This file contains a series of classes and functions to help with loading and splitting twitch chat data
 also json_saver() that converts given variable into string, saves into .json file
-'''
+"""
 import pandas as pd
 import numpy as np
 import datetime as dt
@@ -12,32 +12,34 @@ from pillaralgos.helpers import exceptions as e
 pd.options.mode.chained_assignment = None  # default='warn'
 
 
-def data_finalizer(dataframe: pd.DataFrame,  vid_id: str, select: str = 'all', limit: int = None) -> pd.DataFrame:
-    '''
-    Sorts and clips final dataframe as requested. All algorithms use this function 
+def data_finalizer(
+    dataframe: pd.DataFrame, vid_id: str, select: str = "all", limit: int = None
+) -> pd.DataFrame:
+    """
+    Sorts and clips final dataframe as requested. All algorithms use this function
     to standardize dataset layout.
-    
+
     input
     -----
     dataframe: final dataframe with required columns: start, end
     vid_id: the stream id, required
     select: what column(s), besides start and end, to include in the df. Default is all columns.
     limit: how many rows to return, default is no limit (so all rows)
-    '''
+    """
     # Check that the required columns are included in the dataframe
-    for col in ['start','end']:
+    for col in ["start", "end"]:
         if col not in dataframe.columns:
             # raise custom error if the column is not in df
             raise e.missingColumnError(col)
 
-    dataframe['vid_id'] = vid_id
+    dataframe["vid_id"] = vid_id
 
     if len(dataframe.drop_duplicates()) != len(dataframe):
         # raise custom error if duplicates were found
         raise e.duplicatesFoundError()
-    
-    if select != 'all':
-        dataframe = dataframe[['start','end',select]]
+
+    if select != "all":
+        dataframe = dataframe[["start", "end", select]]
 
     if type(limit) == int:
         # should never be used, but just in case
@@ -104,7 +106,9 @@ def organize_twitch_chat(data, keep_user_vars=False):
     """
     if len(data) > 0:
         data = pd.DataFrame.from_records(data)  # convert to df
-        df = data[["created_at", "updated_at", "commenter", "message"]].add_suffix("_mess")
+        df = data[["created_at", "updated_at", "commenter", "message"]].add_suffix(
+            "_mess"
+        )
 
         h = dictExtractor(df["message_mess"], label="_mess")
         messages = h.result
@@ -338,7 +342,9 @@ def results_jsonified(results, first_sec, results_col):
     json_results: list
         List of dictionaries with startTime and endTime keys, sorted by best results at top
     """
-    results["first_sec"] = first_sec  # to calculate elapsed time from first sec, in seconds
+    results[
+        "first_sec"
+    ] = first_sec  # to calculate elapsed time from first sec, in seconds
     results = results.sort_values(
         results_col, ascending=False
     )  # so json format is returned with top result being the most relevant
