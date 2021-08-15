@@ -123,3 +123,4 @@ def run(vid_id: str, clip_length: int, limit: int = None, select: str = "all"):
     for key in algo_results.keys():
         if key != ["algo_0"]:
             df = df.merge(algo_results[key])
+    return df
