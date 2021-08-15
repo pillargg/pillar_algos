@@ -10,114 +10,60 @@ HOW TO:
     results = ee.run()
 """
 import pandas as pd
-import numpy as np
-from .helpers import data_handler as dh
-
 
 class featureFinder():
-    def __init__(
-        self, data: list, limit:int, sort_by:str, clip_length:int):
+    def __init__(self, data: list):
         """
-        Gets data ready for emo extraction. Initializes dicts, lists, etc.
-
         input
         -----
-        data: list
-            List of dictionaries, a json file opened with json.load(open(file))
-        sort_by: str
-            Options:
-                "perc_emoji_of_stream" - percent of emoticons from stream sent at timestamp
-                "emoji_user_ratio" - number of unique users participating compared to number of emoticons sent
-                "perc_then_ratio" - first sort with "perc_emoji_of_stream", then by "emoji_user_ratio"
-                "ratio_then_perc" - first sort with "emoji_user_ratio", then by "perc_emoji_of_stream"
 
-            Return timestamps with the highest `sort_by` value
-        limit: int or None
-            int: Return only the top X timestamps (using df.head(X))
-            None: Return all timestamps
         """
-        self.big_df = data[0]
-        self.first_stamp = data[1]
-        self.chunks_list = data[2]
-        self.vid_id = data[3]
+        self.first_stamp = data[0]
+        self.chunks_df = data[1]
+        self.vid_id = data[2]
 
-        self.sort_by = sort_by
-        self.limit = limit
+    def run(self) -> pd.DataFrame:
 
-    def run(self):
-        if type(self.big_df) == pd.DataFrame:
-            results = self.thalamus()
-            self.results = results
-            # results_jsonified sorts by top calc
-            json_results = dh.results_jsonified(results, self.first_stamp, self.sort_by)
-            if type(self.limit) == int:
-                # grab only the top X most used
-                json_results = json_results[: self.limit]
+        chunk_df_with_emo_count = self.thalamus()
+        results = self.clean_dataframe(chunk_df_with_emo_count)
+        return results
 
-            if self.save_json:
-                dh.save_json(json_results, f"algo3.6_{self.sort_by}")
-
-            return json_results
-        else:
-            return np.array([])  # this is an empty numpy array if it is not a DF.
-
-    def thalamus(self):
+    def thalamus(self) -> pd.DataFrame:
         """
         Coordinates all functions to return a dataset of top emojis used
         """
         import pandas as pd
 
-        self.pd = pd
-
-        big_emo = 0
-        big_df_formatted = self.format_df_for_emo(self.big_df)
-        # get a count total number of emojis in stream
-        for idx, row in big_df_formatted.iterrows():
-            num_emo = self.emo_counter(row)
-            big_emo += num_emo
+        big_emo = 0 # to count total emoticons per stream
 
         # get count of total emoticon per chunk and number of users per chunk
-        chunk_data = pd.DataFrame(
-            columns=[
-                "start",
-                "end",
-                "num_emoji",
-            ]
-        )
-        for chunk in self.chunks_list:
-            time_range = (chunk.iloc[0, 0], chunk.iloc[-1, 0])
-            start = time_range[0]  # very first timestamp of chunk
-            end = time_range[1]  # very last timestamp of chunk
-            num_user = self.user_counter(chunk)
+        new_chunk_data = pd.DataFrame()
+        for start in self.chunks_df['start'].unique():
+            chunk = self.chunks_df[self.chunks_df['start'] == start]
+            num_user = len(chunk["_id"].unique())
 
             chunk_emo = 0
             chunk_formatted = self.format_df_for_emo(chunk)
-            try:
-                if chunk_formatted.empty:
-                    chunk_emo += 0
-                else:
-                    for idx, row in chunk_formatted.iterrows():
-                        num_emo = self.emo_counter(row)
-                        chunk_emo += num_emo
-            except AttributeError as a:
-                chunk_emo += 0
 
-            chunk_data = chunk_data.append(
-                {
-                    "start": start,
-                    "end": end,
-                    "num_emoji": chunk_emo,
-                    "num_user": num_user,
-                },
-                ignore_index=True,
-            )
-        chunk_data["perc_emoji_of_stream"] = chunk_data["num_emoji"] / big_emo
-        chunk_data["emoji_user_ratio"] = (
-            chunk_data["num_emoji"] / chunk_data["num_user"]
+            if chunk_formatted.empty:
+                # if returned dataframe is empty, no emojis
+                chunk_emo += 0
+            else:
+                for idx, row in chunk_formatted.iterrows():
+                    num_emo = self.emo_counter(row)
+                    chunk_emo += num_emo
+
+            big_emo += chunk_emo # add number of emoticons in chunk to total
+            chunk['num_emoji'] = chunk_emo
+            chunk['num_user'] = num_user
+            new_chunk_data = new_chunk_data.append(chunk)
+
+        new_chunk_data["perc_emoji_of_stream"] = new_chunk_data["num_emoji"] / big_emo
+        new_chunk_data["emoji_user_ratio"] = (
+            new_chunk_data["num_emoji"] / new_chunk_data["num_user"]
         )
 
-        result = self.finalizer(chunk_data)
-        return result
+        return new_chunk_data
 
     ### ACTUAL FUNCTIONS ###
 
@@ -125,60 +71,24 @@ class featureFinder():
         """
         Extracts emojis to make them accessible to counter
         """
-        import pandas as pd
-
         # check whether dataframe has any emoticons
+        if 'emoticons' not in dataframe.columns:
+            return pd.DataFrame()
         body_has_emo = dataframe[~dataframe["emoticons"].isna()].reset_index(drop=True)
         if len(body_has_emo.index) == 0:
-            return None
+            return pd.DataFrame()
 
-        # emoticons col contains _id, begin, end. Here we extract just the _id and
-        # put it into a list
+        # emoticons col contains _id, begin, end. Here we extract just the _id,
+        # and put it into a list
         body_has_emo["emo_id_list"] = body_has_emo["emoticons"].apply(
-            lambda my_list: self.emo_extractor(my_list)
+            lambda my_list: [emo_dict["_id"] for emo_dict in my_list]
         )
 
-        emo_data = body_has_emo[["emo_id_list", "body"]]
-
-        return emo_data
-
-    def finalize(self, dataframe: pd.DataFrame) -> list:
-        """
-        Sorts dataframe by given class parameter and jsonifies the result
-        """
-        if self.sort_by in ["perc_emoji_of_stream", "emoji_user_ratio"]:
-            self.sort_by = self.sort_by
-        elif self.sort_by == "perc_then_ratio":
-            self.sort_by = ["perc_emoji_of_stream", "emoji_user_ratio"]
-        elif self.sort_by == "ratio_then_perc":
-            self.sort_by = ["emoji_user_ratio", "perc_emoji_of_stream"]
-        else:
-            self.sort_by = ["perc_emoji_of_stream", "emoji_user_ratio"]
-            print("Invalid sort_by value, sorting by default value")
-
-        dataframe["vid_id"] = self.vid_id
-        return dataframe
+        return body_has_emo
 
     ### HELPER FUNCTIONS ###
-    def emo_extractor(self, my_list):
-        """
-        Helper function to grab emoticon id
-        """
-        return [emo_dict["_id"] for emo_dict in my_list]
 
-    def loc_extractor(self, my_list):
-        """
-        Helper function to grab index location of emoticon in the body
-        """
-        return [[emo_dict["begin"], emo_dict["end"]] for emo_dict in my_list]
-
-    def user_counter(self, dataframe):
-        """
-        Counts the number of unique users in the dataframe
-        """
-        return len(dataframe["_id"].unique())
-
-    def emo_counter(self, row):
+    def emo_counter(self, row: pd.DataFrame) -> int:
         """
         Counts the number of times an emoticon occurs in the row
 
@@ -190,3 +100,12 @@ class featureFinder():
         for emoji_id in row["emo_id_list"]:
             counter += 1
         return counter
+
+    
+    def clean_dataframe(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+        '''
+        Groups dataframe by start/end and then means each column to only include 1 stat per chunk
+        '''
+        dataframe = dataframe.groupby(['start','end']).mean().reset_index()
+        dataframe = dataframe[['start','end','num_emoji','num_user','perc_emoji_of_stream','emoji_user_ratio']]
+        return dataframe

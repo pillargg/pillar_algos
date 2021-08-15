@@ -1,17 +1,15 @@
 """
-Contains one class `sentimentRanker()` that returns a json of timestamps ranked by
-a user chosen metric. Sentiment score is compouted using nltk.sentiment.vader.SentimentIntensityAnalyzer()
+This script calculates the mean sentiment score of each chunk 
+using nltk.sentiment.vader.SentimentIntensityAnalyzer()
 
 HOW TO:
-    sr = sentimentRanker(data, sort_by='abs_overall', limit=10, save_json=False)
+    sr = sentimentRanker(data)
     results = sr.run()
 """
 import pandas as pd
-from .helpers import data_handler as dh
-
 
 class featureFinder():
-    def __init__(self, data: list, limit:int, sort_by:str):
+    def __init__(self, data: list):
         """
         Gets data ready for sentiment analysis. Initializes dicts, lists, etc.
 
@@ -19,76 +17,57 @@ class featureFinder():
         -----
         data: list
             List of dictionaries, a json file opened with json.load(open(file))
-        sort_by: str
-            Options:
+
+        output
+        ------
+        results: dataframe columns that represent the mean sentiment value of
+            chats sent during each chunk:
                 "positive" - strength of positive sentiment
                 "negative" - strength of negative sentiment
                 "neutral" - strength of neutral sentiment
-                "compound" - overall sentiment where > 0.05 is positive, < -0.05 is negative, in between is neutral
-                "abs_overall" - sort by the absolute value of "compound", resulting in a mixture of positive and negative (but not neutral) chat timescripts
-            Return timestamps with the highest `sort_by` value
-        limit: int, None
-            int: Return only the top X timestamps (using df.head(X))
-            None: Return all timestamps
+                "compound" - overall sentiment where > 0.05 is positive,
+                    < -0.05 is negative, in between is neutral
+                "abs_overall" - absolute value of "compound", resulting in a 
+                    mixture of positive and negative (but not neutral) chat timescripts
+                "mostly" - indicating whether the overall sentiment is mostly 
+                    positive, neutral, or negative. Calculated using self.cat_compound()
         """
-        self.big_df = data[0]
-        self.first_stamp = data[1]
-        self.chunks_list = data[2]
-        self.vid_id = data[3]
-
-        self.sort_by = sort_by
-        self.limit = limit
+        self.first_stamp = data[0]
+        self.chunk_df = data[1]
+        self.vid_id = data[2]
 
     def run(self):
-        results = self.thalamus()
-        self.results = results
+        new_df = self.thalamus(self.chunk_df)
+        results = self.clean_dataframe(new_df)
+        return results
 
 
-    def thalamus(self):
-        chunk_data = pd.DataFrame()
+    def thalamus(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+        '''
+        Coordinates getting sentiment values for chunks
+        '''
 
-        for chunk in self.chunks_list:
-            start = chunk.sort_values('created_at').iloc[0,0]
-            end = chunk.sort_values('created_at').iloc[-1,0]
-            messages = ''
-            chunk_results = pd.DataFrame()
-            for idx, row in chunk.iterrows():
-                messages += f" {row['body']}"
-                cell = row['body']
-                res = self.sent_analysis(cell, expand=True)
-                chunk_results = chunk_results.append(res)
-                
-            means_dict = chunk_results.mean().to_dict()
-            chunk_means = pd.DataFrame(means_dict,index=[chunk_results.index.values[-1]])
-            chunk_means['start'] = start
-            chunk_means['end'] = end
-            chunk_means['messages'] = messages
-            chunk_means['overall'] = chunk_means['compound'].apply(self.cat_compound)
-            chunk_means['abs_overall'] = abs(chunk_means['compound'])
-            chunk_data = chunk_data.append(chunk_means)
+        sentiment_df = pd.DataFrame()
 
-        result = self.finalizer(chunk_data)
-        return result
-        
-    def finalizer(self, dataframe: pd.DataFrame) -> pd.DataFrame:
-        
-        dataframe['vid_id'] = self.vid_id
-        dataframe = dataframe.sort_values(self.sort_by, ascending=False)
+        for idx, row in dataframe.iterrows():
+            res = self.sent_analysis(row['body'])
+            row['positive'] = res['pos']
+            row['neutral'] = res['neu']
+            row['negative'] = res['neg']
+            row['compound'] = res['compound']
 
-        return dataframe
-        
-    def sent_analysis(self, cell: str, expand = True) -> pd.DataFrame:
+            sentiment_df = sentiment_df.append(row)
+
+        sentiment_df['abs_compound'] = abs(sentiment_df['compound'])
+        return sentiment_df
+
+    def sent_analysis(self, cell: str, expand = True) -> dict:
         '''
         Gives sentiment scores to strings
         '''
         from nltk.sentiment import SentimentIntensityAnalyzer
         sia = SentimentIntensityAnalyzer()
         result = sia.polarity_scores(cell)
-
-        if expand:
-            result = pd.DataFrame.from_dict(result,orient='index').T
-            result['body'] = cell
-
         return result
     
     def cat_compound(self, score:float) -> str:
@@ -106,3 +85,12 @@ class featureFinder():
 
         else:
             return "Neutral"
+
+    def clean_dataframe(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+        '''
+        Groups dataframe by start/end and then means each column to only include 1 stat per chunk
+        '''
+        dataframe = dataframe.groupby(['start','end']).mean().reset_index()
+        dataframe = dataframe[['start','end','positive', 'neutral', 'negative','compound','abs_compound']]
+        dataframe['mostly'] = dataframe['compound'].apply(self.cat_compound)
+        return dataframe
