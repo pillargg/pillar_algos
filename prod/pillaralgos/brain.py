@@ -11,7 +11,7 @@ from icecream import ic
 ### Functions in common across all algos ###
 def load_data(data, clip_length):
     """
-    Loads and splits data into appropriate chunks
+    Loads and splits data into appropriate chunks 
 
     output
     ------
