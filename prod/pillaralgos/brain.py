@@ -141,6 +141,17 @@ def run(vid_id: str, clip_length: float, select_features: dict = "all", dev_mode
         if True, will assume file `vid_id` is located in the data directory
         with a .json file extension, opens it with json.load(open()), provides
         a progress bar for jupyter notebook, and labels each feature with the algo that made it
+
+    Example:
+    
+    select = {
+        'algo1':['chunk_unique_users'],
+        'algo3_0':['num_chats_by_top_words_emoji_users'],
+        'algo3_5':['num_words_emo'],
+        'algo3_6':['emoji_user_ratio'],
+        'algo4':['compound','abs_compound','mostly']
+    }
+    df = brain.run(vid_id, clip_length=0.5, select_features=select,dev_mode=False)
     '''
     if dev_mode:
         data = json.load(open(f"data/{vid_id}.json"))
@@ -177,6 +188,7 @@ def run(vid_id: str, clip_length: float, select_features: dict = "all", dev_mode
             algo = all_algos[i]
 
             result = run_algo(algo, important_data, select_features, algo_str, vid_id, label_features)
+            algo_results[algo_str] = result
 
     ic("Merging featuresets")
     df = algo_results[all_algos_str[0]]
