@@ -3,7 +3,6 @@
    1. [Algorithms](#algorithms)
    2. [Datasets](#datasets)
 3. [Current Goal](#current-goal)
-4. [Long Term Goal](#long-term-goal)
 
 # Background
 Pillar is creating an innovative way to automatically select and splice clips from Twitch videos for streamers. This repo is focusing on the algorithm aspect. Three main algorithms are being tested.
