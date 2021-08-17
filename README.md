@@ -63,25 +63,5 @@ __Algo4__:
 
 # Current Goal
 
-To create one overarching algorithm that will find the most "interesting" clips in a twitch VOD. This will be created through the following steps:
-1. Creation of various algorithms that isolate `min_` (2 by default) minute chunks. The basic workflow:
-   1. Create variable (ex: `num_words`, for number of words in the body of a chat message)
-   1. Group df by `min_` chunks, then average/sum/etc `num_words` for each `min_` chunks
-   1. Sort new df by `num_words`, from highest "value" to lowest "value"
-   1. Return this new df as json ([example](https://github.com/pomkos/twitch_chat_analysis/blob/main/exports/algo1_results.json))
-1. Users rate clips provided by each algorithm
-2. Useless algorithms thrown away
-3. Rest of the algorithms merged into one overarching algorithm, with weights distributed based on user ratings
+To label each timestamp as CCC or not CCC, then use categorical supervised ML algorithm to predict future CCC clips based on twitch chat featureset.
 
-# Long Term Goal
-
-* __New objective measure__: community created clips (`ccc`) for a given VOD id with start/end timestamps for each clip
-* __Assumption__: `ccc` are interesting and can be used to create a narrative for each VOD. We can test this by cross referencing with posts to /r/livestreamfails upvotes/comments
-* __Hypothesis__: if we can predict where `ccc` would be created, those are potentially good clips to show the user
-   * *Short term test*: Create a model to predict where ccc would be created using variables such as word count, chat rate, emoji usage, chat semantic analysis. We can do this by finding timestamps of ccc and correlating them with chat stats
-   * *Medium term test*: Use top 100 streamers as training data. What similarities do their ccc and reddit most upvoted of that VOD share? (chat rate etc)
-      1. Get the transcript for these top 100
-      2. Get the top 100's YT posted 15-30min story content for the 8 hour VOD
-      3. Get the transcript for that story content
-      4. Semantic analysis and correlations, etc.
-   * *Long term test*: what percentage of clips do our streamers actually end up using
