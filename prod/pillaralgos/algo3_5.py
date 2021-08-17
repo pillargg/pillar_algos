@@ -11,9 +11,9 @@ class featureFinder:
     def __init__(self, data: tuple) -> pd.DataFrame:
         """
         Runs algo3_5 to get the number of words/emoji/both for each chunk:
-            'num_words': number of words at that chunk
-            'num_emo': number of emoticons at that chunk
-            'num_words_emo': number words + emoticons at that chunk
+            - 'num_words': number of words at that chunk
+            - 'num_emo': number of emoticons at that chunk
+            - 'num_words_emo': number words + emoticons at that chunk
 
         input
         ------
@@ -22,7 +22,7 @@ class featureFinder:
         output
         ------
         results: dataframe
-            Dataframe with columns of:
+            Dataframe with feature columns of:
                 'num_words'
                 'num_emo'
                 'num_words_emo'

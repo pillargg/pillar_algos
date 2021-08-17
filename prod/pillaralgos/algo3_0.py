@@ -22,7 +22,7 @@ class featureFinder:
         output
         ------
         results: dataframe
-            Dataframe with columns of:
+            Dataframe with feature columns of:
                 'num_chats_by_top_emoji_users'
                 'num_chats_by_top_words_users'
                 'num_chats_by_top_words_emoji_users'

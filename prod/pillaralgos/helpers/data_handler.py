@@ -13,7 +13,7 @@ pd.options.mode.chained_assignment = None  # default='warn'
 
 
 def data_finalizer(
-    dataframe: pd.DataFrame, vid_id: str, select: str = "all", limit: int = None
+    dataframe: pd.DataFrame, vid_id: str, algo_label: str = None, select: str = "all", limit: int = None
 ) -> pd.DataFrame:
     """
     Sorts and clips final dataframe as requested. All algorithms use this function
@@ -23,6 +23,7 @@ def data_finalizer(
     -----
     dataframe: final dataframe with required columns: start, end
     vid_id: the stream id, required
+    algo_label: str or None. Prefix to add to each column, so features can be distinguished by label
     select: what column(s), besides start and end, to include in the df. Default is all columns.
     limit: how many rows to return, default is no limit (so all rows)
     """
@@ -37,15 +38,24 @@ def data_finalizer(
     if len(dataframe.drop_duplicates()) != len(dataframe):
         # raise custom error if duplicates were found
         raise e.duplicatesFoundError()
-
-    if select != "all":
-        dataframe = dataframe[["start", "end", select]]
+    not_there = []
+    if type(select) == list:
+        selected_columns = ['start', 'end'] + select
+        # check the columns exist
+        for col in selected_columns:
+            if col not in dataframe.columns:
+                not_there.append(col) # return and notify user
+                selected_columns.remove(col)
+        dataframe = dataframe[selected_columns]
 
     if type(limit) == int:
         # should never be used, but just in case
         dataframe = dataframe.head(limit)
+    
+    if type(algo_label) == str:
+        dataframe.columns = [f"{algo_label}_" + col if col not in ['start', 'end', 'vid_id'] else col for col in dataframe.columns]
 
-    return dataframe
+    return dataframe, not_there
 
 
 def rename_columns(col_string):

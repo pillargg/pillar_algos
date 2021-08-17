@@ -19,7 +19,7 @@ class featureFinder:
         output
         ------
         results: dataframe
-            Dataframe with columns of:
+            Dataframe with feature columns of:
                 'stream_unique_users': number of unique users in the stream
                 'hour_unique_users': number of unique users that hour
                 'chunk_unique_users': number of unique users that chunk

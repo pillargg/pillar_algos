@@ -1,12 +1,8 @@
 """
-Contains one class `emoticonExtractor` that returns a df of top emoticons used,
-including the video's ID, and the emoticon's id, name, number of uses. Plus a blank
-"label" column to be filled out by little label-monkeys.
-
-"Top emoticons used" is defined as `emoticon count in dataset` >= `mean emoticon count in dataset`
+Algorithm to analyze emoticon usage in the stream
 
 HOW TO:
-    ee = emoticonExtractor(data, limit='mean')
+    ee = featureFinder(data)
     results = ee.run()
 """
 import pandas as pd
@@ -15,16 +11,34 @@ import pandas as pd
 class featureFinder:
     def __init__(self, data: list):
         """
+        Gets data ready for emoticon analysis. Initializes dicts, lists, etc.
+
         input
         -----
-
+        data: list
+            List where index 0 is the first timestamp, index 1 the chunks dataframe, and index 2 the stream ID
         """
         self.first_stamp = data[0]
         self.chunks_df = data[1]
         self.vid_id = data[2]
 
     def run(self) -> pd.DataFrame:
-
+        '''
+        Runs algo3_6 to get some stats on emoticon usage. Emoticons are not counted uniquely, so one
+        message with 100 of the same emoticon is recorded as 100 "uses". 
+            - 'num_emo': the number of emoticons used in the chunk
+            - 'chunk_unique_users': the number of users in the chunk
+            - 'perc_emoji_of_stream': ratio of emojis in chunk / total emojis in stream
+            - 'emoji_user_ratio': ratio of 'emojis in chunk' / 'number of unique chatters in chunk'
+        output
+        ------
+        results: dataframe 
+            Dataframe with feature columns including:
+                - 'num_emo'
+                - 'chunk_unique_users'
+                - 'perc_emoji_of_stream'
+                - 'emoji_user_ratio'
+        '''
         chunk_df_with_emo_count = self.thalamus()
         results = self.clean_dataframe(chunk_df_with_emo_count)
         return results
@@ -41,7 +55,7 @@ class featureFinder:
         new_chunk_data = pd.DataFrame()
         for start in self.chunks_df["start"].unique():
             chunk = self.chunks_df[self.chunks_df["start"] == start]
-            num_user = len(chunk["_id"].unique())
+            chunk_unique_users = len(chunk["_id"].unique())
 
             chunk_emo = 0
             chunk_formatted = self.format_df_for_emo(chunk)
@@ -55,13 +69,13 @@ class featureFinder:
                     chunk_emo += num_emo
 
             big_emo += chunk_emo  # add number of emoticons in chunk to total
-            chunk["num_emoji"] = chunk_emo
-            chunk["num_user"] = num_user
+            chunk["num_emo"] = chunk_emo
+            chunk["chunk_unique_users"] = chunk_unique_users
             new_chunk_data = new_chunk_data.append(chunk)
 
-        new_chunk_data["perc_emoji_of_stream"] = new_chunk_data["num_emoji"] / big_emo
+        new_chunk_data["perc_emoji_of_stream"] = new_chunk_data["num_emo"] / big_emo
         new_chunk_data["emoji_user_ratio"] = (
-            new_chunk_data["num_emoji"] / new_chunk_data["num_user"]
+            new_chunk_data["num_emo"] / new_chunk_data["chunk_unique_users"]
         )
 
         return new_chunk_data
@@ -111,8 +125,8 @@ class featureFinder:
             [
                 "start",
                 "end",
-                "num_emoji",
-                "num_user",
+                "num_emo",
+                "chunk_unique_users",
                 "perc_emoji_of_stream",
                 "emoji_user_ratio",
             ]

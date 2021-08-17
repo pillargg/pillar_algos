@@ -25,7 +25,7 @@ class featureFinder:
         output
         ------
         results: dataframe
-            Dataframe with columns of:
+            Dataframe with feature columns of:
                 'mean_chat_rate_per_minute'
         """
         self.first_stamp = data[0]
