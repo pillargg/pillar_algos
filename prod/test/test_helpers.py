@@ -26,7 +26,6 @@ sys.path.append(algos_path)  # append the path to sys.path
 
 #### Testing Area ####
 from helpers import data_handler as dh  # from pillaralgos folder
-from helpers import emoji_getter as eg
 
 ###############################################################################
 
@@ -119,7 +118,7 @@ def test_chunker():
     "future site of testing minute chunker and hour splitter"
 
 
-def test_emoji_getter(lg_file):
+def nottest_emoji_getter(lg_file):
     ee = eg.emoticonExtractor(data=lg_file, min_use="mean", limit=None)
     calc_result = ee.run()
     calc_result = calc_result.head(10).astype(

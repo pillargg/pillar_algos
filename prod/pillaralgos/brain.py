@@ -119,8 +119,17 @@ def run_algo(algo, data: pd.DataFrame, select: dict, algo_str: str, vid_id: str,
 
     return formatted
 
-
-def run(vid_id: str, clip_length: float, select_features: dict = "all", dev_mode: bool = False):
+def reorganize_columns(dataframe: pd.DataFrame) -> pd.DataFrame:
+    begin_cols = ['start','end', 'vid_id']
+    other_cols = []
+    for col in dataframe.columns:
+        if col not in begin_cols:
+            other_cols.append(col)
+    all_cols = begin_cols + other_cols
+    dataframe = dataframe[all_cols]
+    return dataframe
+    
+def run(vid_id: str, clip_length: float, select_features: dict = "all", dev_mode: bool = False, chosen_algos = ['algo1', 'algo2', 'algo3_0', 'algo3_5', 'algo3_6', 'algo4']):
     '''
     Formats raw json into dataframe, creates the chunk_df where
     each chunk is of size clip_length, then iterates through each algorithm 
@@ -165,10 +174,19 @@ def run(vid_id: str, clip_length: float, select_features: dict = "all", dev_mode
     # load and organize data so that one row is one chunk
     important_data = load_data(data, clip_length)
 
-    # used for select_features parameter
-    all_algos_str = ['algo1', 'algo2', 'algo3_0', 'algo3_5', 'algo3_6', 'algo4']
     # the algorithms
-    all_algos = [algo1, algo2, algo3_0, algo3_5, algo3_6, algo4]
+    all_algos_dict = {
+        'algo1':algo1,
+        'algo2':algo2,
+        'algo3_0':algo3_0,
+        'algo3_5':algo3_5,
+        'algo3_6':algo3_6,
+        'algo4':algo4
+    }
+    all_algos = []
+    for algo_str in chosen_algos:
+        all_algos.append(all_algos_dict[algo_str])
+
     ic("Running algorithms")
     algo_results = {}
 
@@ -176,7 +194,7 @@ def run(vid_id: str, clip_length: float, select_features: dict = "all", dev_mode
         # show progress bar in jupyter notebook
         from tqdm.notebook import tqdm
         for i in tqdm(range(len(all_algos))):
-            algo_str = all_algos_str[i]
+            algo_str = chosen_algos[i]
             algo = all_algos[i]
 
             result = run_algo(algo, important_data, select_features, algo_str, vid_id, label_features)
@@ -184,16 +202,16 @@ def run(vid_id: str, clip_length: float, select_features: dict = "all", dev_mode
     else:
         # don't show progress bar
         for i in range(len(all_algos)):
-            algo_str = all_algos_str[i]
+            algo_str = chosen_algos[i]
             algo = all_algos[i]
 
             result = run_algo(algo, important_data, select_features, algo_str, vid_id, label_features)
             algo_results[algo_str] = result
 
-    ic("Merging featuresets")
-    df = algo_results[all_algos_str[0]]
+    ic("Merging feature sets")
+    df = algo_results[chosen_algos[0]]
     for key in algo_results.keys():
-        if key != all_algos_str[0]:
+        if key != chosen_algos[0]:
             df = df.merge(algo_results[key])
-
+    df = reorganize_columns(df)
     return df
