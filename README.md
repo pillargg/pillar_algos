@@ -56,10 +56,12 @@ __Algo4__:
     positive, neutral, or negative. Calculated using self.cat_compound()
 
 ## Datasets:
-1. Preliminary data `prelim_df`: 545 rows representing one 3 hour 35 minute 26 second twitch stream chat of [Hearthstone by LiiHS](https://www.twitch.tv/videos/963184458)
-    * Used to create initial json import and resulting df clean/merge function `organize_twitch_chat`
-2. Big data `big_df`: 2409 rows representing one 7 hour 37 minute, 0 second twitch stream chat of [Hearthstone by LiiHS](https://www.twitch.tv/videos/955629991)
-    * Used to create all algorithms
+
+Three datasets are in progress.
+
+1. CCC dataset - containing timestamps and other features for each CCC that @gatesyp downloaded
+2. CCC stream dataset - containing the entire twitch stream chat log for each CCC
+3. Featureset - created with `brain`, contains results of feature engineering with algos
 
 # Current Goal
 
