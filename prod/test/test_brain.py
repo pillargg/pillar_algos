@@ -21,6 +21,7 @@ algos_path = os.path.abspath(prod_dir)  # get the absolute path
 
 base_dir = os.path.join(prod_dir, cd, cd)
 data_folder = "sample_data"  # location of sample data
+clip_length = 0.75 # this is also param for check_length
 
 #### Append Algos Dir to Sys.path ####
 sys.path.append(algos_path)  # append the path to sys.path
@@ -31,48 +32,31 @@ from pillaralgos import brain # from pillaralgos folder
 ###############################################################################
 import pytest
 
-@pytest.fixture()
-def med_file():
-    data = json.load(open(f"{data_folder}/sample_med.json"))
-    return data
-
-
-def test_brain(med_file):
-    clip_length = 0.75 # this is also param for check_length
-    calc_result = brain.run(data=med_file,
+@pytest.fixture(scope='module')
+def med_file_calc():
+    'run brain once, then use results to test'
+    calc_result = brain.run(chat_loc=f"{data_folder}/sample_med.json",
                             clip_length=clip_length,
-                            common_timestamps=2, 
-                            algos_to_compare = ["algo1","algo2","algo3_0","algo3_5"],
-                            limit=7)
+                            dev_mode = False)
+    return calc_result.sample(n=10, random_state=69)
+
+def test_brain(med_file_calc):
+    clip_length = 0.75 # this is also param for check_length
+    answer = pd.read_pickle(f"{data_folder}/med_brain_answer.pkl")
     
-    answer = [{'startTime': 21200.477, 'endTime': 21245.343},
-              {'startTime': 12175.522, 'endTime': 12220.34},
-              {'startTime': 19831.123, 'endTime': 19875.995},
-              {'startTime': 15355.018, 'endTime': 15387.38},
-              {'startTime': 17841.413, 'endTime': 17886.181},
-              {'startTime': 5912.06, 'endTime': 5955.978},
-              {'startTime': 5583.986, 'endTime': 5628.403}]
-    assert calc_result == answer # check answer is correct
+    assert med_file_calc.equals(answer) # check answer is correct
 
 
-def test_length(med_file):
+def test_length(med_file_calc):
     '''
     Checks the length of timestamps is less than min_
     
     answer: list
         List of dictionaries (json format)
-    '''
-    clip_length = 0.75 # this is also param for check_length
-    answer = brain.run(data=med_file,
-                            clip_length=clip_length,
-                            common_timestamps=2, 
-                            algos_to_compare = ["algo1","algo2","algo3_0","algo3_5"],
-                            limit=7)
-    
-    lengths = []
-    for ans in answer:
-        time_diff = ans['endTime'] - ans['startTime']
-        num_sec = clip_length*60 
-        result = time_diff <= num_sec # to get bools
-        lengths.append(result)
-    assert sum(lengths) == 7 # passes if all time lengths <= clip_length
+    '''    
+    time_diff = med_file_calc['end'] - med_file_calc['start']
+    time_diff = time_diff.apply(lambda x: x.total_seconds())
+    num_sec = clip_length*60 
+    result = time_diff <= num_sec # to get bools
+
+    assert sum(result) == 10 # passes if all time lengths <= clip_length

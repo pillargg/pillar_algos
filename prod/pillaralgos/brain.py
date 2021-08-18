@@ -15,7 +15,7 @@ from pillaralgos.helpers import exceptions as e
 from icecream import ic
 
 ### Functions in common across all algos ###
-def load_data(data, clip_length):
+def load_data(data: list, clip_length: float) -> tuple:
     """
     Loads and splits data into appropriate chunks 
 
@@ -129,7 +129,7 @@ def reorganize_columns(dataframe: pd.DataFrame) -> pd.DataFrame:
     dataframe = dataframe[all_cols]
     return dataframe
     
-def run(vid_id: str, clip_length: float, select_features: dict = "all", dev_mode: bool = False, chosen_algos = ['algo1', 'algo2', 'algo3_0', 'algo3_5', 'algo3_6', 'algo4']):
+def run(chat_loc: str, clip_length: float, select_features: dict = "all", dev_mode: bool = False, chosen_algos = ['algo1', 'algo2', 'algo3_0', 'algo3_5', 'algo3_6', 'algo4']):
     '''
     Formats raw json into dataframe, creates the chunk_df where
     each chunk is of size clip_length, then iterates through each algorithm 
@@ -137,8 +137,8 @@ def run(vid_id: str, clip_length: float, select_features: dict = "all", dev_mode
     
     input
     -----
-    vid_id: str
-        id of the twitch stream to load
+    chat_loc: str
+        id and loc of the twitch stream to load. ex: "data/1341231.json"
     clip_length: int or float
         length of each clip to be suggested to user
     select_features: str or dict
@@ -147,8 +147,7 @@ def run(vid_id: str, clip_length: float, select_features: dict = "all", dev_mode
         representing features to return
         NOTE: see algo docstring for feature options
     dev_mode: bool
-        if True, will assume file `vid_id` is located in the data directory
-        with a .json file extension, opens it with json.load(open()), provides
+        if True, opens file `vid_id` with json.load(open()), provides
         a progress bar for jupyter notebook, and labels each feature with the algo that made it
 
     Example:
@@ -162,11 +161,11 @@ def run(vid_id: str, clip_length: float, select_features: dict = "all", dev_mode
     }
     df = brain.run(vid_id, clip_length=0.5, select_features=select,dev_mode=False)
     '''
+    data = json.load(open(f"{chat_loc}"))
+    vid_id = chat_loc.split('/')[-1].strip('.json')
     if dev_mode:
-        data = json.load(open(f"data/{vid_id}.json"))
         label_features = True
     else:
-        data = json.load(open(f"{vid_id}.json"))
         label_features = False
     if len(data) == 0:
         ic(f"{vid_id} is empty")
