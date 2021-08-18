@@ -11,6 +11,7 @@ import json
 from pillaralgos import algo1, algo2, algo3_0, algo3_5, algo3_6, algo4, brain
 from pillaralgos.helpers import data_handler as d
 from pillaralgos.helpers import exceptions as e
+from pillaralgos.helpers.ccc_labeling import cccLabeler
 
 from icecream import ic
 
@@ -129,7 +130,7 @@ def reorganize_columns(dataframe: pd.DataFrame) -> pd.DataFrame:
     dataframe = dataframe[all_cols]
     return dataframe
     
-def run(chat_loc: str, clip_length: float, select_features: dict = "all", dev_mode: bool = False, chosen_algos = ['algo1', 'algo2', 'algo3_0', 'algo3_5', 'algo3_6', 'algo4']):
+def run(chat_loc: str, clip_length: float, select_features: dict = "all", dev_mode: bool = False, ccc_df_loc = '../data', chosen_algos = ['algo1', 'algo2', 'algo3_0', 'algo3_5', 'algo3_6', 'algo4']):
     '''
     Formats raw json into dataframe, creates the chunk_df where
     each chunk is of size clip_length, then iterates through each algorithm 
@@ -162,7 +163,7 @@ def run(chat_loc: str, clip_length: float, select_features: dict = "all", dev_mo
     df = brain.run(vid_id, clip_length=0.5, select_features=select,dev_mode=False)
     '''
     data = json.load(open(f"{chat_loc}"))
-    vid_id = chat_loc.split('/')[-1].strip('.json')
+    vid_id = chat_loc.split('/')[-1].replace('.json','')
     if dev_mode:
         label_features = True
     else:
@@ -213,4 +214,8 @@ def run(chat_loc: str, clip_length: float, select_features: dict = "all", dev_mo
         if key != chosen_algos[0]:
             df = df.merge(algo_results[key])
     df = reorganize_columns(df)
+    ic("Labeling timestamps")
+    c = cccLabeler(first_stamp = important_data[0], brain_df = df, ccc_df_loc = ccc_df_loc)
+    df = c.run()
+    ic(f"{vid_id} done!")
     return df
