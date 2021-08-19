@@ -100,7 +100,7 @@ select_features = {
 ```
 
 * `dev_mode`: Whether or not to run in dev mode. This mode will load the data using `json.load(open())` instead of `StringIO`, provides a progress bar for jupyter notebooks, and labels each feature with the algo that made it.
-   * Default: False
+   * Default: `False`
 * `ccc_df_loc`: Location of the CCC database
    * Default: `datasets/collated_clip_dataset.txt`
 
