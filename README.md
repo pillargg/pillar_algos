@@ -83,7 +83,8 @@ Only two parameters, `vid_id` and `data_` are required to run brain, the rest ha
    * Default: `0.5`, this is half a minute (30 seconds)
 * `chosen_algos: A list of algorithms to run. By default all algorithms are selected
    * Default: `['algo1','algo2','algo3_0','algo3_5','algo3_6','algo4']`
-* `select_features`: Select the features to get from each algorithm, in dictionary form. See example below. Default is 'all', to return all calculated features. See feature descriptions above for more info.
+* `select_features`: Select the features to get from each algorithm, in dictionary form. See example below. 
+   * Default: `'all'`, to return all calculated features. See feature descriptions above for more info.
    * _NOTE_: duplicate variables will be merged prior to returning the feature set
 
 ```
