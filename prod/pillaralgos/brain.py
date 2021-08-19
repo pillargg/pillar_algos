@@ -98,23 +98,10 @@ a progress bar for jupyter notebook, and labels each feature with the algo that 
     @step
     def organize_algos(self):
         'this step loops through selected algos and pairs them with the appropriate algo'
-        chosen_algos = self.chosen_algos
-        # the algorithms
-        all_algos_dict = {
-            'algo1':algo1,
-            'algo2':algo2,
-            'algo3_0':algo3_0,
-            'algo3_5':algo3_5,
-            'algo3_6':algo3_6,
-            'algo4':algo4
-        }
-        all_algos = []
-        for algo_str in self.chosen_algos:
-            all_algos.append(all_algos_dict[algo_str])
+
 
         # run each chosen algo
-        self.algos_tuple = zip(chosen_algos, all_algos)
-        self.next(self.run_algo, foreach='algos_tuple')
+        self.next(self.run_algo, foreach='chosen_algos')
 
 
     @step
@@ -132,9 +119,17 @@ a progress bar for jupyter notebook, and labels each feature with the algo that 
         label_features: whether or not to label each feature with the algo that made it
         '''
         # self.input is created by metaflow with the foreach parameter
-        algo_str = self.input[0]
-        algo = self.input[1]
-        data = self.chunk_df
+        all_algos_dict = {
+            'algo1':algo1,
+            'algo2':algo2,
+            'algo3_0':algo3_0,
+            'algo3_5':algo3_5,
+            'algo3_6':algo3_6,
+            'algo4':algo4
+        }
+        algo_str = self.input
+        algo = all_algos_dict[algo_str]
+        data = self.important_data
         select = self.select_features
         vid_id = self.vid_id
         label_features = self.label_features
