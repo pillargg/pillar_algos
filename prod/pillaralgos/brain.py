@@ -74,16 +74,30 @@ a progress bar for jupyter notebook, and labels each feature with the algo that 
             return np.array([])
         self.important_data = self.load_data(data, self.clip_length)
         self.first_stamp = self.important_data[0]
+        self.chunk_df = self.important_data[1]
+
         self.next(self.organize_algos)
         # load and organize data so that one row is one chunk
+
+
+    @step
+    def organize_dataframe(self):
+        'this step reorganizes columns'
+        df = self.df
+        begin_cols = ['start','end', 'vid_id']
+        other_cols = []
+        for col in df.columns:
+            if col not in begin_cols:
+                other_cols.append(col)
+
+        all_cols = begin_cols + other_cols
+        self.df = df[all_cols]
+        self.next(self.label_timestamps)
+
+
     @step
     def organize_algos(self):
-        'this step loops through select algos, runs them with the help of self.run_algos'
-        from tqdm import tqdm
-        important_data = self.important_data
-        select_features = self.select_features
-        vid_id = self.vid_id
-        label_features = self.label_features
+        'this step loops through selected algos and pairs them with the appropriate algo'
         chosen_algos = self.chosen_algos
         # the algorithms
         all_algos_dict = {
@@ -98,46 +112,75 @@ a progress bar for jupyter notebook, and labels each feature with the algo that 
         for algo_str in self.chosen_algos:
             all_algos.append(all_algos_dict[algo_str])
 
-        algo_results = {}
+        # run each chosen algo
+        self.algos_tuple = zip(chosen_algos, all_algos)
+        self.next(self.run_algo, foreach='algos_tuple')
 
-        if self.dev_mode:
-            # show progress bar in jupyter notebook
-            from tqdm.notebook import tqdm
-            for i in tqdm(range(len(all_algos))):
-                algo_str = chosen_algos[i]
-                algo = all_algos[i]
 
-                result = self.run_algo(algo, important_data, select_features, algo_str, vid_id, label_features)
-                algo_results[algo_str] = result
+    @step
+    def run_algo(self):
+        '''
+        Runs the algorithm, formats resulting dataset
+
+        input
+        -----
+        algo: loaded algorithm class
+        data: twitch data preformatted and chunkified
+        select: "all" or dictionary of lists with columns to select from algo output
+        algo_str: name of algorithm
+        vid_id: video ID of twitch stream
+        label_features: whether or not to label each feature with the algo that made it
+        '''
+        # self.input is created by metaflow with the foreach parameter
+        algo_str = self.input[0]
+        algo = self.input[1]
+        data = self.chunk_df
+        select = self.select_features
+        vid_id = self.vid_id
+        label_features = self.label_features
+        
+        a = algo.featureFinder(data)
+        res = a.run()
+
+        if (type(select) == dict) & (algo_str in select):
+            selected_columns = select[algo_str]
         else:
-            # don't show progress bar
-            for i in range(len(all_algos)):
-                algo_str = chosen_algos[i]
-                algo = all_algos[i]
+            selected_columns = "all"
 
-                result = self.run_algo(algo, important_data, select_features, algo_str, vid_id, label_features)
-                algo_results[algo_str] = result
+        if label_features:
+            feature_label = algo_str
+        else:
+            feature_label = None
+        formatted, bad_columns = d.data_finalizer(res, 
+                                                  vid_id=vid_id, 
+                                                  select=selected_columns, 
+                                                  algo_label=feature_label)
+        if len(bad_columns) > 1:
+            # if there is something in this list, the user defined columns in 
+            # selected_columns was not found
+            print(f"{algo_str}: The following columns were not found: {bad_columns}")
+        elif len(bad_columns) == 1:
+            print(f"{algo_str}: Column not found: {bad_columns}")
 
-        df = algo_results[chosen_algos[0]]
-        for key in algo_results.keys():
-            if key != chosen_algos[0]:
-                df = df.merge(algo_results[key])
+        # check the dataset is proper
+        if not self.test_results(data, formatted):
+            print(f"{algo_str} failed the test!")
+
+        self.algo_features = formatted
+        self.next(self.join_features)
+
+
+    @step
+    def join_features(self, all_algo_features):
+        'this step merges the results of each algorithm into one dataset'
+        features = [algo_feature for algo_feature in all_algo_features]
+        df = features[0]
+        for i in range(1,len(features)):
+            df = df.merge(features[i])
         self.df = df
         self.next(self.organize_dataframe)
 
-    @step
-    def organize_dataframe(self):
-        'this step reorganizes columns'
-        df = self.df
-        begin_cols = ['start','end', 'vid_id']
-        other_cols = []
-        for col in df.columns:
-            if col not in begin_cols:
-                other_cols.append(col)
-                
-        all_cols = begin_cols + other_cols
-        self.df = df[all_cols]
-        self.next(self.label_timestamps)
+
     @step
     def label_timestamps(self):
         'this step labels each timestamp range as ccc or not'
@@ -183,48 +226,6 @@ a progress bar for jupyter notebook, and labels each feature with the algo that 
         else:
             return np.array([])
 
-    
-    def run_algo(self, algo, data: pd.DataFrame, select: dict, algo_str: str, vid_id: str, label_features: bool) -> pd.DataFrame:
-        '''
-        Runs the algorithm, formats resulting dataset
-
-        input
-        -----
-        algo: loaded algorithm class
-        data: twitch data preformatted and chunkified
-        select: "all" or dictionary of lists with columns to select from algo output
-        algo_str: name of algorithm
-        vid_id: video ID of twitch stream
-        label_features: whether or not to label each feature with the algo that made it
-        '''
-        a = algo.featureFinder(data)
-        res = a.run()
-
-        if (type(select) == dict) & (algo_str in select):
-            selected_columns = select[algo_str]
-        else:
-            selected_columns = "all"
-
-        if label_features:
-            feature_label = algo_str
-        else:
-            feature_label = None
-        formatted, bad_columns = d.data_finalizer(res, 
-                                                  vid_id=vid_id, 
-                                                  select=selected_columns, 
-                                                  algo_label=feature_label)
-        if len(bad_columns) > 1:
-            # if there is something in this list, the user defined columns in 
-            # selected_columns was not found
-            print(f"{algo_str}: The following columns were not found: {bad_columns}")
-        elif len(bad_columns) == 1:
-            print(f"{algo_str}: Column not found: {bad_columns}")
-
-        # check the dataset is proper
-        if not self.test_results(data, formatted):
-            print(f"{algo_str} failed the test!")
-
-        return formatted
 
     def test_results(self, data, dataframe):
         """
