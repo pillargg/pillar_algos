@@ -1,4 +1,5 @@
 import pandas as pd
+from helpers import exceptions as e
 
 def load_ccc_data(loc: str = '../data') -> pd.DataFrame:
     '''
@@ -8,7 +9,7 @@ def load_ccc_data(loc: str = '../data') -> pd.DataFrame:
     -----
     loc: location of `collated_clip_dataset.txt`
     '''
-    file = open(f'{loc}/collated_clip_dataset.txt','r')
+    file = open(f'{loc}','r')
     lines = file.readlines()
     dontwork = []
     work = []
@@ -47,7 +48,7 @@ def load_ccc_data(loc: str = '../data') -> pd.DataFrame:
 
 
 class cccLabeler():
-    def __init__(self, first_stamp, brain_df: pd.DataFrame, ccc_df_loc:str = 'datasets'):
+    def __init__(self, first_stamp, brain_df: pd.DataFrame, ccc_df_loc:str):
         '''
         Makes sure the vid_id exists in ccc database, converts timestamps to floats
         
@@ -62,7 +63,7 @@ class cccLabeler():
 
         if ccc_clip.empty:
             # check if any vid_id is associated
-            print(f"{vid_id} was not found in the CCC dataset, cannot continue")
+            raise e.VidIdNotFound(vid_id=vid_id)
         else:
             # rename to be more friendly
             ccc_clip = ccc_clip.rename({

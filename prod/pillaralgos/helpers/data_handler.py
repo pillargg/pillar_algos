@@ -5,7 +5,7 @@ also json_saver() that converts given variable into string, saves into .json fil
 import pandas as pd
 import numpy as np
 import datetime as dt
-from pillaralgos.helpers import exceptions as e
+from helpers import exceptions as e
 
 # remove the .loc warning. bc I dont acre about writes making it back
 # to og dataframe https://stackoverflow.com/a/20627316/9866659
