@@ -3,7 +3,9 @@
    1. [Algorithms](#algorithms)
    2. [Datasets](#datasets)
 3. [Current Goal](#current-goal)
-
+4. [Metaflow](#metaflow)
+   1. [Steps](#steps)
+   2. [How to](#how-to)
 # Background
 Pillar is creating an innovative way to automatically select and splice clips from Twitch videos for streamers. This repo is focusing on the algorithm aspect. Three main algorithms are being tested.
 
@@ -66,3 +68,22 @@ Three datasets are in progress.
 
 To label each timestamp as CCC or not CCC, then use categorical supervised ML algorithm to predict future CCC clips based on twitch chat featureset.
 
+# Metaflow
+
+Brain is set up to work with metaflow is ease of deployment and debugging. The current flow is below:
+
+<img src = "https://github.com/pillargg/pillar_algos/raw/new_brain/graph.png" >
+
+## Steps
+
+1. Start
+
+## How To
+
+To run brain locally in conda:
+
+`CONDA_CHANNELS=conda-forge python brain.py --environment=conda run --data_=datasets/1073841789.json --vid_id=1073841789`
+
+To create a graph of the flow first install graphviz `sudo apt install graphviz` and then run the command below:
+
+`python brain.py --environment=conda output-dot | dot -Tpng -o graph.png`
