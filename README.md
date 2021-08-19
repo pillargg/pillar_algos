@@ -4,8 +4,9 @@
    2. [Datasets](#datasets)
 3. [Current Goal](#current-goal)
 4. [Metaflow](#metaflow)
-   1. [Steps](#steps)
-   2. [How to](#how-to)
+   1. [Parameters](#parameters)
+   2. [Steps](#steps)
+   3. [How to](#how-to)
 # Background
 Pillar is creating an innovative way to automatically select and splice clips from Twitch videos for streamers. This repo is focusing on the algorithm aspect. Three main algorithms are being tested.
 
@@ -70,13 +71,53 @@ To label each timestamp as CCC or not CCC, then use categorical supervised ML al
 
 # Metaflow
 
-Brain is set up to work with metaflow is ease of deployment and debugging. The current flow is below:
+Brain is set up to work with metaflow is ease of deployment and debugging. The flow is explained here.
 
-<img src = "https://github.com/pillargg/pillar_algos/raw/new_brain/graph.png" >
+## Parameters
+
+Only two parameters, `vid_id` and `data_` are required to run brain, the rest have defaults selected.
+
+* `vid_id`: ID of the twitch video that has chat log. This is used to confirm that the ID exists in our CCC database
+* `data_`: Location of the chat log as a json file
+* `clip_length`: How long each clip range should be, in minutes. 
+   * Default: `0.5`, this is half a minute (30 seconds)
+* `chosen_algos: A list of algorithms to run. By default all algorithms are selected
+   * Default: `['algo1','algo2','algo3_0','algo3_5','algo3_6','algo4']`
+* `select_features`: Select the features to get from each algorithm, in dictionary form. See example below. Default is 'all', to return all calculated features. See feature descriptions above for more info.
+   * _NOTE_: duplicate variables will be merged prior to returning the feature set
+
+```
+# this example will return all features for demonstration purposes. It's enough to pass the string 'all' to select_features, same result.
+select_features = {
+   'algo1':['stream_unique_users', 'hour_unique_users', 'chunk_unique_users', 'chunk_to_stream_unique_users', 'chunk_to_hour_unique_users'],
+   'algo2':['mean_chat_rate_per_minute'],
+   'algo3_0':['num_chats_by_top_emoji_users','num_chats_by_top_words_users','num_chats_by_top_words_emoji_users'],
+   'algo3_5':['num_words', 'num_emo', 'num_words_emo'],
+   'algo3_6':['num_emo','chunk_unique_users','perc_emoji_of_stream','emoji_user_ratio'],
+   'algo4':['positive','negative','neutral','compound','abs_overall','mostly']
+}
+```
+
+* `dev_mode`: Whether or not to run in dev mode. This mode will load the data using `json.load(open())` instead of `StringIO`, provides a progress bar for jupyter notebooks, and labels each feature with the algo that made it.
+   * Default: False
+* `ccc_df_loc`: Location of the CCC database
+   * Default: `datasets/collated_clip_dataset.txt`
 
 ## Steps
 
+<img src = "https://github.com/pillargg/pillar_algos/raw/new_brain/graph.png" >
+
 1. Start
+   1. Load the data and organize into clips of `clip_length` length using the `load_data()` function and assign relevant variables to class variables
+2. Organize algorithms
+   1. Loops through each user provided algorithm and runs them using `run_algos()` function, then merges the results into one dataframe
+   2. If `dev_mode = True` will show a progress bar for jupyter notebook
+3. Organize dataframe
+   1. Reorganizes the feature set so columns are in a standard order
+4. Label timestamps
+   1. Runs the `cccLabeler()` class to label each timestamp range in the feature set as overlapping the CCC timestamps in the CCC dataset. True if overlapped, False if not.
+5. End
+   1. Returns the feature set
 
 ## How To
 
