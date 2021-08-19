@@ -166,9 +166,9 @@ a progress bar for jupyter notebook, and labels each feature with the algo that 
 
 
     @step
-    def join_features(self, all_algo_features):
+    def join_features(self, algo_step):
         'this step merges the results of each algorithm into one dataset'
-        features = [algo_feature for algo_feature in all_algo_features]
+        features = [output.algo_features for output in algo_step]
         df = features[0]
         for i in range(1,len(features)):
             df = df.merge(features[i])
@@ -185,6 +185,7 @@ a progress bar for jupyter notebook, and labels each feature with the algo that 
         df = c.run()
         self.result = df
         self.next(self.end)
+
 
     @step
     def end(self):
