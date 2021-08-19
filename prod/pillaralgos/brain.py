@@ -39,15 +39,19 @@ class brainFlow(FlowSpec):
     vid_id = Parameter('vid_id',
                        help='ID of stream video')
     data_ = IncludeFile('data_', 
-                        help='List Twitch')
+                        help='Twitch stream chat log, json file')
     clip_length = Parameter('clip_length', 
                             default=0.5,
-                            help="Length of recommended clips")
+                            help="Length of recommended clips in minutes, default is 0.5 minutes")
+    chosen_algos = Parameter('chosen_algos',
+                             default=['algo1', 'algo2', 'algo3_0', 'algo3_5', 'algo3_6', 'algo4'],
+                             help='''list of algos as str that should be run to create feature set''')
     select_features = Parameter('select_features',
                                 default='all',
                                 help='''either 'all' or a dictionary where keys are one of 'algo1', 'algo2', 
 'algo3_0', 'algo3_5', 'algo3_6', 'algo4' and values a list of str representing features to return
 NOTE: see algo docstring for feature options''')
+
     dev_mode = Parameter('dev_mode',
                          default=False,
                          help='''if True, opens file `vid_id` with json.load(open()), provides
@@ -55,9 +59,7 @@ a progress bar for jupyter notebook, and labels each feature with the algo that 
     ccc_df_loc = Parameter('ccc_df_loc',
                          default='datasets/collated_clip_dataset.txt',
                          help='location of dataset of ccc clips and properties')
-    chosen_algos = Parameter('chosen_algos',
-                             default=['algo1', 'algo2', 'algo3_0', 'algo3_5', 'algo3_6', 'algo4'],
-                             help='''algos that should be run to create feature set''')
+
     @conda(libraries={'numpy':'1.20.2', 'pandas':'1.2.3'})
     @step
     def start(self):
@@ -73,7 +75,6 @@ a progress bar for jupyter notebook, and labels each feature with the algo that 
             return np.array([])
         self.important_data = self.load_data(data, self.clip_length)
         self.first_stamp = self.important_data[0]
-        print(self.first_stamp)
         self.next(self.organize_algos)
         # load and organize data so that one row is one chunk
     @conda(libraries={'tqdm':'4.60.0', 'pandas':'1.2.3','nltk':'3.6.2'})
@@ -146,7 +147,7 @@ a progress bar for jupyter notebook, and labels each feature with the algo that 
         'this step labels each timestamp range as ccc or not'
         from helpers.ccc_labeling import cccLabeler
 
-        c = cccLabeler(first_stamp = self.important_data[0], brain_df = self.df, ccc_df_loc = self.ccc_df_loc)
+        c = cccLabeler(first_stamp = self.self.first_stamp, brain_df = self.df, ccc_df_loc = self.ccc_df_loc)
         df = c.run()
         self.result = df
         self.next(self.end)
