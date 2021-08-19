@@ -31,7 +31,7 @@ def get_python_version():
 
 
 # Use the specified version of python for this flow.
-@conda_base(python=get_python_version())
+@conda_base(libraries={'numpy':'1.20.2', 'pandas':'1.2.3','tqdm':'4.60.0', 'nltk':'3.6.2'}, python='3.8.8')
 class brainFlow(FlowSpec):
     # allow for data input, default is the sample_med.json
     # python brain.py --environment=conda run --data_=/path/to/data 
@@ -60,7 +60,6 @@ a progress bar for jupyter notebook, and labels each feature with the algo that 
                          default='datasets/collated_clip_dataset.txt',
                          help='location of dataset of ccc clips and properties')
 
-    @conda(libraries={'numpy':'1.20.2', 'pandas':'1.2.3'})
     @step
     def start(self):
         'this step loads the data and gets variables ready according to user input'
@@ -77,7 +76,6 @@ a progress bar for jupyter notebook, and labels each feature with the algo that 
         self.first_stamp = self.important_data[0]
         self.next(self.organize_algos)
         # load and organize data so that one row is one chunk
-    @conda(libraries={'tqdm':'4.60.0', 'pandas':'1.2.3','nltk':'3.6.2'})
     @step
     def organize_algos(self):
         'this step loops through select algos, runs them with the help of self.run_algos'
@@ -127,7 +125,6 @@ a progress bar for jupyter notebook, and labels each feature with the algo that 
         self.df = df
         self.next(self.organize_dataframe)
 
-    @conda(libraries={'pandas':'1.2.3'})
     @step
     def organize_dataframe(self):
         'this step reorganizes columns'
@@ -141,18 +138,16 @@ a progress bar for jupyter notebook, and labels each feature with the algo that 
         all_cols = begin_cols + other_cols
         self.df = df[all_cols]
         self.next(self.label_timestamps)
-    @conda(libraries={'pandas':'1.2.3'})
     @step
     def label_timestamps(self):
         'this step labels each timestamp range as ccc or not'
         from helpers.ccc_labeling import cccLabeler
 
-        c = cccLabeler(first_stamp = self.self.first_stamp, brain_df = self.df, ccc_df_loc = self.ccc_df_loc)
+        c = cccLabeler(first_stamp = self.first_stamp, brain_df = self.df, ccc_df_loc = self.ccc_df_loc)
         df = c.run()
         self.result = df
         self.next(self.end)
 
-    @conda(libraries={'pandas':'1.2.3'})
     @step
     def end(self):
         'this step just returns the result'
