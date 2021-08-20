@@ -81,25 +81,10 @@ a progress bar for jupyter notebook, and labels each feature with the algo that 
 
 
     @step
-    def organize_dataframe(self):
-        'this step reorganizes columns'
-        df = self.df
-        begin_cols = ['start','end', 'vid_id']
-        other_cols = []
-        for col in df.columns:
-            if col not in begin_cols:
-                other_cols.append(col)
-
-        all_cols = begin_cols + other_cols
-        self.df = df[all_cols]
-        self.next(self.label_timestamps)
-
-
-    @step
     def organize_algos(self):
         'this step loops through selected algos and pairs them with the appropriate algo'
 
-
+        first_stamp = self.first_stamp
         # run each chosen algo
         self.next(self.run_algo, foreach='chosen_algos')
 
@@ -162,6 +147,7 @@ a progress bar for jupyter notebook, and labels each feature with the algo that 
             print(f"{algo_str} failed the test!")
 
         self.algo_features = formatted
+        self.first_stamp = self.first_stamp
         self.next(self.join_features)
 
 
@@ -173,7 +159,26 @@ a progress bar for jupyter notebook, and labels each feature with the algo that 
         for i in range(1,len(features)):
             df = df.merge(features[i])
         self.df = df
+        # so apparently we lose all class variables if they're not propagated through to the join step
+        stamps = [output.first_stamp for output in algo_step]
+        self.first_stamp = stamps[0] 
         self.next(self.organize_dataframe)
+
+
+    @step
+    def organize_dataframe(self):
+        'this step reorganizes columns'
+        self.first_stamp
+        df = self.df
+        begin_cols = ['start','end', 'vid_id']
+        other_cols = []
+        for col in df.columns:
+            if col not in begin_cols:
+                other_cols.append(col)
+
+        all_cols = begin_cols + other_cols
+        self.df = df[all_cols]
+        self.next(self.label_timestamps)
 
 
     @step
@@ -181,7 +186,7 @@ a progress bar for jupyter notebook, and labels each feature with the algo that 
         'this step labels each timestamp range as ccc or not'
         from helpers.ccc_labeling import cccLabeler
 
-        c = cccLabeler(first_stamp = self.first_stamp, brain_df = self.df, ccc_df_loc = self.ccc_df_loc)
+        c = cccLabeler(brain_df = self.df, ccc_df_loc = self.ccc_df_loc, first_stamp = self.first_stamp)
         df = c.run()
         self.result = df
         self.next(self.end)
