@@ -24,7 +24,7 @@ class featureFinder:
         self.vid_id = data[2]
 
     def run(self) -> pd.DataFrame:
-        '''
+        """
         Runs the functions of this algorithm
 
         output
@@ -40,7 +40,7 @@ class featureFinder:
                         mixture of positive and negative (but not neutral) chat timescripts
                     "mostly" - indicating whether the overall sentiment is mostly
                         positive, neutral, or negative. Calculated using self.cat_compound()
-        '''
+        """
         new_df = self.thalamus(self.chunk_df)
         results = self.clean_dataframe(new_df)
         return results

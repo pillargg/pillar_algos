@@ -1,10 +1,10 @@
-'''
+"""
 This script is responsible for running datasets through each algorithm, tying
 the feature outputs into together into one dataset.
 
 HOW TO: brain.run()
 METAFLOW: CONDA_CHANNELS=conda-forge python brain.py --environment=conda run --data_=datasets/1073841789.json --vid_id=1073841789
-'''
+"""
 from metaflow import FlowSpec, Parameter, IncludeFile, step, conda, conda_base, retry
 from io import StringIO
 import pandas as pd
@@ -16,54 +16,51 @@ from helpers import data_handler as d
 from helpers import exceptions as e
 
 
-def get_python_version():
-    """
-    A convenience function to get the python version.
-    This ensures that the conda environment is created with an
-    available version of python.
-    """
-    import platform
-    versions = {'2': '2.7.15',
-                '3': '3.7',
-                '4': '3.9.5',
-                '5': '3.8.8'}
-    return versions[platform.python_version_tuple()[0]]
-
-
 # Use the specified version of python for this flow.
-@conda_base(libraries={'numpy':'1.20.2', 'pandas':'1.2.3','tqdm':'4.60.0', 'nltk':'3.6.2'}, python='3.8.8')
+@conda_base(
+    libraries={"numpy": "1.20.2", "pandas": "1.2.3", "nltk": "3.6.2"},
+    python="3.8.8",
+)
 class brainFlow(FlowSpec):
     # allow for data input, default is the sample_med.json
-    # python brain.py --environment=conda run --data_=/path/to/data 
-    
-    vid_id = Parameter('vid_id',
-                       help='ID of stream video')
-    data_ = IncludeFile('data_', 
-                        help='Twitch stream chat log, json file')
-    clip_length = Parameter('clip_length', 
-                            default=0.5,
-                            help="Length of recommended clips in minutes, default is 0.5 minutes")
-    chosen_algos = Parameter('chosen_algos',
-                             default=['algo1', 'algo2', 'algo3_0', 'algo3_5', 'algo3_6', 'algo4'],
-                             help='''list of algos as str that should be run to create feature set''')
-    select_features = Parameter('select_features',
-                                default='all',
-                                help='''either 'all' or a dictionary where keys are one of 'algo1', 'algo2', 
-'algo3_0', 'algo3_5', 'algo3_6', 'algo4' and values a list of str representing features to return
-NOTE: see algo docstring for feature options''')
+    # python brain.py --environment=conda run --data_=/path/to/data
 
-    dev_mode = Parameter('dev_mode',
-                         default=False,
-                         help='''if True, opens file `vid_id` with json.load(open()), provides
-a progress bar for jupyter notebook, and labels each feature with the algo that made it''')
-    ccc_df_loc = Parameter('ccc_df_loc',
-                         default='datasets/collated_clip_dataset.txt',
-                         help='location of dataset of ccc clips and properties')
+    vid_id = Parameter("vid_id", help="ID of stream video")
+    data_ = IncludeFile("data_", help="Twitch stream chat log, json file")
+    clip_length = Parameter(
+        "clip_length",
+        default=0.5,
+        help="Length of recommended clips in minutes, default is 0.5 minutes",
+    )
+    chosen_algos = Parameter(
+        "chosen_algos",
+        default=["algo1", "algo2", "algo3_0", "algo3_5", "algo3_6", "algo4"],
+        help="""list of algos as str that should be run to create feature set""",
+    )
+    select_features = Parameter(
+        "select_features",
+        default="all",
+        help="""either 'all' or a dictionary where keys are one of 'algo1', 'algo2', 
+'algo3_0', 'algo3_5', 'algo3_6', 'algo4' and values a list of str representing features to return
+NOTE: see algo docstring for feature options""",
+    )
+
+    dev_mode = Parameter(
+        "dev_mode",
+        default=False,
+        help="""if True, opens file `vid_id` with json.load(open()) and labels each feature with the algo that made it""",
+    )
+    ccc_df_loc = Parameter(
+        "ccc_df_loc",
+        default="datasets/collated_clip_dataset.txt",
+        help="location of dataset of ccc clips and properties",
+    )
 
     @step
     def start(self):
-        'this step loads the data and gets variables ready according to user input'
+        "this step loads the data and gets variables ready according to user input"
         import numpy as np
+
         data = json.load(StringIO(self.data_))
         if self.dev_mode:
             self.label_features = True
@@ -79,38 +76,27 @@ a progress bar for jupyter notebook, and labels each feature with the algo that 
         self.next(self.organize_algos)
         # load and organize data so that one row is one chunk
 
-
     @step
     def organize_algos(self):
-        'this step loops through selected algos and pairs them with the appropriate algo'
+        "this step loops through selected algos and pairs them with the appropriate algo"
 
         first_stamp = self.first_stamp
         # run each chosen algo
-        self.next(self.run_algo, foreach='chosen_algos')
-
+        self.next(self.run_algo, foreach="chosen_algos")
 
     @step
     def run_algo(self):
-        '''
+        """
         Runs the algorithm, formats resulting dataset
-
-        input
-        -----
-        algo: loaded algorithm class
-        data: twitch data preformatted and chunkified
-        select: "all" or dictionary of lists with columns to select from algo output
-        algo_str: name of algorithm
-        vid_id: video ID of twitch stream
-        label_features: whether or not to label each feature with the algo that made it
-        '''
+        """
         # self.input is created by metaflow with the foreach parameter
         all_algos_dict = {
-            'algo1':algo1,
-            'algo2':algo2,
-            'algo3_0':algo3_0,
-            'algo3_5':algo3_5,
-            'algo3_6':algo3_6,
-            'algo4':algo4
+            "algo1": algo1,
+            "algo2": algo2,
+            "algo3_0": algo3_0,
+            "algo3_5": algo3_5,
+            "algo3_6": algo3_6,
+            "algo4": algo4,
         }
         algo_str = self.input
         algo = all_algos_dict[algo_str]
@@ -118,7 +104,7 @@ a progress bar for jupyter notebook, and labels each feature with the algo that 
         select = self.select_features
         vid_id = self.vid_id
         label_features = self.label_features
-        
+
         a = algo.featureFinder(data)
         res = a.run()
 
@@ -131,12 +117,11 @@ a progress bar for jupyter notebook, and labels each feature with the algo that 
             feature_label = algo_str
         else:
             feature_label = None
-        formatted, bad_columns = d.data_finalizer(res, 
-                                                  vid_id=vid_id, 
-                                                  select=selected_columns, 
-                                                  algo_label=feature_label)
+        formatted, bad_columns = d.data_finalizer(
+            res, vid_id=vid_id, select=selected_columns, algo_label=feature_label
+        )
         if len(bad_columns) > 1:
-            # if there is something in this list, the user defined columns in 
+            # if there is something in this list, the user defined columns in
             # selected_columns was not found
             print(f"{algo_str}: The following columns were not found: {bad_columns}")
         elif len(bad_columns) == 1:
@@ -150,27 +135,25 @@ a progress bar for jupyter notebook, and labels each feature with the algo that 
         self.first_stamp = self.first_stamp
         self.next(self.join_features)
 
-
     @step
     def join_features(self, algo_step):
-        'this step merges the results of each algorithm into one dataset'
+        "this step merges the results of each algorithm into one dataset"
         features = [output.algo_features for output in algo_step]
         df = features[0]
-        for i in range(1,len(features)):
+        for i in range(1, len(features)):
             df = df.merge(features[i])
         self.df = df
         # so apparently we lose all class variables if they're not propagated through to the join step
         stamps = [output.first_stamp for output in algo_step]
-        self.first_stamp = stamps[0] 
+        self.first_stamp = stamps[0]
         self.next(self.organize_dataframe)
-
 
     @step
     def organize_dataframe(self):
-        'this step reorganizes columns'
+        "this step reorganizes columns"
         self.first_stamp
         df = self.df
-        begin_cols = ['start','end', 'vid_id']
+        begin_cols = ["start", "end", "vid_id"]
         other_cols = []
         for col in df.columns:
             if col not in begin_cols:
@@ -180,26 +163,26 @@ a progress bar for jupyter notebook, and labels each feature with the algo that 
         self.df = df[all_cols]
         self.next(self.label_timestamps)
 
-
     @step
     def label_timestamps(self):
-        'this step labels each timestamp range as ccc or not'
+        "this step labels each timestamp range as ccc or not"
         from helpers.ccc_labeling import cccLabeler
 
-        c = cccLabeler(brain_df = self.df, ccc_df_loc = self.ccc_df_loc, first_stamp = self.first_stamp)
+        c = cccLabeler(
+            brain_df=self.df, ccc_df_loc=self.ccc_df_loc, first_stamp=self.first_stamp
+        )
         df = c.run()
         self.result = df
         self.next(self.end)
 
-
     @step
     def end(self):
-        'this step just returns the result'
-        return self.result
+        "this step just saves the result"
+        self.result.to_pickle(f"{self.vid_id}.pkl")
 
     def load_data(self, data: list, clip_length: float) -> tuple:
         """
-        Loads and splits data into appropriate chunks 
+        Loads and splits data into appropriate chunks
 
         output
         ------
@@ -227,7 +210,6 @@ a progress bar for jupyter notebook, and labels each feature with the algo that 
         else:
             return np.array([])
 
-
     def test_results(self, data, dataframe):
         """
         Checks that we retained all chunks, and that chunks have start/end times
@@ -246,5 +228,6 @@ a progress bar for jupyter notebook, and labels each feature with the algo that 
             print(dataframe.columns)
             return False
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     brainFlow()

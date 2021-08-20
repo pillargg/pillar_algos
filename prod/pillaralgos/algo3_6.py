@@ -23,22 +23,22 @@ class featureFinder:
         self.vid_id = data[2]
 
     def run(self) -> pd.DataFrame:
-        '''
+        """
         Runs algo3_6 to get some stats on emoticon usage. Emoticons are not counted uniquely, so one
-        message with 100 of the same emoticon is recorded as 100 "uses". 
+        message with 100 of the same emoticon is recorded as 100 "uses".
             - 'num_emo': the number of emoticons used in the chunk
             - 'chunk_unique_users': the number of users in the chunk
             - 'perc_emoji_of_stream': ratio of emojis in chunk / total emojis in stream
             - 'emoji_user_ratio': ratio of 'emojis in chunk' / 'number of unique chatters in chunk'
         output
         ------
-        results: dataframe 
+        results: dataframe
             Dataframe with feature columns including:
                 - 'num_emo'
                 - 'chunk_unique_users'
                 - 'perc_emoji_of_stream'
                 - 'emoji_user_ratio'
-        '''
+        """
         chunk_df_with_emo_count = self.thalamus()
         results = self.clean_dataframe(chunk_df_with_emo_count)
         return results
