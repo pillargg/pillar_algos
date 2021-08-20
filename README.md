@@ -106,7 +106,7 @@ select_features = {
 
 ## Steps
 
-<img src = "https://github.com/pillargg/pillar_algos/raw/new_brain/graph.png" >
+<img src = "https://github.com/pillargg/pillar_algos/raw/new_brain/graph(1).png" >
 
 1. Start
    1. Load the data and organize into clips of `clip_length` length using the `load_data()` function and assign relevant variables to class variables
