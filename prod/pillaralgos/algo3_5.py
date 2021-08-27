@@ -5,9 +5,10 @@ HOW TO
     algo3_5.run(data)
 """
 import pandas as pd
+from abstracts import abstractAlgos
 
 
-class featureFinder:
+class featureFinder(abstractAlgos):
     def __init__(self, data: tuple) -> pd.DataFrame:
         """
         Runs algo3_5 to get the number of words/emoji/both for each chunk:

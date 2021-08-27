@@ -7,9 +7,10 @@ HOW TO:
     results = sr.run()
 """
 import pandas as pd
+from abstracts import abstractAlgos
 
 
-class featureFinder:
+class featureFinder(abstractAlgos):
     def __init__(self, data: list):
         """
         Gets data ready for sentiment analysis. Initializes dicts, lists, etc.

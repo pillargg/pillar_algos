@@ -5,9 +5,10 @@ HOW TO
     algo1.run(data)
 """
 import pandas as pd
+from abstracts import abstractAlgos
 
 
-class featureFinder:
+class featureFinder(abstractAlgos):
     def __init__(self, data: tuple) -> pd.DataFrame:
         """
         Runs algo1 to find the number of unique users per stream, hour, and chunk.

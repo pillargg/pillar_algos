@@ -7,9 +7,10 @@ HOW TO
 """
 import pandas as pd
 from helpers import exceptions as e
+from abstracts import abstractAlgos
 
 
-class featureFinder:
+class featureFinder(abstractAlgos):
     def __init__(self, data: tuple) -> pd.DataFrame:
         """
         Runs algo2 to find the chat_rate per unique user per chunk, takes the means for each chunk.

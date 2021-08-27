@@ -6,9 +6,10 @@ HOW TO:
     results = ee.run()
 """
 import pandas as pd
+from abstracts import abstractAlgos
 
 
-class featureFinder:
+class featureFinder(abstractAlgos):
     def __init__(self, data: list):
         """
         Gets data ready for emoticon analysis. Initializes dicts, lists, etc.
