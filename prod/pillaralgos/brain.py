@@ -64,7 +64,7 @@ NOTE: see algo docstring for feature options""",
         
         # check the vid_id exists in ccc dataset
         ccc_data = load_ccc_data(self.ccc_df_loc)
-        if self.vid_id not in ccc_data['video_id']:
+        if self.vid_id not in list(ccc_data['video_id']):
             # raise custom exception if vid_id doesn't exist in the ccc dataset
             raise e.VidIdNotFound(vid_id=self.vid_id)
         
