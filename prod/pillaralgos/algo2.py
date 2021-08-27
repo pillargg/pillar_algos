@@ -7,7 +7,7 @@ HOW TO
 """
 import pandas as pd
 from helpers import exceptions as e
-from abstracts import abstractAlgos
+from helpers.abstracts import abstractAlgos
 
 
 class featureFinder(abstractAlgos):

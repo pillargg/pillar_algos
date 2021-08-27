@@ -5,7 +5,7 @@ HOW TO
     algo3_5.run(data)
 """
 import pandas as pd
-from abstracts import abstractAlgos
+from helpers.abstracts import abstractAlgos
 
 
 class featureFinder(abstractAlgos):

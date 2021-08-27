@@ -7,7 +7,7 @@ HOW TO:
     results = sr.run()
 """
 import pandas as pd
-from abstracts import abstractAlgos
+from helpers.abstracts import abstractAlgos
 
 
 class featureFinder(abstractAlgos):
