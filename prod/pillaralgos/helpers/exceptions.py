@@ -52,6 +52,7 @@ class ExpectedOneValueError(Error):
     def __str__(self):
         return f"{self.message} {self.num_unique}"
 
+
 class VidIdNotFound(Error):
     '''
     Raised by cccLabeler() if the provided vid_id is not amongst the vid_ids in the ccc dataset

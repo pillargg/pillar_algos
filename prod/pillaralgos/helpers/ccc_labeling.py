@@ -31,7 +31,7 @@ def load_ccc_data(loc: str = '../data') -> pd.DataFrame:
     dataframe = dataframe.astype({
         'broadcaster_id':int,
         'creator_id':int,
-        'video_id':int,
+        'video_id':str,
         'game_id':int,
         'duration':float,
         'game_metadata.id':int,
@@ -58,7 +58,6 @@ class cccLabeler():
         '''
         ccc_df = load_ccc_data(loc = ccc_df_loc)
         vid_id = brain_df['vid_id'].unique()[0]
-        ccc_df['video_id'] = ccc_df['video_id'].astype(str)
         ccc_clip = ccc_df[ccc_df['video_id'] == str(vid_id)]
 
         if ccc_clip.empty:

@@ -60,7 +60,14 @@ NOTE: see algo docstring for feature options""",
     def start(self):
         "this step loads the data and gets variables ready according to user input"
         import numpy as np
-
+        from helpers.ccc_labeling import load_ccc_data
+        
+        # check the vid_id exists in ccc dataset
+        ccc_data = load_ccc_data(self.ccc_df_loc)
+        if self.vid_id not in ccc_data['video_id']:
+            # raise custom exception if vid_id doesn't exist in the ccc dataset
+            raise e.VidIdNotFound(vid_id=self.vid_id)
+        
         data = json.load(StringIO(self.data_))
         if self.dev_mode:
             self.label_features = True
