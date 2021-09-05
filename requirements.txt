@@ -1,4 +1,0 @@
-pandas
-numpy
-pre-commit
-pillaralgos
