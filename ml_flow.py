@@ -45,10 +45,13 @@ class mlFlow(FlowSpec):
             pkl = pd.read_pickle(file)
             data = data.append(pkl)
         self.data = data.reset_index(drop=True)
+        
+        print(self.data.info())
         self.next(self.train)
 
     @step
     def train(self):
+        
         print('step 1')
         self.next(self.validate)
 

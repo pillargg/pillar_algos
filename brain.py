@@ -151,8 +151,6 @@ NOTE: see algo docstring for feature options""",
         self.first_stamp = self.first_stamp
         self.next(self.join_features)
 
-
-    
     @batch
     @step
     def join_features(self, algo_step):
