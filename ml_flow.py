@@ -2,10 +2,11 @@
 Uses metaflow to run datasets through the appropriate machine learning
 algorithm.
 
-HOW TO: CONDA_CHANNELS=conda-forge python ml_flow.py --environment=conda run --data_=datasets/1073841789.pkl --vid_id=1073841789
+HOW TO: CONDA_CHANNELS=conda-forge python ml_flow.py --environment=conda run 
 '''
 
-from metaflow import FlowSpec, Parameter, IncludeFile, step, conda_base
+from metaflow import FlowSpec, Parameter, IncludeFile, step, conda_base, batch
+from helpers import exceptions as e
 from io import BytesIO
 
 
@@ -14,16 +15,12 @@ from io import BytesIO
     python="3.8.8",
 )
 class mlFlow(FlowSpec):
-    data_ = IncludeFile(
-        "data_", 
-        help="Labeled and processed twitch stream chat log, pickle file",
-        is_text=False
+    data_loc = Parameter(
+        "data_loc", 
+        help="Location of labeled and processed twitch stream chat log, pickle file",
+        default='output'
     )
-    vid_id = Parameter(
-        "vid_id", 
-        help="ID of stream video",
-        default="1073841789"
-    )
+
     select_features = Parameter(
         "select_features",
         default="all",
@@ -33,22 +30,42 @@ class mlFlow(FlowSpec):
     @step
     def start(self):
         '''
+        Merges all datasets
         Loads user provided parameters
         '''
         import pandas as pd
-        self.data = pd.read_pickle(BytesIO(self.data_))
-        
-        self.next(self.me)
+        import os
+        pickles = [self.data_loc + '/' + file for file in os.listdir(self.data_loc) if '.pkl' in file]
+        if len(pickles) == 0:
+            raise e.EmptyFolder(self.data_loc, '.pkl')
+
+        data = pd.DataFrame()
+
+        for file in pickles:
+            pkl = pd.read_pickle(file)
+            data = data.append(pkl)
+        self.data = data.reset_index(drop=True)
+        self.next(self.train)
+
     @step
-    def me(self):
+    def train(self):
         print('step 1')
+        self.next(self.validate)
+
+    @step
+    def validate(self):
+        print('step 2')
+        self.next(self.test)
+
+    @step
+    def test(self):
+        print('step 2')
         self.next(self.end)
-        
+
     @step
     def end(self):
         print(self.data.head())
         print('reached the end')
-
 
 
 if __name__ == "__main__":

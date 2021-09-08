@@ -61,3 +61,13 @@ class VidIdNotFound(Error):
     def __init__(self, vid_id: int):
         self.message = f"{vid_id} vid_id was not found in the CCC dataset"
         super().__init__(self.message)
+
+
+class EmptyFolder(Error):
+    '''
+    Raised if the given folder has no files
+    '''
+
+    def __init__(self, folder: str, filetype: str):
+        self.message = f"{folder} is empty has no {filetype} files"
+        super().__init__(self.message)

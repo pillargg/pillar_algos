@@ -93,8 +93,9 @@ NOTE: see algo docstring for feature options""",
         first_stamp = self.first_stamp
         # run each chosen algo
         self.next(self.run_algo, foreach="chosen_algos")
-
-    @resources(memory=12000, cpu=4)
+    
+    # we have 30000ram and 16cpu
+    @resources(memory=24000, cpu=10)
     @batch
     @step
     def run_algo(self):
@@ -116,7 +117,7 @@ NOTE: see algo docstring for feature options""",
         select = self.select_features
         vid_id = self.vid_id
         label_features = self.label_features
-
+        print(algo_str)
         if algo_str == 'algo4':
             a = algo.featureFinder(data, self.vader_lex)
         else:
@@ -151,6 +152,7 @@ NOTE: see algo docstring for feature options""",
         self.next(self.join_features)
 
 
+    
     @batch
     @step
     def join_features(self, algo_step):
