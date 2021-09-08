@@ -11,7 +11,7 @@ from helpers.abstracts import abstractAlgos
 
 
 class featureFinder(abstractAlgos):
-    def __init__(self, data: list):
+    def __init__(self, data: list, vader_lex: str):
         """
         Gets data ready for sentiment analysis. Initializes dicts, lists, etc.
 
@@ -19,10 +19,18 @@ class featureFinder(abstractAlgos):
         -----
         data: list
             List of dictionaries, a json file opened with json.load(open(file))
+        vader_loc: str
+            Location of the vader_lexicon.txt file
         """
         self.first_stamp = data[0]
         self.chunk_df = data[1]
         self.vid_id = data[2]
+        
+        # this is needed because SentimentIntensityAnalyzer() expects the file
+        # to be downloaded already, we can't pass it a file instance only a str
+        # to the location
+        with open('vader_lexicon.txt', 'w') as f:
+            f.writelines(vader_lex)
 
     def run(self) -> pd.DataFrame:
         """
@@ -71,7 +79,7 @@ class featureFinder(abstractAlgos):
         """
         from nltk.sentiment import SentimentIntensityAnalyzer
 
-        sia = SentimentIntensityAnalyzer()
+        sia = SentimentIntensityAnalyzer(lexicon_file='vader_lexicon.txt')
         result = sia.polarity_scores(cell)
         return result
 

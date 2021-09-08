@@ -3,9 +3,9 @@ This script is responsible for running datasets through each algorithm, tying
 the feature outputs into together into one dataset.
 
 HOW TO: brain.run()
-METAFLOW: CONDA_CHANNELS=conda-forge python brain.py --environment=conda run --data_=datasets/1073841789.json --vid_id=1073841789
+METAFLOW: CONDA_CHANNELS=conda-forge python brain.py --environment=conda run --data_=data/1073833457.json --vid_id=1073833457
 """
-from metaflow import FlowSpec, Parameter, IncludeFile, step, conda, conda_base, retry
+from metaflow import FlowSpec, Parameter, IncludeFile, step, conda, conda_base, retry, batch, resources
 from io import StringIO
 import pandas as pd
 import numpy as np
@@ -27,6 +27,9 @@ class brainFlow(FlowSpec):
 
     vid_id = Parameter("vid_id", help="ID of stream video")
     data_ = IncludeFile("data_", help="Twitch stream chat log, json file")
+    vader_lex = IncludeFile("vader_lex",
+                             default='datasets/vader_lexicon.txt',
+                             help="Location of vader_lexicon file required by nltk")
     clip_length = Parameter(
         "clip_length",
         default=0.5,
@@ -55,13 +58,13 @@ NOTE: see algo docstring for feature options""",
         default="datasets/collated_clip_dataset.txt",
         help="location of dataset of ccc clips and properties",
     )
-
+    
     @step
     def start(self):
         "this step loads the data and gets variables ready according to user input"
         import numpy as np
+        import os
         from helpers.ccc_labeling import load_ccc_data
-        
         # check the vid_id exists in ccc dataset
         ccc_data = load_ccc_data(self.ccc_df_loc)
         if self.vid_id not in list(ccc_data['video_id']):
@@ -91,6 +94,8 @@ NOTE: see algo docstring for feature options""",
         # run each chosen algo
         self.next(self.run_algo, foreach="chosen_algos")
 
+    @resources(memory=12000, cpu=4)
+    @batch
     @step
     def run_algo(self):
         """
@@ -112,7 +117,10 @@ NOTE: see algo docstring for feature options""",
         vid_id = self.vid_id
         label_features = self.label_features
 
-        a = algo.featureFinder(data)
+        if algo_str == 'algo4':
+            a = algo.featureFinder(data, self.vader_lex)
+        else:
+            a = algo.featureFinder(data)
         res = a.run()
 
         if (type(select) == dict) & (algo_str in select):
@@ -142,6 +150,8 @@ NOTE: see algo docstring for feature options""",
         self.first_stamp = self.first_stamp
         self.next(self.join_features)
 
+
+    @batch
     @step
     def join_features(self, algo_step):
         "this step merges the results of each algorithm into one dataset"
